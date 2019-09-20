@@ -1,4 +1,4 @@
-# ECSE223 Project Group 09
+# ECSE223 Project Group 12
 
 ## Project Overview
 
