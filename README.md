@@ -1,4 +1,4 @@
-# ECSE223 Project Group 12
+# ECSE223 Project Group 12 [![Build Status](https://travis-ci.com/McGill-ECSE223-Fall2019/ecse223-project--group-12.svg?token=KAZKVRpC6RVs5t8AvzT6&branch=master)](https://travis-ci.com/McGill-ECSE223-Fall2019/ecse223-project--group-12)
 
 ## Project Overview
 
