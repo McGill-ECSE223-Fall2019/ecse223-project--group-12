@@ -1,8 +1,8 @@
-# ECSE223 Project Group 12 [![Build Status](https://travis-ci.com/McGill-ECSE223-Fall2019/ecse223-project--group-12.svg?token=KAZKVRpC6RVs5t8AvzT6&branch=master)](https://travis-ci.com/McGill-ECSE223-Fall2019/ecse223-project--group-12)
+# Fall 2019 ECSE223 Project Group 12 [![Build Status](https://travis-ci.com/McGill-ECSE223-Fall2019/ecse223-project--group-12.svg?token=KAZKVRpC6RVs5t8AvzT6&branch=master)](https://travis-ci.com/McGill-ECSE223-Fall2019/ecse223-project--group-12)
 
 ## Project Overview
 
-Quoridor is a well known board game. We will create a Quridor application in two major phases.
+Quoridor is a well known board game. We will create a Quoridor application in two major phases.
 <br>Visit the [Project Wiki](https://github.com/McGill-ECSE223-Fall2019/ecse223-project--group-12/wiki) for more information
 
 ## Team members
