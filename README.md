@@ -3,6 +3,7 @@
 ## Project Overview
 
 Quoridor is a well known board game. We will create a Quridor application in two major phases.
+<br>Visit the [Project Wiki](https://github.com/McGill-ECSE223-Fall2019/ecse223-project--group-12/wiki) for more information
 
 ## Team members
 
