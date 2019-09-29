@@ -4,7 +4,7 @@
 package ca.mcgill.ecse223.quoridor.model;
 import java.util.*;
 
-// line 11 "../../../../../model.ump"
+// line 9 "../../../../../model.ump"
 public class Player
 {
 
@@ -106,9 +106,9 @@ public class Player
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public PlayerEnrollment addEnrolledMatche(Pawn aPawn, Match aMatch)
+  public PlayerEnrollment addEnrolledMatche(String aId, PlayerEnrollment.Outcome aOutcome, Pawn aPawn, Match aMatch)
   {
-    return new PlayerEnrollment(aPawn, this, aMatch);
+    return new PlayerEnrollment(aId, aOutcome, aPawn, this, aMatch);
   }
 
   public boolean addEnrolledMatche(PlayerEnrollment aEnrolledMatche)

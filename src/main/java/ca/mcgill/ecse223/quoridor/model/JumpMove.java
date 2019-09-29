@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 
-// line 80 "../../../../../model.ump"
+// line 88 "../../../../../model.ump"
 public class JumpMove extends PawnMove
 {
 
@@ -15,9 +15,9 @@ public class JumpMove extends PawnMove
   // CONSTRUCTOR
   //------------------------
 
-  public JumpMove(Tile aTile, PlayerEnrollment aPlayerEnrollment)
+  public JumpMove(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
   {
-    super(aTile, aPlayerEnrollment);
+    super(aTurnNumber, aIsValid, aTimeLimit, aConfirmed, aTargetPos, aEnrollment);
   }
 
   //------------------------

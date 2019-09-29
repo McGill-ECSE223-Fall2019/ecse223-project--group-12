@@ -5,7 +5,7 @@ package ca.mcgill.ecse223.quoridor.model;
 import ca.mcgill.ecse223.quoridor.model.Match.GameState;
 import java.util.*;
 
-// line 28 "../../../../../model.ump"
+// line 26 "../../../../../model.ump"
 public class Board
 {
 
@@ -120,7 +120,7 @@ public class Board
     return 81;
   }
   /* Code from template association_AddMNToOnlyOne */
-  public Tile addTile(int aXPos, int aYPos)
+  public Tile addTile(Character aXPos, int aYPos)
   {
     if (numberOfTiles() >= maximumNumberOfTiles())
     {

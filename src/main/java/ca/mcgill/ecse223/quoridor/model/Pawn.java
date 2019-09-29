@@ -2,8 +2,9 @@
 /*This code was generated using the UMPLE 1.29.0.4181.a593105a9 modeling language!*/
 
 package ca.mcgill.ecse223.quoridor.model;
+import ca.mcgill.ecse223.quoridor.model.PlayerEnrollment.Outcome;
 
-// line 42 "../../../../../model.ump"
+// line 43 "../../../../../model.ump"
 public class Pawn
 {
 
@@ -11,7 +12,7 @@ public class Pawn
   // ENUMERATIONS
   //------------------------
 
-  public enum Color { RED, BLACK }
+  public enum Color { WHITE, BLACK }
 
   //------------------------
   // MEMBER VARIABLES
@@ -22,27 +23,27 @@ public class Pawn
 
   //Pawn Associations
   private Tile currentPos;
-  private PlayerEnrollment playerEnrollment;
+  private PlayerEnrollment enrollment;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Pawn(Color aColor, Tile aCurrentPos, PlayerEnrollment aPlayerEnrollment)
+  public Pawn(Color aColor, Tile aCurrentPos, PlayerEnrollment aEnrollment)
   {
     color = aColor;
     if (!setCurrentPos(aCurrentPos))
     {
       throw new RuntimeException("Unable to create Pawn due to aCurrentPos");
     }
-    if (aPlayerEnrollment == null || aPlayerEnrollment.getPawn() != null)
+    if (aEnrollment == null || aEnrollment.getPawn() != null)
     {
-      throw new RuntimeException("Unable to create Pawn due to aPlayerEnrollment");
+      throw new RuntimeException("Unable to create Pawn due to aEnrollment");
     }
-    playerEnrollment = aPlayerEnrollment;
+    enrollment = aEnrollment;
   }
 
-  public Pawn(Color aColor, Tile aCurrentPos, Player aPlayerForPlayerEnrollment, Match aMatchForPlayerEnrollment)
+  public Pawn(Color aColor, Tile aCurrentPos, String aIdForEnrollment, Outcome aOutcomeForEnrollment, Player aPlayerForEnrollment, Match aMatchForEnrollment)
   {
     color = aColor;
     boolean didAddCurrentPos = setCurrentPos(aCurrentPos);
@@ -50,7 +51,7 @@ public class Pawn
     {
       throw new RuntimeException("Unable to create pawn due to currentPos");
     }
-    playerEnrollment = new PlayerEnrollment(this, aPlayerForPlayerEnrollment, aMatchForPlayerEnrollment);
+    enrollment = new PlayerEnrollment(aIdForEnrollment, aOutcomeForEnrollment, this, aPlayerForEnrollment, aMatchForEnrollment);
   }
 
   //------------------------
@@ -75,9 +76,9 @@ public class Pawn
     return currentPos;
   }
   /* Code from template association_GetOne */
-  public PlayerEnrollment getPlayerEnrollment()
+  public PlayerEnrollment getEnrollment()
   {
-    return playerEnrollment;
+    return enrollment;
   }
   /* Code from template association_SetUnidirectionalOne */
   public boolean setCurrentPos(Tile aNewCurrentPos)
@@ -94,11 +95,11 @@ public class Pawn
   public void delete()
   {
     currentPos = null;
-    PlayerEnrollment existingPlayerEnrollment = playerEnrollment;
-    playerEnrollment = null;
-    if (existingPlayerEnrollment != null)
+    PlayerEnrollment existingEnrollment = enrollment;
+    enrollment = null;
+    if (existingEnrollment != null)
     {
-      existingPlayerEnrollment.delete();
+      existingEnrollment.delete();
     }
   }
 
@@ -108,6 +109,6 @@ public class Pawn
     return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "color" + "=" + (getColor() != null ? !getColor().equals(this)  ? getColor().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "currentPos = "+(getCurrentPos()!=null?Integer.toHexString(System.identityHashCode(getCurrentPos())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "playerEnrollment = "+(getPlayerEnrollment()!=null?Integer.toHexString(System.identityHashCode(getPlayerEnrollment())):"null");
+            "  " + "enrollment = "+(getEnrollment()!=null?Integer.toHexString(System.identityHashCode(getEnrollment())):"null");
   }
 }

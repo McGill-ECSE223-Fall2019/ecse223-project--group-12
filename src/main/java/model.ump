@@ -1,4 +1,3 @@
-
 namespace ca.mcgill.ecse223.quoridor.model;
 
 class Quoridor
@@ -16,11 +15,11 @@ class Player
 
 class Match
 {  
-  enum GameState {SETUP, IN_PROGRESS, GAME_OVER }
+  enum GameState {NEW_GAME, SETUP, WHITE_PLAYER_TURN, BLACK_PLAYER_TURN, PAUSED, GAME_OVER }
   GameState state;
   Boolean isNew;
   Integer id;
-1 match <@>- 1 Board board;
+  1 match <@>- 1 Board board;
   1 match <@>- 2 PlayerEnrollment enrolledPlayers;
  
 }
@@ -28,19 +27,23 @@ class Board
 {
   depend ca.mcgill.ecse223.quoridor.model.Match.GameState;
   Boolean isValid;
-  1 <@>- 81 Tile tiles; 
+  1 board <@>- 81 Tile tiles; 
 }
 
 class PlayerEnrollment{
   depend ca.mcgill.ecse223.quoridor.model.Pawn.Color;
-  1  <@>- 1 Pawn pawn;
-  1  <@>- 10 Wall walls;
-  1 -- * Move moves;
+  enum Outcome{WIN, LOSS, WITHDRAWAL, DRAW, INCOMPLETE}
+  String id;
+  Outcome outcome;
+  1 enrollment <@>- 1 Pawn pawn;
+  1 enrollment <@>- 10 Wall walls;
+  1 enrollment -- * Move moves;
 }
 
 class Pawn
 {
-  enum Color {RED, BLACK}
+  depend ca.mcgill.ecse223.quoridor.model.PlayerEnrollment.Outcome;
+  enum Color {WHITE, BLACK}
   Color color;
   0..1 -> 1 Tile currentPos;
 }
@@ -49,21 +52,27 @@ class Wall
 {
   enum Orientation {VERTICAL, HORIZONTAL}
   Orientation orientation;
-  0..1 -> 1 Tile currentPos;
-  1 -- * WallMove;
+  Boolean isOnBoard;
+  0..1 -> 0..1 Tile currentPos;
+  1 wall -- * WallMove wallMoves;
 }
 
 
 
 class Tile 
 {
-  Integer xPos;
+  Character xPos;
   Integer yPos;
 }
 class Move
 {
+  Integer turnNumber;
+  Boolean isValid;
+  Integer timeLimit;
+  Boolean confirmed;
   0..1 -> 0..1 Move previousMove;
-  0..1 -> 1 Tile;
+  0..1 -> 0..1 Move nextMove;
+  0..1 -> 1 Tile targetPos;
 }
 
 class PawnMove
@@ -80,3 +89,81 @@ class JumpMove{
 
   isA PawnMove;
 }
+
+namespace -;
+// Uncomment these lines to set positions of diagram components in umple online
+
+/*
+class Quoridor
+{
+  position 239 16 109 41;
+  position.association Match:matches__Quoridor:quoridor 102,39 4,0;
+  position.association Player:players__Quoridor:quoridor 0,41 112,0;
+}
+
+class Player
+{
+  position 92 112 112 75;
+  position.association Player:player__PlayerEnrollment:enrolledMatches 30,75 11,0;
+}
+
+class Match
+{
+  position 432 108 146 93;
+  position.association Board:board__Match:match 26,92 30,0;
+  position.association Match:match__PlayerEnrollment:enrolledPlayers 0,49 117,0;
+}
+
+class Board
+{
+  position 445 278 129 58;
+  position.association Board__Tile:tiles 56,58 112,0;
+}
+
+class PlayerEnrollment
+{
+  position 48 287 158 75;
+  position.association PlayerEnrollment__Wall:walls 98,41 6,0;
+  position.association Pawn:pawn__PlayerEnrollment 22,75 72,0;
+  position.association Move:moves__PlayerEnrollment 154,75 133,0;
+}
+
+class Pawn
+{
+  position 24 311 109 58;
+  position.association Pawn__Tile:currentPos 110,47 0,30;
+}
+
+class Wall
+{
+  position 261 448 186 58;
+  position.association Tile:currentPos__Wall 190,29 50,0;
+  position.association Wall__WallMove 96,58 12,0;
+}
+
+class Tile
+{
+  position 442 549 115 75;
+}
+
+class Move
+{
+  position 493 217 109 41;
+  position.association Move__Tile 164,28 0,65;
+}
+
+class PawnMove
+{
+  position 539 338 109 41;
+}
+
+class WallMove
+{
+  position 336 813 109 39;
+}
+
+class JumpMove
+{
+  position 31 914 109 39;
+}
+*/

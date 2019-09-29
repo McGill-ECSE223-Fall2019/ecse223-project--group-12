@@ -4,7 +4,7 @@
 package ca.mcgill.ecse223.quoridor.model;
 import java.util.*;
 
-// line 49 "../../../../../model.ump"
+// line 51 "../../../../../model.ump"
 public class Wall
 {
 
@@ -20,28 +20,26 @@ public class Wall
 
   //Wall Attributes
   private Orientation orientation;
+  private boolean isOnBoard;
 
   //Wall Associations
   private Tile currentPos;
   private List<WallMove> wallMoves;
-  private PlayerEnrollment playerEnrollment;
+  private PlayerEnrollment enrollment;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Wall(Orientation aOrientation, Tile aCurrentPos, PlayerEnrollment aPlayerEnrollment)
+  public Wall(Orientation aOrientation, boolean aIsOnBoard, PlayerEnrollment aEnrollment)
   {
     orientation = aOrientation;
-    if (!setCurrentPos(aCurrentPos))
-    {
-      throw new RuntimeException("Unable to create Wall due to aCurrentPos");
-    }
+    isOnBoard = aIsOnBoard;
     wallMoves = new ArrayList<WallMove>();
-    boolean didAddPlayerEnrollment = setPlayerEnrollment(aPlayerEnrollment);
-    if (!didAddPlayerEnrollment)
+    boolean didAddEnrollment = setEnrollment(aEnrollment);
+    if (!didAddEnrollment)
     {
-      throw new RuntimeException("Unable to create wall due to playerEnrollment");
+      throw new RuntimeException("Unable to create wall due to enrollment");
     }
   }
 
@@ -57,14 +55,38 @@ public class Wall
     return wasSet;
   }
 
+  public boolean setIsOnBoard(boolean aIsOnBoard)
+  {
+    boolean wasSet = false;
+    isOnBoard = aIsOnBoard;
+    wasSet = true;
+    return wasSet;
+  }
+
   public Orientation getOrientation()
   {
     return orientation;
+  }
+
+  public boolean getIsOnBoard()
+  {
+    return isOnBoard;
+  }
+  /* Code from template attribute_IsBoolean */
+  public boolean isIsOnBoard()
+  {
+    return isOnBoard;
   }
   /* Code from template association_GetOne */
   public Tile getCurrentPos()
   {
     return currentPos;
+  }
+
+  public boolean hasCurrentPos()
+  {
+    boolean has = currentPos != null;
+    return has;
   }
   /* Code from template association_GetMany */
   public WallMove getWallMove(int index)
@@ -97,19 +119,16 @@ public class Wall
     return index;
   }
   /* Code from template association_GetOne */
-  public PlayerEnrollment getPlayerEnrollment()
+  public PlayerEnrollment getEnrollment()
   {
-    return playerEnrollment;
+    return enrollment;
   }
-  /* Code from template association_SetUnidirectionalOne */
+  /* Code from template association_SetUnidirectionalOptionalOne */
   public boolean setCurrentPos(Tile aNewCurrentPos)
   {
     boolean wasSet = false;
-    if (aNewCurrentPos != null)
-    {
-      currentPos = aNewCurrentPos;
-      wasSet = true;
-    }
+    currentPos = aNewCurrentPos;
+    wasSet = true;
     return wasSet;
   }
   /* Code from template association_MinimumNumberOfMethod */
@@ -118,9 +137,9 @@ public class Wall
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public WallMove addWallMove(Tile aTile, PlayerEnrollment aPlayerEnrollment)
+  public WallMove addWallMove(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
   {
-    return new WallMove(aTile, aPlayerEnrollment, this);
+    return new WallMove(aTurnNumber, aIsValid, aTimeLimit, aConfirmed, aTargetPos, aEnrollment, this);
   }
 
   public boolean addWallMove(WallMove aWallMove)
@@ -185,33 +204,33 @@ public class Wall
     return wasAdded;
   }
   /* Code from template association_SetOneToAtMostN */
-  public boolean setPlayerEnrollment(PlayerEnrollment aPlayerEnrollment)
+  public boolean setEnrollment(PlayerEnrollment aEnrollment)
   {
     boolean wasSet = false;
-    //Must provide playerEnrollment to wall
-    if (aPlayerEnrollment == null)
+    //Must provide enrollment to wall
+    if (aEnrollment == null)
     {
       return wasSet;
     }
 
-    //playerEnrollment already at maximum (10)
-    if (aPlayerEnrollment.numberOfWalls() >= PlayerEnrollment.maximumNumberOfWalls())
+    //enrollment already at maximum (10)
+    if (aEnrollment.numberOfWalls() >= PlayerEnrollment.maximumNumberOfWalls())
     {
       return wasSet;
     }
     
-    PlayerEnrollment existingPlayerEnrollment = playerEnrollment;
-    playerEnrollment = aPlayerEnrollment;
-    if (existingPlayerEnrollment != null && !existingPlayerEnrollment.equals(aPlayerEnrollment))
+    PlayerEnrollment existingEnrollment = enrollment;
+    enrollment = aEnrollment;
+    if (existingEnrollment != null && !existingEnrollment.equals(aEnrollment))
     {
-      boolean didRemove = existingPlayerEnrollment.removeWall(this);
+      boolean didRemove = existingEnrollment.removeWall(this);
       if (!didRemove)
       {
-        playerEnrollment = existingPlayerEnrollment;
+        enrollment = existingEnrollment;
         return wasSet;
       }
     }
-    playerEnrollment.addWall(this);
+    enrollment.addWall(this);
     wasSet = true;
     return wasSet;
   }
@@ -224,20 +243,21 @@ public class Wall
       WallMove aWallMove = wallMoves.get(i - 1);
       aWallMove.delete();
     }
-    PlayerEnrollment placeholderPlayerEnrollment = playerEnrollment;
-    this.playerEnrollment = null;
-    if(placeholderPlayerEnrollment != null)
+    PlayerEnrollment placeholderEnrollment = enrollment;
+    this.enrollment = null;
+    if(placeholderEnrollment != null)
     {
-      placeholderPlayerEnrollment.removeWall(this);
+      placeholderEnrollment.removeWall(this);
     }
   }
 
 
   public String toString()
   {
-    return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
+    return super.toString() + "["+
+            "isOnBoard" + ":" + getIsOnBoard()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "orientation" + "=" + (getOrientation() != null ? !getOrientation().equals(this)  ? getOrientation().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "currentPos = "+(getCurrentPos()!=null?Integer.toHexString(System.identityHashCode(getCurrentPos())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "playerEnrollment = "+(getPlayerEnrollment()!=null?Integer.toHexString(System.identityHashCode(getPlayerEnrollment())):"null");
+            "  " + "enrollment = "+(getEnrollment()!=null?Integer.toHexString(System.identityHashCode(getEnrollment())):"null");
   }
 }

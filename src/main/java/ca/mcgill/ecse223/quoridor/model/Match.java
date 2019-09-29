@@ -4,7 +4,7 @@
 package ca.mcgill.ecse223.quoridor.model;
 import java.util.*;
 
-// line 18 "../../../../../model.ump"
+// line 16 "../../../../../model.ump"
 public class Match
 {
 
@@ -12,7 +12,7 @@ public class Match
   // ENUMERATIONS
   //------------------------
 
-  public enum GameState { SETUP, IN_PROGRESS, GAME_OVER }
+  public enum GameState { NEW_GAME, SETUP, WHITE_PLAYER_TURN, BLACK_PLAYER_TURN, PAUSED, GAME_OVER }
 
   //------------------------
   // MEMBER VARIABLES
@@ -173,7 +173,7 @@ public class Match
     return 2;
   }
   /* Code from template association_AddMNToOnlyOne */
-  public PlayerEnrollment addEnrolledPlayer(Pawn aPawn, Player aPlayer)
+  public PlayerEnrollment addEnrolledPlayer(String aId, PlayerEnrollment.Outcome aOutcome, Pawn aPawn, Player aPlayer)
   {
     if (numberOfEnrolledPlayers() >= maximumNumberOfEnrolledPlayers())
     {
@@ -181,7 +181,7 @@ public class Match
     }
     else
     {
-      return new PlayerEnrollment(aPawn, aPlayer, this);
+      return new PlayerEnrollment(aId, aOutcome, aPawn, aPlayer, this);
     }
   }
 

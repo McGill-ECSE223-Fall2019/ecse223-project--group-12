@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 
-// line 75 "../../../../../model.ump"
+// line 83 "../../../../../model.ump"
 public class WallMove extends Move
 {
 
@@ -18,9 +18,9 @@ public class WallMove extends Move
   // CONSTRUCTOR
   //------------------------
 
-  public WallMove(Tile aTile, PlayerEnrollment aPlayerEnrollment, Wall aWall)
+  public WallMove(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment, Wall aWall)
   {
-    super(aTile, aPlayerEnrollment);
+    super(aTurnNumber, aIsValid, aTimeLimit, aConfirmed, aTargetPos, aEnrollment);
     boolean didAddWall = setWall(aWall);
     if (!didAddWall)
     {

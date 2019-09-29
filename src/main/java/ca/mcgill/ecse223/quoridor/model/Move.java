@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 
-// line 64 "../../../../../model.ump"
+// line 67 "../../../../../model.ump"
 public class Move
 {
 
@@ -11,31 +11,104 @@ public class Move
   // MEMBER VARIABLES
   //------------------------
 
+  //Move Attributes
+  private int turnNumber;
+  private boolean isValid;
+  private int timeLimit;
+  private boolean confirmed;
+
   //Move Associations
   private Move previousMove;
-  private Tile tile;
-  private PlayerEnrollment playerEnrollment;
+  private Move nextMove;
+  private Tile targetPos;
+  private PlayerEnrollment enrollment;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Move(Tile aTile, PlayerEnrollment aPlayerEnrollment)
+  public Move(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
   {
-    if (!setTile(aTile))
+    turnNumber = aTurnNumber;
+    isValid = aIsValid;
+    timeLimit = aTimeLimit;
+    confirmed = aConfirmed;
+    if (!setTargetPos(aTargetPos))
     {
-      throw new RuntimeException("Unable to create Move due to aTile");
+      throw new RuntimeException("Unable to create Move due to aTargetPos");
     }
-    boolean didAddPlayerEnrollment = setPlayerEnrollment(aPlayerEnrollment);
-    if (!didAddPlayerEnrollment)
+    boolean didAddEnrollment = setEnrollment(aEnrollment);
+    if (!didAddEnrollment)
     {
-      throw new RuntimeException("Unable to create move due to playerEnrollment");
+      throw new RuntimeException("Unable to create move due to enrollment");
     }
   }
 
   //------------------------
   // INTERFACE
   //------------------------
+
+  public boolean setTurnNumber(int aTurnNumber)
+  {
+    boolean wasSet = false;
+    turnNumber = aTurnNumber;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setIsValid(boolean aIsValid)
+  {
+    boolean wasSet = false;
+    isValid = aIsValid;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setTimeLimit(int aTimeLimit)
+  {
+    boolean wasSet = false;
+    timeLimit = aTimeLimit;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setConfirmed(boolean aConfirmed)
+  {
+    boolean wasSet = false;
+    confirmed = aConfirmed;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public int getTurnNumber()
+  {
+    return turnNumber;
+  }
+
+  public boolean getIsValid()
+  {
+    return isValid;
+  }
+
+  public int getTimeLimit()
+  {
+    return timeLimit;
+  }
+
+  public boolean getConfirmed()
+  {
+    return confirmed;
+  }
+  /* Code from template attribute_IsBoolean */
+  public boolean isIsValid()
+  {
+    return isValid;
+  }
+  /* Code from template attribute_IsBoolean */
+  public boolean isConfirmed()
+  {
+    return confirmed;
+  }
   /* Code from template association_GetOne */
   public Move getPreviousMove()
   {
@@ -48,14 +121,25 @@ public class Move
     return has;
   }
   /* Code from template association_GetOne */
-  public Tile getTile()
+  public Move getNextMove()
   {
-    return tile;
+    return nextMove;
+  }
+
+  public boolean hasNextMove()
+  {
+    boolean has = nextMove != null;
+    return has;
   }
   /* Code from template association_GetOne */
-  public PlayerEnrollment getPlayerEnrollment()
+  public Tile getTargetPos()
   {
-    return playerEnrollment;
+    return targetPos;
+  }
+  /* Code from template association_GetOne */
+  public PlayerEnrollment getEnrollment()
+  {
+    return enrollment;
   }
   /* Code from template association_SetUnidirectionalOptionalOne */
   public boolean setPreviousMove(Move aNewPreviousMove)
@@ -65,33 +149,41 @@ public class Move
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_SetUnidirectionalOne */
-  public boolean setTile(Tile aNewTile)
+  /* Code from template association_SetUnidirectionalOptionalOne */
+  public boolean setNextMove(Move aNewNextMove)
   {
     boolean wasSet = false;
-    if (aNewTile != null)
+    nextMove = aNewNextMove;
+    wasSet = true;
+    return wasSet;
+  }
+  /* Code from template association_SetUnidirectionalOne */
+  public boolean setTargetPos(Tile aNewTargetPos)
+  {
+    boolean wasSet = false;
+    if (aNewTargetPos != null)
     {
-      tile = aNewTile;
+      targetPos = aNewTargetPos;
       wasSet = true;
     }
     return wasSet;
   }
   /* Code from template association_SetOneToMany */
-  public boolean setPlayerEnrollment(PlayerEnrollment aPlayerEnrollment)
+  public boolean setEnrollment(PlayerEnrollment aEnrollment)
   {
     boolean wasSet = false;
-    if (aPlayerEnrollment == null)
+    if (aEnrollment == null)
     {
       return wasSet;
     }
 
-    PlayerEnrollment existingPlayerEnrollment = playerEnrollment;
-    playerEnrollment = aPlayerEnrollment;
-    if (existingPlayerEnrollment != null && !existingPlayerEnrollment.equals(aPlayerEnrollment))
+    PlayerEnrollment existingEnrollment = enrollment;
+    enrollment = aEnrollment;
+    if (existingEnrollment != null && !existingEnrollment.equals(aEnrollment))
     {
-      existingPlayerEnrollment.removeMove(this);
+      existingEnrollment.removeMove(this);
     }
-    playerEnrollment.addMove(this);
+    enrollment.addMove(this);
     wasSet = true;
     return wasSet;
   }
@@ -99,13 +191,25 @@ public class Move
   public void delete()
   {
     previousMove = null;
-    tile = null;
-    PlayerEnrollment placeholderPlayerEnrollment = playerEnrollment;
-    this.playerEnrollment = null;
-    if(placeholderPlayerEnrollment != null)
+    nextMove = null;
+    targetPos = null;
+    PlayerEnrollment placeholderEnrollment = enrollment;
+    this.enrollment = null;
+    if(placeholderEnrollment != null)
     {
-      placeholderPlayerEnrollment.removeMove(this);
+      placeholderEnrollment.removeMove(this);
     }
   }
 
+
+  public String toString()
+  {
+    return super.toString() + "["+
+            "turnNumber" + ":" + getTurnNumber()+ "," +
+            "isValid" + ":" + getIsValid()+ "," +
+            "timeLimit" + ":" + getTimeLimit()+ "," +
+            "confirmed" + ":" + getConfirmed()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "targetPos = "+(getTargetPos()!=null?Integer.toHexString(System.identityHashCode(getTargetPos())):"null") + System.getProperties().getProperty("line.separator") +
+            "  " + "enrollment = "+(getEnrollment()!=null?Integer.toHexString(System.identityHashCode(getEnrollment())):"null");
+  }
 }

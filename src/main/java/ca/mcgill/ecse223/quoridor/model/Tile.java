@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 
-// line 59 "../../../../../model.ump"
+// line 62 "../../../../../model.ump"
 public class Tile
 {
 
@@ -12,7 +12,7 @@ public class Tile
   //------------------------
 
   //Tile Attributes
-  private int xPos;
+  private Character xPos;
   private int yPos;
 
   //Tile Associations
@@ -22,7 +22,7 @@ public class Tile
   // CONSTRUCTOR
   //------------------------
 
-  public Tile(int aXPos, int aYPos, Board aBoard)
+  public Tile(Character aXPos, int aYPos, Board aBoard)
   {
     xPos = aXPos;
     yPos = aYPos;
@@ -37,7 +37,7 @@ public class Tile
   // INTERFACE
   //------------------------
 
-  public boolean setXPos(int aXPos)
+  public boolean setXPos(Character aXPos)
   {
     boolean wasSet = false;
     xPos = aXPos;
@@ -53,7 +53,7 @@ public class Tile
     return wasSet;
   }
 
-  public int getXPos()
+  public Character getXPos()
   {
     return xPos;
   }

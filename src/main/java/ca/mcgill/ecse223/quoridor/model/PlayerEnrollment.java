@@ -5,13 +5,23 @@ package ca.mcgill.ecse223.quoridor.model;
 import ca.mcgill.ecse223.quoridor.model.Pawn.Color;
 import java.util.*;
 
-// line 35 "../../../../../model.ump"
+// line 33 "../../../../../model.ump"
 public class PlayerEnrollment
 {
 
   //------------------------
+  // ENUMERATIONS
+  //------------------------
+
+  public enum Outcome { WIN, LOSS, WITHDRAWAL, DRAW, INCOMPLETE }
+
+  //------------------------
   // MEMBER VARIABLES
   //------------------------
+
+  //PlayerEnrollment Attributes
+  private String id;
+  private Outcome outcome;
 
   //PlayerEnrollment Associations
   private Pawn pawn;
@@ -24,9 +34,11 @@ public class PlayerEnrollment
   // CONSTRUCTOR
   //------------------------
 
-  public PlayerEnrollment(Pawn aPawn, Player aPlayer, Match aMatch)
+  public PlayerEnrollment(String aId, Outcome aOutcome, Pawn aPawn, Player aPlayer, Match aMatch)
   {
-    if (aPawn == null || aPawn.getPlayerEnrollment() != null)
+    id = aId;
+    outcome = aOutcome;
+    if (aPawn == null || aPawn.getEnrollment() != null)
     {
       throw new RuntimeException("Unable to create PlayerEnrollment due to aPawn");
     }
@@ -45,8 +57,10 @@ public class PlayerEnrollment
     }
   }
 
-  public PlayerEnrollment(Color aColorForPawn, Tile aCurrentPosForPawn, Player aPlayer, Match aMatch)
+  public PlayerEnrollment(String aId, Outcome aOutcome, Color aColorForPawn, Tile aCurrentPosForPawn, Player aPlayer, Match aMatch)
   {
+    id = aId;
+    outcome = aOutcome;
     pawn = new Pawn(aColorForPawn, aCurrentPosForPawn, this);
     walls = new ArrayList<Wall>();
     moves = new ArrayList<Move>();
@@ -65,6 +79,32 @@ public class PlayerEnrollment
   //------------------------
   // INTERFACE
   //------------------------
+
+  public boolean setId(String aId)
+  {
+    boolean wasSet = false;
+    id = aId;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setOutcome(Outcome aOutcome)
+  {
+    boolean wasSet = false;
+    outcome = aOutcome;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public String getId()
+  {
+    return id;
+  }
+
+  public Outcome getOutcome()
+  {
+    return outcome;
+  }
   /* Code from template association_GetOne */
   public Pawn getPawn()
   {
@@ -162,7 +202,7 @@ public class PlayerEnrollment
     return 10;
   }
   /* Code from template association_AddMNToOnlyOne */
-  public Wall addWall(Wall.Orientation aOrientation, Tile aCurrentPos)
+  public Wall addWall(Wall.Orientation aOrientation, boolean aIsOnBoard)
   {
     if (numberOfWalls() >= maximumNumberOfWalls())
     {
@@ -170,7 +210,7 @@ public class PlayerEnrollment
     }
     else
     {
-      return new Wall(aOrientation, aCurrentPos, this);
+      return new Wall(aOrientation, aIsOnBoard, this);
     }
   }
 
@@ -183,17 +223,17 @@ public class PlayerEnrollment
       return wasAdded;
     }
 
-    PlayerEnrollment existingPlayerEnrollment = aWall.getPlayerEnrollment();
-    boolean isNewPlayerEnrollment = existingPlayerEnrollment != null && !this.equals(existingPlayerEnrollment);
+    PlayerEnrollment existingEnrollment = aWall.getEnrollment();
+    boolean isNewEnrollment = existingEnrollment != null && !this.equals(existingEnrollment);
 
-    if (isNewPlayerEnrollment && existingPlayerEnrollment.numberOfWalls() <= minimumNumberOfWalls())
+    if (isNewEnrollment && existingEnrollment.numberOfWalls() <= minimumNumberOfWalls())
     {
       return wasAdded;
     }
 
-    if (isNewPlayerEnrollment)
+    if (isNewEnrollment)
     {
-      aWall.setPlayerEnrollment(this);
+      aWall.setEnrollment(this);
     }
     else
     {
@@ -206,13 +246,13 @@ public class PlayerEnrollment
   public boolean removeWall(Wall aWall)
   {
     boolean wasRemoved = false;
-    //Unable to remove aWall, as it must always have a playerEnrollment
-    if (this.equals(aWall.getPlayerEnrollment()))
+    //Unable to remove aWall, as it must always have a enrollment
+    if (this.equals(aWall.getEnrollment()))
     {
       return wasRemoved;
     }
 
-    //playerEnrollment already at minimum (10)
+    //enrollment already at minimum (10)
     if (numberOfWalls() <= minimumNumberOfWalls())
     {
       return wasRemoved;
@@ -227,20 +267,20 @@ public class PlayerEnrollment
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Move addMove(Tile aTile)
+  public Move addMove(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos)
   {
-    return new Move(aTile, this);
+    return new Move(aTurnNumber, aIsValid, aTimeLimit, aConfirmed, aTargetPos, this);
   }
 
   public boolean addMove(Move aMove)
   {
     boolean wasAdded = false;
     if (moves.contains(aMove)) { return false; }
-    PlayerEnrollment existingPlayerEnrollment = aMove.getPlayerEnrollment();
-    boolean isNewPlayerEnrollment = existingPlayerEnrollment != null && !this.equals(existingPlayerEnrollment);
-    if (isNewPlayerEnrollment)
+    PlayerEnrollment existingEnrollment = aMove.getEnrollment();
+    boolean isNewEnrollment = existingEnrollment != null && !this.equals(existingEnrollment);
+    if (isNewEnrollment)
     {
-      aMove.setPlayerEnrollment(this);
+      aMove.setEnrollment(this);
     }
     else
     {
@@ -253,8 +293,8 @@ public class PlayerEnrollment
   public boolean removeMove(Move aMove)
   {
     boolean wasRemoved = false;
-    //Unable to remove aMove, as it must always have a playerEnrollment
-    if (!this.equals(aMove.getPlayerEnrollment()))
+    //Unable to remove aMove, as it must always have a enrollment
+    if (!this.equals(aMove.getEnrollment()))
     {
       moves.remove(aMove);
       wasRemoved = true;
@@ -378,4 +418,14 @@ public class PlayerEnrollment
     }
   }
 
+
+  public String toString()
+  {
+    return super.toString() + "["+
+            "id" + ":" + getId()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "outcome" + "=" + (getOutcome() != null ? !getOutcome().equals(this)  ? getOutcome().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "pawn = "+(getPawn()!=null?Integer.toHexString(System.identityHashCode(getPawn())):"null") + System.getProperties().getProperty("line.separator") +
+            "  " + "player = "+(getPlayer()!=null?Integer.toHexString(System.identityHashCode(getPlayer())):"null") + System.getProperties().getProperty("line.separator") +
+            "  " + "match = "+(getMatch()!=null?Integer.toHexString(System.identityHashCode(getMatch())):"null");
+  }
 }
