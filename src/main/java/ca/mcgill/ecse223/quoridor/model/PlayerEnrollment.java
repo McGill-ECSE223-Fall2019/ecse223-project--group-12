@@ -3,9 +3,10 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 import ca.mcgill.ecse223.quoridor.model.Pawn.Color;
+import java.time.Duration;
 import java.util.*;
 
-// line 34 "../../../../../model.ump"
+// line 35 "../../../../../model.ump"
 public class PlayerEnrollment
 {
 
@@ -22,6 +23,7 @@ public class PlayerEnrollment
   //PlayerEnrollment Attributes
   private String id;
   private Outcome outcome;
+  private Duration thinkingTime;
 
   //PlayerEnrollment Associations
   private Pawn pawn;
@@ -34,10 +36,11 @@ public class PlayerEnrollment
   // CONSTRUCTOR
   //------------------------
 
-  public PlayerEnrollment(String aId, Outcome aOutcome, Pawn aPawn, Player aPlayer, Match aMatch)
+  public PlayerEnrollment(String aId, Outcome aOutcome, Duration aThinkingTime, Pawn aPawn, Player aPlayer, Match aMatch)
   {
     id = aId;
     outcome = aOutcome;
+    thinkingTime = aThinkingTime;
     if (aPawn == null || aPawn.getEnrollment() != null)
     {
       throw new RuntimeException("Unable to create PlayerEnrollment due to aPawn");
@@ -57,10 +60,11 @@ public class PlayerEnrollment
     }
   }
 
-  public PlayerEnrollment(String aId, Outcome aOutcome, Color aColorForPawn, Tile aCurrentPosForPawn, Player aPlayer, Match aMatch)
+  public PlayerEnrollment(String aId, Outcome aOutcome, Duration aThinkingTime, Color aColorForPawn, Tile aCurrentPosForPawn, Player aPlayer, Match aMatch)
   {
     id = aId;
     outcome = aOutcome;
+    thinkingTime = aThinkingTime;
     pawn = new Pawn(aColorForPawn, aCurrentPosForPawn, this);
     walls = new ArrayList<Wall>();
     moves = new ArrayList<Move>();
@@ -96,6 +100,14 @@ public class PlayerEnrollment
     return wasSet;
   }
 
+  public boolean setThinkingTime(Duration aThinkingTime)
+  {
+    boolean wasSet = false;
+    thinkingTime = aThinkingTime;
+    wasSet = true;
+    return wasSet;
+  }
+
   public String getId()
   {
     return id;
@@ -104,6 +116,11 @@ public class PlayerEnrollment
   public Outcome getOutcome()
   {
     return outcome;
+  }
+
+  public Duration getThinkingTime()
+  {
+    return thinkingTime;
   }
   /* Code from template association_GetOne */
   public Pawn getPawn()
@@ -424,6 +441,7 @@ public class PlayerEnrollment
     return super.toString() + "["+
             "id" + ":" + getId()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "outcome" + "=" + (getOutcome() != null ? !getOutcome().equals(this)  ? getOutcome().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "thinkingTime" + "=" + (getThinkingTime() != null ? !getThinkingTime().equals(this)  ? getThinkingTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "pawn = "+(getPawn()!=null?Integer.toHexString(System.identityHashCode(getPawn())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "player = "+(getPlayer()!=null?Integer.toHexString(System.identityHashCode(getPlayer())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "match = "+(getMatch()!=null?Integer.toHexString(System.identityHashCode(getMatch())):"null");

@@ -8,6 +8,7 @@ class Quoridor
 
 class Player
 {
+  depend java.time.Duration;
   String name;
   Integer elo;
   1 player -- * PlayerEnrollment enrolledMatches;
@@ -15,11 +16,11 @@ class Player
 
 class Match
 {  
+  depend java.time.Duration;
   enum GameState {NEW_GAME, SETUP, WHITE_PLAYER_TURN, BLACK_PLAYER_TURN, PAUSED, GAME_OVER }
   GameState state;
   Boolean isNew;
   Integer id;
-  Integer timeLimit;
   1 match <@>- 1 Board board;
   1 match <@>- 2 PlayerEnrollment enrolledPlayers;
  
@@ -33,9 +34,11 @@ class Board
 
 class PlayerEnrollment{
   depend ca.mcgill.ecse223.quoridor.model.Pawn.Color;
+  depend java.time.Duration;
   enum Outcome{WIN, LOSS, WITHDRAWAL, DRAW, INCOMPLETE}
   String id;
   Outcome outcome;
+  Duration thinkingTime;
   1 enrollment <@>- 1 Pawn pawn;
   1 enrollment <@>- 10 Wall walls;
   1 enrollment -- * Move moves;
@@ -44,6 +47,7 @@ class PlayerEnrollment{
 class Pawn
 {
   depend ca.mcgill.ecse223.quoridor.model.PlayerEnrollment.Outcome;
+  depend java.time.Duration;
   enum Color {WHITE, BLACK}
   Color color;
   0..1 -> 1 Tile currentPos;

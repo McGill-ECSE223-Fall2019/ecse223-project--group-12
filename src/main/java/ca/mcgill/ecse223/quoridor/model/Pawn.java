@@ -3,8 +3,9 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 import ca.mcgill.ecse223.quoridor.model.PlayerEnrollment.Outcome;
+import java.time.Duration;
 
-// line 44 "../../../../../model.ump"
+// line 47 "../../../../../model.ump"
 public class Pawn
 {
 
@@ -43,7 +44,7 @@ public class Pawn
     enrollment = aEnrollment;
   }
 
-  public Pawn(Color aColor, Tile aCurrentPos, String aIdForEnrollment, Outcome aOutcomeForEnrollment, Player aPlayerForEnrollment, Match aMatchForEnrollment)
+  public Pawn(Color aColor, Tile aCurrentPos, String aIdForEnrollment, Outcome aOutcomeForEnrollment, Duration aThinkingTimeForEnrollment, Player aPlayerForEnrollment, Match aMatchForEnrollment)
   {
     color = aColor;
     boolean didAddCurrentPos = setCurrentPos(aCurrentPos);
@@ -51,7 +52,7 @@ public class Pawn
     {
       throw new RuntimeException("Unable to create pawn due to currentPos");
     }
-    enrollment = new PlayerEnrollment(aIdForEnrollment, aOutcomeForEnrollment, this, aPlayerForEnrollment, aMatchForEnrollment);
+    enrollment = new PlayerEnrollment(aIdForEnrollment, aOutcomeForEnrollment, aThinkingTimeForEnrollment, this, aPlayerForEnrollment, aMatchForEnrollment);
   }
 
   //------------------------

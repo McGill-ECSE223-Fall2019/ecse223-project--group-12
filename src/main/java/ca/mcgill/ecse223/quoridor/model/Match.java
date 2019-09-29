@@ -2,9 +2,10 @@
 /*This code was generated using the UMPLE 1.29.0.4181.a593105a9 modeling language!*/
 
 package ca.mcgill.ecse223.quoridor.model;
+import java.time.Duration;
 import java.util.*;
 
-// line 16 "../../../../../model.ump"
+// line 17 "../../../../../model.ump"
 public class Match
 {
 
@@ -22,7 +23,6 @@ public class Match
   private GameState state;
   private boolean isNew;
   private int id;
-  private int timeLimit;
 
   //Match Associations
   private Board board;
@@ -33,12 +33,11 @@ public class Match
   // CONSTRUCTOR
   //------------------------
 
-  public Match(GameState aState, boolean aIsNew, int aId, int aTimeLimit, Board aBoard, Quoridor aQuoridor)
+  public Match(GameState aState, boolean aIsNew, int aId, Board aBoard, Quoridor aQuoridor)
   {
     state = aState;
     isNew = aIsNew;
     id = aId;
-    timeLimit = aTimeLimit;
     if (aBoard == null || aBoard.getMatch() != null)
     {
       throw new RuntimeException("Unable to create Match due to aBoard");
@@ -52,12 +51,11 @@ public class Match
     }
   }
 
-  public Match(GameState aState, boolean aIsNew, int aId, int aTimeLimit, boolean aIsValidForBoard, Quoridor aQuoridor)
+  public Match(GameState aState, boolean aIsNew, int aId, boolean aIsValidForBoard, Quoridor aQuoridor)
   {
     state = aState;
     isNew = aIsNew;
     id = aId;
-    timeLimit = aTimeLimit;
     board = new Board(aIsValidForBoard, this);
     enrolledPlayers = new ArrayList<PlayerEnrollment>();
     boolean didAddQuoridor = setQuoridor(aQuoridor);
@@ -95,14 +93,6 @@ public class Match
     return wasSet;
   }
 
-  public boolean setTimeLimit(int aTimeLimit)
-  {
-    boolean wasSet = false;
-    timeLimit = aTimeLimit;
-    wasSet = true;
-    return wasSet;
-  }
-
   public GameState getState()
   {
     return state;
@@ -116,11 +106,6 @@ public class Match
   public int getId()
   {
     return id;
-  }
-
-  public int getTimeLimit()
-  {
-    return timeLimit;
   }
   /* Code from template attribute_IsBoolean */
   public boolean isIsNew()
@@ -189,7 +174,7 @@ public class Match
     return 2;
   }
   /* Code from template association_AddMNToOnlyOne */
-  public PlayerEnrollment addEnrolledPlayer(String aId, PlayerEnrollment.Outcome aOutcome, Pawn aPawn, Player aPlayer)
+  public PlayerEnrollment addEnrolledPlayer(String aId, PlayerEnrollment.Outcome aOutcome, Duration aThinkingTime, Pawn aPawn, Player aPlayer)
   {
     if (numberOfEnrolledPlayers() >= maximumNumberOfEnrolledPlayers())
     {
@@ -197,7 +182,7 @@ public class Match
     }
     else
     {
-      return new PlayerEnrollment(aId, aOutcome, aPawn, aPlayer, this);
+      return new PlayerEnrollment(aId, aOutcome, aThinkingTime, aPawn, aPlayer, this);
     }
   }
 
@@ -296,8 +281,7 @@ public class Match
   {
     return super.toString() + "["+
             "isNew" + ":" + getIsNew()+ "," +
-            "id" + ":" + getId()+ "," +
-            "timeLimit" + ":" + getTimeLimit()+ "]" + System.getProperties().getProperty("line.separator") +
+            "id" + ":" + getId()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "state" + "=" + (getState() != null ? !getState().equals(this)  ? getState().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "board = "+(getBoard()!=null?Integer.toHexString(System.identityHashCode(getBoard())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "quoridor = "+(getQuoridor()!=null?Integer.toHexString(System.identityHashCode(getQuoridor())):"null");

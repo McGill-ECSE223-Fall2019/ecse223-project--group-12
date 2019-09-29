@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 
-// line 68 "../../../../../model.ump"
+// line 72 "../../../../../model.ump"
 public class Move
 {
 

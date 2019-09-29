@@ -2,6 +2,7 @@
 /*This code was generated using the UMPLE 1.29.0.4181.a593105a9 modeling language!*/
 
 package ca.mcgill.ecse223.quoridor.model;
+import java.time.Duration;
 import java.util.*;
 
 // line 9 "../../../../../model.ump"
@@ -106,9 +107,9 @@ public class Player
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public PlayerEnrollment addEnrolledMatche(String aId, PlayerEnrollment.Outcome aOutcome, Pawn aPawn, Match aMatch)
+  public PlayerEnrollment addEnrolledMatche(String aId, PlayerEnrollment.Outcome aOutcome, Duration aThinkingTime, Pawn aPawn, Match aMatch)
   {
-    return new PlayerEnrollment(aId, aOutcome, aPawn, this, aMatch);
+    return new PlayerEnrollment(aId, aOutcome, aThinkingTime, aPawn, this, aMatch);
   }
 
   public boolean addEnrolledMatche(PlayerEnrollment aEnrolledMatche)
