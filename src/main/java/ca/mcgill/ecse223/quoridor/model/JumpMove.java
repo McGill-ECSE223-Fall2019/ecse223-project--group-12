@@ -15,9 +15,9 @@ public class JumpMove extends PawnMove
   // CONSTRUCTOR
   //------------------------
 
-  public JumpMove(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
+  public JumpMove(int aTurnNumber, boolean aIsValid, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
   {
-    super(aTurnNumber, aIsValid, aTimeLimit, aConfirmed, aTargetPos, aEnrollment);
+    super(aTurnNumber, aIsValid, aConfirmed, aTargetPos, aEnrollment);
   }
 
   //------------------------

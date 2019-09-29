@@ -4,7 +4,7 @@
 package ca.mcgill.ecse223.quoridor.model;
 import ca.mcgill.ecse223.quoridor.model.PlayerEnrollment.Outcome;
 
-// line 43 "../../../../../model.ump"
+// line 44 "../../../../../model.ump"
 public class Pawn
 {
 

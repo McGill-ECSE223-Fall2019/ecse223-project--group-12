@@ -18,9 +18,9 @@ public class WallMove extends Move
   // CONSTRUCTOR
   //------------------------
 
-  public WallMove(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment, Wall aWall)
+  public WallMove(int aTurnNumber, boolean aIsValid, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment, Wall aWall)
   {
-    super(aTurnNumber, aIsValid, aTimeLimit, aConfirmed, aTargetPos, aEnrollment);
+    super(aTurnNumber, aIsValid, aConfirmed, aTargetPos, aEnrollment);
     boolean didAddWall = setWall(aWall);
     if (!didAddWall)
     {

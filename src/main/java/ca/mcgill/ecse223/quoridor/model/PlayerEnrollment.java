@@ -5,7 +5,7 @@ package ca.mcgill.ecse223.quoridor.model;
 import ca.mcgill.ecse223.quoridor.model.Pawn.Color;
 import java.util.*;
 
-// line 33 "../../../../../model.ump"
+// line 34 "../../../../../model.ump"
 public class PlayerEnrollment
 {
 
@@ -267,9 +267,9 @@ public class PlayerEnrollment
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Move addMove(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos)
+  public Move addMove(int aTurnNumber, boolean aIsValid, boolean aConfirmed, Tile aTargetPos)
   {
-    return new Move(aTurnNumber, aIsValid, aTimeLimit, aConfirmed, aTargetPos, this);
+    return new Move(aTurnNumber, aIsValid, aConfirmed, aTargetPos, this);
   }
 
   public boolean addMove(Move aMove)

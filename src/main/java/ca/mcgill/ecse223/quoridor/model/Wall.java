@@ -4,7 +4,7 @@
 package ca.mcgill.ecse223.quoridor.model;
 import java.util.*;
 
-// line 51 "../../../../../model.ump"
+// line 52 "../../../../../model.ump"
 public class Wall
 {
 
@@ -137,9 +137,9 @@ public class Wall
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public WallMove addWallMove(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
+  public WallMove addWallMove(int aTurnNumber, boolean aIsValid, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
   {
-    return new WallMove(aTurnNumber, aIsValid, aTimeLimit, aConfirmed, aTargetPos, aEnrollment, this);
+    return new WallMove(aTurnNumber, aIsValid, aConfirmed, aTargetPos, aEnrollment, this);
   }
 
   public boolean addWallMove(WallMove aWallMove)

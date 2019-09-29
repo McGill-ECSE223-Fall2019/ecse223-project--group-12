@@ -15,9 +15,9 @@ public class PawnMove extends Move
   // CONSTRUCTOR
   //------------------------
 
-  public PawnMove(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
+  public PawnMove(int aTurnNumber, boolean aIsValid, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
   {
-    super(aTurnNumber, aIsValid, aTimeLimit, aConfirmed, aTargetPos, aEnrollment);
+    super(aTurnNumber, aIsValid, aConfirmed, aTargetPos, aEnrollment);
   }
 
   //------------------------

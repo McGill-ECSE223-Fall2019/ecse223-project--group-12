@@ -19,6 +19,7 @@ class Match
   GameState state;
   Boolean isNew;
   Integer id;
+  Integer timeLimit;
   1 match <@>- 1 Board board;
   1 match <@>- 2 PlayerEnrollment enrolledPlayers;
  
@@ -68,7 +69,6 @@ class Move
 {
   Integer turnNumber;
   Boolean isValid;
-  Integer timeLimit;
   Boolean confirmed;
   0..1 -> 0..1 Move previousMove;
   0..1 -> 0..1 Move nextMove;

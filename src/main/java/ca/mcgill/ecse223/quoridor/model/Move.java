@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 
-// line 67 "../../../../../model.ump"
+// line 68 "../../../../../model.ump"
 public class Move
 {
 
@@ -14,7 +14,6 @@ public class Move
   //Move Attributes
   private int turnNumber;
   private boolean isValid;
-  private int timeLimit;
   private boolean confirmed;
 
   //Move Associations
@@ -27,11 +26,10 @@ public class Move
   // CONSTRUCTOR
   //------------------------
 
-  public Move(int aTurnNumber, boolean aIsValid, int aTimeLimit, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
+  public Move(int aTurnNumber, boolean aIsValid, boolean aConfirmed, Tile aTargetPos, PlayerEnrollment aEnrollment)
   {
     turnNumber = aTurnNumber;
     isValid = aIsValid;
-    timeLimit = aTimeLimit;
     confirmed = aConfirmed;
     if (!setTargetPos(aTargetPos))
     {
@@ -64,14 +62,6 @@ public class Move
     return wasSet;
   }
 
-  public boolean setTimeLimit(int aTimeLimit)
-  {
-    boolean wasSet = false;
-    timeLimit = aTimeLimit;
-    wasSet = true;
-    return wasSet;
-  }
-
   public boolean setConfirmed(boolean aConfirmed)
   {
     boolean wasSet = false;
@@ -88,11 +78,6 @@ public class Move
   public boolean getIsValid()
   {
     return isValid;
-  }
-
-  public int getTimeLimit()
-  {
-    return timeLimit;
   }
 
   public boolean getConfirmed()
@@ -207,7 +192,6 @@ public class Move
     return super.toString() + "["+
             "turnNumber" + ":" + getTurnNumber()+ "," +
             "isValid" + ":" + getIsValid()+ "," +
-            "timeLimit" + ":" + getTimeLimit()+ "," +
             "confirmed" + ":" + getConfirmed()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "targetPos = "+(getTargetPos()!=null?Integer.toHexString(System.identityHashCode(getTargetPos())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "enrollment = "+(getEnrollment()!=null?Integer.toHexString(System.identityHashCode(getEnrollment())):"null");
