@@ -6,7 +6,7 @@ import ca.mcgill.ecse223.quoridor.model.Pawn.Color;
 import java.time.Duration;
 import java.util.*;
 
-// line 35 "../../../../../model.ump"
+// line 34 "../../../../../model.ump"
 public class PlayerEnrollment
 {
 

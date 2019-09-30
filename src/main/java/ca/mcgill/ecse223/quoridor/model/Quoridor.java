@@ -167,9 +167,9 @@ public class Quoridor
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Match addMatche(Match.GameState aState, boolean aIsNew, int aId, Board aBoard)
+  public Match addMatche(Match.GameState aState, int aId, Board aBoard)
   {
-    return new Match(aState, aIsNew, aId, aBoard, this);
+    return new Match(aState, aId, aBoard, this);
   }
 
   public boolean addMatche(Match aMatche)

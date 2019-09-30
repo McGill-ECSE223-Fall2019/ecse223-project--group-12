@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 
-// line 82 "../../../../../model.ump"
+// line 81 "../../../../../model.ump"
 public class PawnMove extends Move
 {
 

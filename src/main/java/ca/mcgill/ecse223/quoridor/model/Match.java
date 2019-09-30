@@ -21,7 +21,6 @@ public class Match
 
   //Match Attributes
   private GameState state;
-  private boolean isNew;
   private int id;
 
   //Match Associations
@@ -33,10 +32,9 @@ public class Match
   // CONSTRUCTOR
   //------------------------
 
-  public Match(GameState aState, boolean aIsNew, int aId, Board aBoard, Quoridor aQuoridor)
+  public Match(GameState aState, int aId, Board aBoard, Quoridor aQuoridor)
   {
     state = aState;
-    isNew = aIsNew;
     id = aId;
     if (aBoard == null || aBoard.getMatch() != null)
     {
@@ -51,10 +49,9 @@ public class Match
     }
   }
 
-  public Match(GameState aState, boolean aIsNew, int aId, boolean aIsValidForBoard, Quoridor aQuoridor)
+  public Match(GameState aState, int aId, boolean aIsValidForBoard, Quoridor aQuoridor)
   {
     state = aState;
-    isNew = aIsNew;
     id = aId;
     board = new Board(aIsValidForBoard, this);
     enrolledPlayers = new ArrayList<PlayerEnrollment>();
@@ -77,14 +74,6 @@ public class Match
     return wasSet;
   }
 
-  public boolean setIsNew(boolean aIsNew)
-  {
-    boolean wasSet = false;
-    isNew = aIsNew;
-    wasSet = true;
-    return wasSet;
-  }
-
   public boolean setId(int aId)
   {
     boolean wasSet = false;
@@ -98,19 +87,9 @@ public class Match
     return state;
   }
 
-  public boolean getIsNew()
-  {
-    return isNew;
-  }
-
   public int getId()
   {
     return id;
-  }
-  /* Code from template attribute_IsBoolean */
-  public boolean isIsNew()
-  {
-    return isNew;
   }
   /* Code from template association_GetOne */
   public Board getBoard()
@@ -280,7 +259,6 @@ public class Match
   public String toString()
   {
     return super.toString() + "["+
-            "isNew" + ":" + getIsNew()+ "," +
             "id" + ":" + getId()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "state" + "=" + (getState() != null ? !getState().equals(this)  ? getState().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "board = "+(getBoard()!=null?Integer.toHexString(System.identityHashCode(getBoard())):"null") + System.getProperties().getProperty("line.separator") +

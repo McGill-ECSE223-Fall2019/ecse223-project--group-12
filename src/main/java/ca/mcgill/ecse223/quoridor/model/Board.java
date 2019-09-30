@@ -5,7 +5,7 @@ package ca.mcgill.ecse223.quoridor.model;
 import ca.mcgill.ecse223.quoridor.model.Match.GameState;
 import java.util.*;
 
-// line 28 "../../../../../model.ump"
+// line 27 "../../../../../model.ump"
 public class Board
 {
 
@@ -35,11 +35,11 @@ public class Board
     match = aMatch;
   }
 
-  public Board(boolean aIsValid, GameState aStateForMatch, boolean aIsNewForMatch, int aIdForMatch, Quoridor aQuoridorForMatch)
+  public Board(boolean aIsValid, GameState aStateForMatch, int aIdForMatch, Quoridor aQuoridorForMatch)
   {
     isValid = aIsValid;
     tiles = new ArrayList<Tile>();
-    match = new Match(aStateForMatch, aIsNewForMatch, aIdForMatch, this, aQuoridorForMatch);
+    match = new Match(aStateForMatch, aIdForMatch, this, aQuoridorForMatch);
   }
 
   //------------------------

@@ -5,7 +5,7 @@ package ca.mcgill.ecse223.quoridor.model;
 import ca.mcgill.ecse223.quoridor.model.PlayerEnrollment.Outcome;
 import java.time.Duration;
 
-// line 47 "../../../../../model.ump"
+// line 46 "../../../../../model.ump"
 public class Pawn
 {
 

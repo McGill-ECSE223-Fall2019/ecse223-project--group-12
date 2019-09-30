@@ -19,7 +19,6 @@ class Match
   depend java.time.Duration;
   enum GameState {NEW_GAME, SETUP, WHITE_PLAYER_TURN, BLACK_PLAYER_TURN, PAUSED, GAME_OVER }
   GameState state;
-  Boolean isNew;
   Integer id;
   1 match <@>- 1 Board board;
   1 match <@>- 2 PlayerEnrollment enrolledPlayers;
