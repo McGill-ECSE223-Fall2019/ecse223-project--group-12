@@ -1,7 +1,8 @@
 language: java
 
 before_install: 
+  cd ca.mcgill.ecse223.quoridor/
   chmod +x gradlew
   
 script:
-  - ./gradlew build
+  - ./gradlew build -x test
