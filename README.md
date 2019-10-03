@@ -10,7 +10,7 @@ Quoridor is a well known board game. We will create a Quoridor application in tw
 |     Team members      |        Major        | Year |
 |-----------------------|---------------------|------|   
 |**Remi Carriere**      | Software Engineering|  U2  |
-|**Kaan Gure**          | 		      |      |
+|**Kaan Gure**          | Computer Engineering|  U1  |
 |**Francis Comeau**     | Software Engineering|  U3  |
 |**Weige Qian**         | Software Engineering|  U2  |
 |**Zechen Ren**         | 		      |      |
