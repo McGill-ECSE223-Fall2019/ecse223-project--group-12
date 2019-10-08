@@ -124,6 +124,13 @@ public class CucumberStepDefinitions {
 	// ***********************************************
 	// ***********************************************
 	// ***********************************************
+	
+	@When("The initialization of the board is initiated")
+	public void the_initialization_of_the_board_is_initiated() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new cucumber.api.PendingException();
+	}
+	
 	@Given("I have a wall in my hand over the board")
 	public void i_have_a_wall_in_my_hand_over_the_board() {
 	    // Write code here that turns the phrase above into concrete actions
@@ -1003,6 +1010,18 @@ public class CucumberStepDefinitions {
 
 	@Given("A game position is supplied with wall coordinate {int}:{int}-vertical")
 	public void a_game_position_is_supplied_with_wall_coordinate_vertical(Integer int1, Integer int2) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new cucumber.api.PendingException();
+	}
+	
+	@When("The position to load is valid")
+	public void the_position_to_load_is_valid() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new cucumber.api.PendingException();
+	}
+
+	@When("The to load position is invalid")
+	public void the_to_load_position_is_invalid() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
