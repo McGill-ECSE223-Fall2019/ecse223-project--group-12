@@ -11,7 +11,10 @@ public class QuoridorController {
 	public QuoridorController() {
 		
 	}
-	
+	/**
+	 * 
+	 * @param name
+	 */
 	public static void creatUser(String name) {
 		//to do check inputs
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
