@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 /*
- * Note that the classes may not conatain all relative steps for a certain feature, 
+ * Note that the classe may not conatain all relative steps for a certain feature, 
  * since there are duplicate steps between scenarios.
  */
 
