@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.features;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,44 +27,36 @@ import io.cucumber.java.en.When;
 
 public class CucumberStepDefinitions {
 
-	private Quoridor quoridor;
-	private Board board;
-	private Player player1;
-	private Player player2;
-	private Player currentPlayer;
-	private Game game;
-	/*
-	 * ENUM definitions to keep in mind public enum GameStatus { Initializing,
-	 * ReadyToStart, Running, WhiteWon, BlackWon, Draw, Replay } public enum
-	 * MoveMode { WallMove, PlayerMove }
-	 */
 	// ***********************************************
 	// Background step definitions
 	// ***********************************************
 
 	@Given("^The game is not running$")
 	public void theGameIsNotRunning() {
-		quoridor = null;
+		initQuoridorAndBoard();
+		createUsersAndPlayers("user1", "user2");
 	}
 
 	@Given("^The game is running$")
 	public void theGameIsRunning() {
 		initQuoridorAndBoard();
-		createUsersAndPlayers("user1", "user2");
-		createAndStartGame();
+		ArrayList<Player> createUsersAndPlayers = createUsersAndPlayers("user1", "user2");
+		createAndStartGame(createUsersAndPlayers);
 	}
 
 	@And("^It is my turn to move$")
 	public void itIsMyTurnToMove() throws Throwable {
-		currentPlayer = player1;
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Player currentPlayer = quoridor.getCurrentGame().getWhitePlayer();
 		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().setPlayerToMove(currentPlayer);
 	}
 
 	@Given("The following walls exist:")
 	public void theFollowingWallsExist(io.cucumber.datatable.DataTable dataTable) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
 		// keys: wrow, wcol, wdir
-		Player[] players = { player1, player2 };
+		Player[] players = { quoridor.getCurrentGame().getWhitePlayer(), quoridor.getCurrentGame().getBlackPlayer() };
 		int playerIdx = 0;
 		int wallIdxForPlayer = 0;
 		for (Map<String, String> map : valueMaps) {
@@ -72,7 +65,8 @@ public class CucumberStepDefinitions {
 			// Wall to place
 			// Walls are placed on an alternating basis wrt. the owners
 			//Wall wall = Wall.getWithId(playerIdx * 10 + wallIdxForPlayer);
-			Wall wall = players[playerIdx].getWall(wallIdxForPlayer);
+			Wall wall = players[playerIdx].getWall(wallIdxForPlayer); // above implementation sets wall to null
+
 			String dir = map.get("wdir");
 
 			Direction direction;
@@ -86,13 +80,13 @@ public class CucumberStepDefinitions {
 			default:
 				throw new IllegalArgumentException("Unsupported wall direction was provided");
 			}
-			new WallMove(0, 1, players[playerIdx], board.getTile((wrow - 1) * 9 + wcol - 1), game, direction, wall);
+			new WallMove(0, 1, players[playerIdx], quoridor.getBoard().getTile((wrow - 1) * 9 + wcol - 1), quoridor.getCurrentGame(), direction, wall);
 			if (playerIdx == 0) {
-				game.getCurrentPosition().removeWhiteWallsInStock(wall);
-				game.getCurrentPosition().addWhiteWallsOnBoard(wall);
+				quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
+				quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall);
 			} else {
-				game.getCurrentPosition().removeBlackWallsInStock(wall);
-				game.getCurrentPosition().addBlackWallsOnBoard(wall);
+				quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
+				quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall);
 			}
 			wallIdxForPlayer = wallIdxForPlayer + playerIdx;
 			playerIdx++;
@@ -102,43 +96,31 @@ public class CucumberStepDefinitions {
 
 	}
 
-	@Given("A new game is initializing")
-	public void aNewGameIsInitializing() {
-		initQuoridorAndBoard();
-	}
-
-	@Given("The game is ready to start")
-	public void aNewGameIsInitializind() {
-		initQuoridorAndBoard();
-	}
-
 	@And("I do not have a wall in my hand")
 	public void iDoNotHaveAWallInMyHand() {
-		// Walls are in stock for all players
-	}
-
-	// ***********************************************
-	// The below methods need to be sorted and 
-	// implemented. They were just copied from console
-	// ***********************************************
-	// ***********************************************
-	// ***********************************************
-	// ***********************************************
-	
-	@When("The initialization of the board is initiated")
-	public void the_initialization_of_the_board_is_initiated() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+		// GUI-related feature -- TODO for later
 	}
 	
-	@Given("I have a wall in my hand over the board")
-	public void i_have_a_wall_in_my_hand_over_the_board() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
+	@And("^I have a wall in my hand over the board$")
+	public void iHaveAWallInMyHandOverTheBoard() throws Throwable {
+		// GUI-related feature -- TODO for later
 	}
+	
+	// ***********************************************
+	// Scenario and scenario outline step definitions
+	// ***********************************************
 
-	@Given("The wall move candidate with horizontal at position \\({int}, {int}) is valid")
-	public void the_wall_move_candidate_with_horizontal_at_position_is_valid(Integer int1, Integer int2) {
+	// ***********************************************
+	// Scenario and scenario outline step definitions
+	// ***********************************************
+	
+	
+	// ***********************************************
+	// Scenario and scenario outline step definitions
+	// ***********************************************
+	
+	@Given("The wall move candidate with {string} at position \\({int}, {int}) is valid")
+	public void the_wall_move_candidate_with_at_position_is_valid(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -149,38 +131,32 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("A wall move is registered with horizontal at position \\({int}, {int})")
-	public void a_wall_move_is_registered_with_horizontal_at_position(Integer int1, Integer int2) {
+	@Then("A wall move shall be registered with {string} at position \\({int}, {int})")
+	public void a_wall_move_shall_be_registered_with_at_position(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("My move is completed")
-	public void my_move_is_completed() {
+	@Then("I shall not have a wall in my hand")
+	public void i_shall_not_have_a_wall_in_my_hand() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("It is not my turn to move")
-	public void it_is_not_my_turn_to_move() {
+	@Then("My move shall be completed")
+	public void my_move_shall_be_completed() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The wall move candidate with vertical at position \\({int}, {int}) is valid")
-	public void the_wall_move_candidate_with_vertical_at_position_is_valid(Integer int1, Integer int2) {
+	@Then("It shall not be my turn to move")
+	public void it_shall_not_be_my_turn_to_move() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("A wall move is registered with vertical at position \\({int}, {int})")
-	public void a_wall_move_is_registered_with_vertical_at_position(Integer int1, Integer int2) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("The wall move candidate with vertical at position \\({int}, {int}) is invalid")
-	public void the_wall_move_candidate_with_vertical_at_position_is_invalid(Integer int1, Integer int2) {
+	@Given("The wall move candidate with {string} at position \\({int}, {int}) is invalid")
+	public void the_wall_move_candidate_with_at_position_is_invalid(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -191,21 +167,20 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-
-	@Then("No wall move is registered with vertical at position \\({int}, {int})")
-	public void no_wall_move_is_registered_with_vertical_at_position(Integer int1, Integer int2) {
+	@Then("I shall have a wall in my hand over the board")
+	public void i_shall_have_a_wall_in_my_hand_over_the_board() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The wall move candidate with horizontal at position \\({int}, {int}) is invalid")
-	public void the_wall_move_candidate_with_horizontal_at_position_is_invalid(Integer int1, Integer int2) {
+	@Then("It shall be my turn to move")
+	public void it_shall_be_my_turn_to_move() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("No wall move is registered with horizontal at position \\({int}, {int})")
-	public void no_wall_move_is_registered_with_horizontal_at_position(Integer int1, Integer int2) {
+	@Then("No wall move shall be registered with {string} at position \\({int}, {int})")
+	public void no_wall_move_shall_be_registered_with_at_position(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -222,14 +197,14 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The wall in my hand should disappear from my stock")
-	public void the_wall_in_my_hand_should_disappear_from_my_stock() {
+	@Then("A wall move candidate shall be created at initial position")
+	public void a_wall_move_candidate_shall_be_created_at_initial_position() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("A wall move candidate shall be created at initial position")
-	public void a_wall_move_candidate_shall_be_created_at_initial_position() {
+	@Then("The wall in my hand shall disappear from my stock")
+	public void the_wall_in_my_hand_shall_disappear_from_my_stock() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -240,140 +215,122 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("I should be notified that I have no more walls")
-	public void i_should_be_notified_that_I_have_no_more_walls() {
+	@Then("I shall be notified that I have no more walls")
+	public void i_shall_be_notified_that_I_have_no_more_walls() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("The board is initialized")
-	public void the_board_is_initialized() {
+	@Then("I shall have no walls in my hand")
+	public void i_shall_have_no_walls_in_my_hand() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("It is white player to move")
-	public void it_is_white_player_to_move() {
+	@When("The initialization of the board is initiated")
+	public void the_initialization_of_the_board_is_initiated() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("White's pawn is in its initial position")
-	public void white_s_pawn_is_in_its_initial_position() {
+	@Then("It shall be white player to move")
+	public void it_shall_be_white_player_to_move() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("Black's pawn is in its initial position")
-	public void black_s_pawn_is_in_its_initial_position() {
+	@Then("White's pawn shall be in its initial position")
+	public void white_s_pawn_shall_be_in_its_initial_position() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("All of White's walls are in stock")
-	public void all_of_White_s_walls_are_in_stock() {
+	@Then("Black's pawn shall be in its initial position")
+	public void black_s_pawn_shall_be_in_its_initial_position() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("All of Black's walls are in stock")
-	public void all_of_Black_s_walls_are_in_stock() {
+	@Then("All of White's walls shall be in stock")
+	public void all_of_White_s_walls_shall_be_in_stock() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("White's clock is counting down")
-	public void white_s_clock_is_counting_down() {
+	@Then("All of Black's walls shall be in stock")
+	public void all_of_Black_s_walls_shall_be_in_stock() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("It is shown that this is White's turn")
-	public void it_is_shown_that_this_is_White_s_turn() {
+	@Then("White's clock shall be counting down")
+	public void white_s_clock_shall_be_counting_down() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("I initiate to load a saved game quoridor_test_game_{int}.dat")
-	public void i_initiate_to_load_a_saved_game_quoridor_test_game__dat(Integer int1) {
+	@Then("It shall be shown that this is White's turn")
+	public void it_shall_be_shown_that_this_is_White_s_turn() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("The position is valid")
-	public void the_position_is_valid() {
+	@When("I initiate to load a saved game {string}")
+	public void i_initiate_to_load_a_saved_game(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("It is player's turn")
-	public void it_is_player_s_turn() {
+	@When("The position to load is valid")
+	public void the_position_to_load_is_valid() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("player is at {int}:{int}")
-	public void player_is_at(Integer int1, Integer int2) {
+	@Then("It shall be {string}'s turn")
+	public void it_shall_be_s_turn(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("white is at {int}:{int}")
-	public void white_is_at(Integer int1, Integer int2) {
+	@Then("{string} shall be at {int}:{int}")
+	public void shall_be_at(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("player has a vertical wall at {int}:{int}")
-	public void player_has_a_vertical_wall_at(Integer int1, Integer int2) {
+	@Then("{string} shall have a vertical wall at {int}:{int}")
+	public void shall_have_a_vertical_wall_at(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("white has a horizontal wall at {int}:{int}")
-	public void white_has_a_horizontal_wall_at(Integer int1, Integer int2) {
+	@Then("{string} shall have a horizontal wall at {int}:{int}")
+	public void shall_have_a_horizontal_wall_at(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("Both players have {int} in their stacks")
-	public void both_players_have_in_their_stacks(Integer int1) {
+	@Then("Both players shall have {int} in their stacks")
+	public void both_players_shall_have_in_their_stacks(Integer int1) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("I initiate to load a saved game quoridor_test_game_invalid_pawn.dat")
-	public void i_initiate_to_load_a_saved_game_quoridor_test_game_invalid_pawn_dat() {
+	@When("The position to load is invalid")
+	public void the_position_to_load_is_invalid() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("The position is invalid")
-	public void the_position_is_invalid() {
+	@Then("The load shall return an error")
+	public void the_load_shall_return_an_error() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The load returns error")
-	public void the_load_returns_error() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("I initiate to load a saved game quoridor_test_game_invalid_wall_overlap_.dat")
-	public void i_initiate_to_load_a_saved_game_quoridor_test_game_invalid_wall_overlap__dat() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("I initiate to load a saved game quoridor_test_game_invalid_wall_out-of-track.dat")
-	public void i_initiate_to_load_a_saved_game_quoridor_test_game_invalid_wall_out_of_track_dat() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("The player to move is white")
-	public void the_player_to_move_is_white() {
+	@Given("The player to move is {string}")
+	public void the_player_to_move_is(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -384,236 +341,68 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("There are no vertical walls left from the player")
-	public void there_are_no_vertical_walls_left_from_the_player() {
+	@Given("There are no {string} walls {string} from the player")
+	public void there_are_no_walls_from_the_player(String string, String string2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The opponent is not left from the player")
-	public void the_opponent_is_not_left_from_the_player() {
+	@Given("The opponent is not {string} from the player")
+	public void the_opponent_is_not_from_the_player(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("Player white initiates to move left")
-	public void player_white_initiates_to_move_left() {
+	@When("Player {string} initiates to move {string}")
+	public void player_initiates_to_move(String string, String string2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The move left is success")
-	public void the_move_left_is_success() {
+	@Then("The move {string} shall be {string}")
+	public void the_move_shall_be(String string, String string2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("Player's new position is {int}:{int}")
-	public void player_s_new_position_is(Integer int1, Integer int2) {
+	@Then("Player's new position shall be {int}:{int}")
+	public void player_s_new_position_shall_be(Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The next player to move becomes black")
-	public void the_next_player_to_move_becomes_black() {
+	@Then("The next player to move shall become {string}")
+	public void the_next_player_to_move_shall_become(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The move left is illegal")
-	public void the_move_left_is_illegal() {
+	@Given("There is a {string} wall {string} from the player")
+	public void there_is_a_wall_from_the_player(String string, String string2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The next player to move becomes white")
-	public void the_next_player_to_move_becomes_white() {
+	@Given("My opponent is not {string} from the player")
+	public void my_opponent_is_not_from_the_player(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("There are no vertical walls right from the player")
-	public void there_are_no_vertical_walls_right_from_the_player() {
+	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
+	public void a_wall_move_candidate_exists_with_at_position(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The opponent is not right from the player")
-	public void the_opponent_is_not_right_from_the_player() {
+	@Given("The wall candidate is not at the {string} edge of the board")
+	public void the_wall_candidate_is_not_at_the_edge_of_the_board(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("Player white initiates to move right")
-	public void player_white_initiates_to_move_right() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The move right is success")
-	public void the_move_right_is_success() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The move right is illegal")
-	public void the_move_right_is_illegal() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There are no horizontal walls up from the player")
-	public void there_are_no_horizontal_walls_up_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("The opponent is not up from the player")
-	public void the_opponent_is_not_up_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("Player white initiates to move up")
-	public void player_white_initiates_to_move_up() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The move up is success")
-	public void the_move_up_is_success() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The move up is illegal")
-	public void the_move_up_is_illegal() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There are no horizontal walls down from the player")
-	public void there_are_no_horizontal_walls_down_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("The opponent is not down from the player")
-	public void the_opponent_is_not_down_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("Player white initiates to move down")
-	public void player_white_initiates_to_move_down() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The move down is success")
-	public void the_move_down_is_success() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is a vertical wall left from the player")
-	public void there_is_a_vertical_wall_left_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("My opponent is not left from the player")
-	public void my_opponent_is_not_left_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The next player to move becomes <nplayer>")
-	public void the_next_player_to_move_becomes_nplayer() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is a horizontal wall left from the player")
-	public void there_is_a_horizontal_wall_left_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is a vertical wall right from the player")
-	public void there_is_a_vertical_wall_right_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("My opponent is not right from the player")
-	public void my_opponent_is_not_right_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is a horizontal wall right from the player")
-	public void there_is_a_horizontal_wall_right_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is a horizontal wall up from the player")
-	public void there_is_a_horizontal_wall_up_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("My opponent is not up from the player")
-	public void my_opponent_is_not_up_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is a vertical wall up from the player")
-	public void there_is_a_vertical_wall_up_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is a horizontal wall down from the player")
-	public void there_is_a_horizontal_wall_down_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("My opponent is not down from the player")
-	public void my_opponent_is_not_down_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The move down is illegal")
-	public void the_move_down_is_illegal() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is a vertical wall down from the player")
-	public void there_is_a_vertical_wall_down_from_the_player() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("A wall move candidate exists with vertical at position \\({int}, {int})")
-	public void a_wall_move_candidate_exists_with_vertical_at_position(Integer int1, Integer int2) {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("The wall candidate is not at the left edge of the board")
-	public void the_wall_candidate_is_not_at_the_left_edge_of_the_board() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("I try to move the wall left")
-	public void i_try_to_move_the_wall_left() {
+	@When("I try to move the wall {string}")
+	public void i_try_to_move_the_wall(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -624,195 +413,74 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("A wall move candidate shall exist with vertical at position \\({int}, {int})")
-	public void a_wall_move_candidate_shall_exist_with_vertical_at_position(Integer int1, Integer int2) {
+	@Then("A wall move candidate shall exist with {string} at position \\({int}, {int})")
+	public void a_wall_move_candidate_shall_exist_with_at_position(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("A wall move candidate exists with horizontal at position \\({int}, {int})")
-	public void a_wall_move_candidate_exists_with_horizontal_at_position(Integer int1, Integer int2) {
+	@Given("The wall candidate is at the {string} edge of the board")
+	public void the_wall_candidate_is_at_the_edge_of_the_board(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The wall candidate is not at the right edge of the board")
-	public void the_wall_candidate_is_not_at_the_right_edge_of_the_board() {
+	@Then("I shall be notified that my move is illegal")
+	public void i_shall_be_notified_that_my_move_is_illegal() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("I try to move the wall right")
-	public void i_try_to_move_the_wall_right() {
+	@Given("A new game is initializing")
+	public void a_new_game_is_initializing() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("A wall move candidate shall exist with horizontal at position \\({int}, {int})")
-	public void a_wall_move_candidate_shall_exist_with_horizontal_at_position(Integer int1, Integer int2) {
+	@Given("Next player to set user name is {string}")
+	public void next_player_to_set_user_name_is(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The wall candidate is not at the up edge of the board")
-	public void the_wall_candidate_is_not_at_the_up_edge_of_the_board() {
+	@Given("There is existing user {string}")
+	public void there_is_existing_user(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("I try to move the wall up")
-	public void i_try_to_move_the_wall_up() {
+	@When("The player selects existing {string}")
+	public void the_player_selects_existing(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The wall candidate is not at the down edge of the board")
-	public void the_wall_candidate_is_not_at_the_down_edge_of_the_board() {
+	@Then("The name of player {string} in the new game shall be {string}")
+	public void the_name_of_player_in_the_new_game_shall_be(String string, String string2) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("I try to move the wall down")
-	public void i_try_to_move_the_wall_down() {
+	@Given("There is no existing user {string}")
+	public void there_is_no_existing_user(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The wall candidate is at the left edge of the board")
-	public void the_wall_candidate_is_at_the_left_edge_of_the_board() {
+	@When("The player provides new user name: {string}")
+	public void the_player_provides_new_user_name(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("I should be notified that my move is illegal")
-	public void i_should_be_notified_that_my_move_is_illegal() {
+	@Then("The player shall be warned that {string} already exists")
+	public void the_player_shall_be_warned_that_already_exists(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The wall candidate is at the right edge of the board")
-	public void the_wall_candidate_is_at_the_right_edge_of_the_board() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("The wall candidate is at the up edge of the board")
-	public void the_wall_candidate_is_at_the_up_edge_of_the_board() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("The wall candidate is at the down edge of the board")
-	public void the_wall_candidate_is_at_the_down_edge_of_the_board() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("Next player to set user name is white")
-	public void next_player_to_set_user_name_is_white() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is existing user Daniel")
-	public void there_is_existing_user_Daniel() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("The player selects existing Daniel")
-	public void the_player_selects_existing_Daniel() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The name of player white in the new game shall be Daniel")
-	public void the_name_of_player_white_in_the_new_game_shall_be_Daniel() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("Next player to set user name is black")
-	public void next_player_to_set_user_name_is_black() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is existing user Marton")
-	public void there_is_existing_user_Marton() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("The player selects existing Marton")
-	public void the_player_selects_existing_Marton() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The name of player black in the new game shall be Marton")
-	public void the_name_of_player_black_in_the_new_game_shall_be_Marton() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is no existing user Rijul")
-	public void there_is_no_existing_user_Rijul() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("The player provides new user name: Rijul")
-	public void the_player_provides_new_user_name_Rijul() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The name of player white in the new game shall be Rijul")
-	public void the_name_of_player_white_in_the_new_game_shall_be_Rijul() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("There is no existing user Hyacinth")
-	public void there_is_no_existing_user_Hyacinth() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("The player provides new user name: Hyacinth")
-	public void the_player_provides_new_user_name_Hyacinth() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The name of player black in the new game shall be Hyacinth")
-	public void the_name_of_player_black_in_the_new_game_shall_be_Hyacinth() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("The player provides new user name: Daniel")
-	public void the_player_provides_new_user_name_Daniel() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The player shall be warned that Daniel already exists")
-	public void the_player_shall_be_warned_that_Daniel_already_exists() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-
-	@When("The player provides new user name: Marton")
-	public void the_player_provides_new_user_name_Marton() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Then("The player shall be warned that Marton already exists")
-	public void the_player_shall_be_warned_that_Marton_already_exists() {
+	@Then("Next player to set user name shall be {string}")
+	public void next_player_to_set_user_name_shall_be(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -823,38 +491,32 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The wall shall be rotated over the board to vertical")
-	public void the_wall_shall_be_rotated_over_the_board_to_vertical() {
+	@Then("The wall shall be rotated over the board to {string}")
+	public void the_wall_shall_be_rotated_over_the_board_to(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The wall shall be rotated over the board to horizontal")
-	public void the_wall_shall_be_rotated_over_the_board_to_horizontal() {
+	@Given("No file {string} exists in the filesystem")
+	public void no_file_exists_in_the_filesystem(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("No file save_game_test.dat exists in the filesystem")
-	public void no_file_save_game_test_dat_exists_in_the_filesystem() {
+	@When("The user initiates to save the game with name {string}")
+	public void the_user_initiates_to_save_the_game_with_name(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("The user initiates to save the game with name save_game_test.dat")
-	public void the_user_initiates_to_save_the_game_with_name_save_game_test_dat() {
+	@Then("A file with {string} shall be created in the filesystem")
+	public void a_file_with_shall_be_created_in_the_filesystem(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("A file with save_game_test.dat is created in the filesystem")
-	public void a_file_with_save_game_test_dat_is_created_in_the_filesystem() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@Given("File save_game_test.dat exists in the filesystem")
-	public void file_save_game_test_dat_exists_in_the_filesystem() {
+	@Given("File {string} exists in the filesystem")
+	public void file_exists_in_the_filesystem(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -865,8 +527,8 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("File with save_game_test.dat is updated in the filesystem")
-	public void file_with_save_game_test_dat_is_updated_in_the_filesystem() {
+	@Then("File with {string} shall be updated in the filesystem")
+	public void file_with_shall_be_updated_in_the_filesystem(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -877,8 +539,8 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("File save_game_test.dat is not changed in the filesystem")
-	public void file_save_game_test_dat_is_not_changed_in_the_filesystem() {
+	@Then("File {string} shall not be changed in the filesystem")
+	public void file_shall_not_be_changed_in_the_filesystem(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -891,6 +553,12 @@ public class CucumberStepDefinitions {
 
 	@Then("Both players shall have {int}:{int} remaining time left")
 	public void both_players_shall_have_remaining_time_left(Integer int1, Integer int2) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new cucumber.api.PendingException();
+	}
+
+	@When("A new game is being initialized")
+	public void a_new_game_is_being_initialized() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -913,67 +581,74 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
+	@Then("The game shall become ready to start")
+	public void the_game_shall_become_ready_to_start() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new cucumber.api.PendingException();
+	}
+
+	@Given("The game is ready to start")
+	public void the_game_is_ready_to_start() {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new cucumber.api.PendingException();
+	}
+
 	@When("I start the clock")
 	public void i_start_the_clock() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The clock of white is running")
-	public void the_clock_of_white_is_running() {
+	@Then("The game shall be running")
+	public void the_game_shall_be_running() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("The clock of black is stopped")
-	public void the_clock_of_black_is_stopped() {
+	@Then("The board shall be initialized")
+	public void the_board_shall_be_initialized() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@When("Player white completes his move")
-	public void player_white_completes_his_move() {
+	@Given("The clock of {string} is running")
+	public void the_clock_of_is_running(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The clock of white is stopped")
-	public void the_clock_of_white_is_stopped() {
+	@Given("The clock of {string} is stopped")
+	public void the_clock_of_is_stopped(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The clock of black is running")
-	public void the_clock_of_black_is_running() {
+	@When("Player {string} completes his move")
+	public void player_completes_his_move(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The player to move is black")
-	public void the_player_to_move_is_black() {
+	@Then("The user interface shall be showing it is {string} turn")
+	public void the_user_interface_shall_be_showing_it_is_turn(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The user interface is showing it is black's turn")
-	public void the_user_interface_is_showing_it_is_black_s_turn() {
+	@Then("The clock of {string} shall be stopped")
+	public void the_clock_of_shall_be_stopped(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-
-	@When("Player black completes his move")
-	public void player_black_completes_his_move() {
+	@Then("The clock of {string} shall be running")
+	public void the_clock_of_shall_be_running(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-
-
-
-
-	@Then("The user interface is showing it is white's turn")
-	public void the_user_interface_is_showing_it_is_white_s_turn() {
+	@Then("The next player to move shall be {string}")
+	public void the_next_player_to_move_shall_be(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -990,51 +665,42 @@ public class CucumberStepDefinitions {
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The position is ok")
-	public void the_position_is_ok() {
+	@Then("The position shall be {string}")
+	public void the_position_shall_be(String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Then("The position is error")
-	public void the_position_is_error() {
+	@Given("A game position is supplied with wall coordinate {int}:{int}-{string}")
+	public void a_game_position_is_supplied_with_wall_coordinate(Integer int1, Integer int2, String string) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("A game position is supplied with wall coordinate {int}:{int}-horizontal")
-	public void a_game_position_is_supplied_with_wall_coordinate_horizontal(Integer int1, Integer int2) {
+	@Then("The position shall be valid")
+	public void the_position_shall_be_valid() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
-	@Given("A game position is supplied with wall coordinate {int}:{int}-vertical")
-	public void a_game_position_is_supplied_with_wall_coordinate_vertical(Integer int1, Integer int2) {
+	@Then("The position shall be invalid")
+	public void the_position_shall_be_invalid() {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 	
-	@When("The position to load is valid")
-	public void the_position_to_load_is_valid() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-	@When("The to load position is invalid")
-	public void the_to_load_position_is_invalid() {
-	    // Write code here that turns the phrase above into concrete actions
-	    throw new cucumber.api.PendingException();
-	}
-
-
-	//The above methods need to be sorted and 
-	// implemented. They were just copied from console
+	// ***********************************************
+	// Scenario and scenario outline step definitions
 	// ***********************************************
 	// ***********************************************
+	// Scenario and scenario outline step definitions
 	// ***********************************************
 	// ***********************************************
+	// Scenario and scenario outline step definitions
 	// ***********************************************
-
+	// ***********************************************
+	// Scenario and scenario outline step definitions
+	// ***********************************************
 	/*
 	 * TODO Insert your missing step definitions here
 	 * 
@@ -1050,9 +716,17 @@ public class CucumberStepDefinitions {
 	// After each scenario, the test model is discarded
 	@After
 	public void tearDown() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		// Avoid null pointer for step definitions that are not yet implemented.
 		if (quoridor != null) {
 			quoridor.delete();
 			quoridor = null;
+		}
+		for (int i = 0; i < 20; i++) {
+			Wall wall = Wall.getWithId(i);
+			if(wall != null) {
+				wall.delete();
+			}
 		}
 	}
 
@@ -1061,12 +735,10 @@ public class CucumberStepDefinitions {
 	// ***********************************************
 
 	// Place your extracted methods below
-	/**
-	 * Gets Quoridor App and creates a blank default 9 by 9 Quoridor board
-	 */
+
 	private void initQuoridorAndBoard() {
-		quoridor = QuoridorApplication.getQuoridor();
-		board = new Board(quoridor);
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Board board = new Board(quoridor);
 		// Creating tiles by rows, i.e., the column index changes with every tile
 		// creation
 		for (int i = 1; i <= 9; i++) { // rows
@@ -1076,18 +748,8 @@ public class CucumberStepDefinitions {
 		}
 	}
 
-	private void initializeGame() {
-
-	}
-
-	/**
-	 * Create two new users, sets them as players with default thinking time and 10
-	 * walls each
-	 * 
-	 * @param userName1
-	 * @param userName2
-	 */
-	private void createUsersAndPlayers(String userName1, String userName2) {
+	private ArrayList<Player> createUsersAndPlayers(String userName1, String userName2) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		User user1 = quoridor.addUser(userName1);
 		User user2 = quoridor.addUser(userName2);
 
@@ -1095,14 +757,19 @@ public class CucumberStepDefinitions {
 
 		// Players are assumed to start on opposite sides and need to make progress
 		// horizontally to get to the other side
-		// @formatter:off
+		//@formatter:off
 		/*
-		 * __________ | | | | |x-> <-x| | | |__________|
+		 *  __________
+		 * |          |
+		 * |          |
+		 * |x->    <-x|
+		 * |          |
+		 * |__________|
 		 * 
 		 */
-		// @formatter:on
-		player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
-		player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
+		//@formatter:on
+		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
+		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
 
 		Player[] players = { player1, player2 };
 
@@ -1113,24 +780,28 @@ public class CucumberStepDefinitions {
 				new Wall(i * 10 + j, players[i]);
 			}
 		}
+		
+		ArrayList<Player> playersList = new ArrayList<Player>();
+		playersList.add(player1);
+		playersList.add(player2);
+		
+		return playersList;
 	}
 
-	/**
-	 * Creates a game, sets playes at their starting position and adds the players
-	 * walls as in stock, sets the game status as RUNNING
-	 */
-	private void createAndStartGame() {
+	private void createAndStartGame(ArrayList<Player> players) {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		// There are total 36 tiles in the first four rows and
 		// indexing starts from 0 -> tiles with indices 36 and 36+8=44 are the starting
 		// positions
-		Tile player1StartPos = board.getTile(36);
-		Tile player2StartPos = board.getTile(44);
+		Tile player1StartPos = quoridor.getBoard().getTile(36);
+		Tile player2StartPos = quoridor.getBoard().getTile(44);
+		
+		Game game = new Game(GameStatus.Running, MoveMode.PlayerMove, players.get(0), players.get(1), quoridor);
 
-		PlayerPosition player1Position = new PlayerPosition(player1, player1StartPos);
-		PlayerPosition player2Position = new PlayerPosition(player2, player2StartPos);
+		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), player1StartPos);
+		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), player2StartPos);
 
-		game = new Game(GameStatus.Running, MoveMode.PlayerMove, player1, player2, quoridor);
-		GamePosition gamePosition = new GamePosition(0, player1Position, player2Position, player1, game);
+		GamePosition gamePosition = new GamePosition(0, player1Position, player2Position, players.get(0), game);
 
 		// Add the walls as in stock for the players
 		for (int j = 0; j < 10; j++) {
