@@ -2,6 +2,7 @@ package ca.mcgill.ecse223.quoridor.features;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
+import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
@@ -59,7 +60,6 @@ public class LoadPositionStepDefinitions {
 		}	
 		assertEquals(playerPosition.getTile().getColumn(), int1, 0);
 		assertEquals(playerPosition.getTile().getRow(), int2, 0);
-	
 	    throw new cucumber.api.PendingException();
 	}
 
@@ -72,13 +72,38 @@ public class LoadPositionStepDefinitions {
 		} else {
 			walls = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().getWalls();
 		}
-		//incomplete
+		boolean wallExists = false;
+		for (int i=0; i<walls.size(); i++) {
+			if (walls.get(i).getMove().getTargetTile().getColumn() == int1
+					&& walls.get(i).getMove().getTargetTile().getRow() == int2
+					&& walls.get(i).getMove().getWallDirection() == Direction.Vertical) {
+				wallExists = true;
+				break;
+			}
+		}
+		assertTrue(wallExists);
 	    throw new cucumber.api.PendingException();
 	}
 
 	@Then("{string} shall have a horizontal wall at {int}:{int}")
 	public void shall_have_a_horizontal_wall_at(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
+		List<Wall> walls;
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getUser().getName().equals(string)) {
+			walls = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getWalls();
+		} else {
+			walls = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().getWalls();
+		}
+		boolean wallExists = false;
+		for (int i=0; i<walls.size(); i++) {
+			if (walls.get(i).getMove().getTargetTile().getColumn() == int1
+					&& walls.get(i).getMove().getTargetTile().getRow() == int2
+					&& walls.get(i).getMove().getWallDirection() == Direction.Horizontal) {
+				wallExists = true;
+				break;
+			}
+		}
+		assertTrue(wallExists);
 	    throw new cucumber.api.PendingException();
 	}
 
