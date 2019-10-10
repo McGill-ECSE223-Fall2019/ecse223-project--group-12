@@ -2,7 +2,10 @@ package ca.mcgill.ecse223.quoridor.controller;
 
 import java.sql.Time;
 
+import ca.mcgill.ecse223.quoridor.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.User;
 
 public class QuoridorController {
@@ -114,7 +117,23 @@ public class QuoridorController {
 	// Weige
 	// ------------------------
 
-	// TODO
+	/**
+	 * @author Weige qian
+	 * Gherkin feature:InitializeBoard.feature
+	 */
+	public static void initBoard() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		if (!quoridor.hasBoard()) {
+			new Board(quoridor);
+		}
+		if (!quoridor.getBoard().hasTiles()) {
+			for(int i = 1;i < 10;i++) {
+				for(int j = 1;j < 10;j++) {
+					quoridor.getBoard().addTile(i,j);
+				}
+			}
+		}
+	}
 
 	// ------------------------
 	// Khan
