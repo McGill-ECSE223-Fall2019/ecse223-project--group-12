@@ -30,6 +30,10 @@ public class QuoridorController {
 		
 	}
 	
+	public static boolean validatePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException(); 
+	}
+	
 	/**
 	 * @author Francis Comeau
 	 * Gherkin feature: LoadPosition.feature

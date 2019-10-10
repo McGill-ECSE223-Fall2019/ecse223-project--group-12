@@ -1,41 +1,78 @@
 package ca.mcgill.ecse223.quoridor.features;
 
+import ca.mcgill.ecse223.quoridor.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
+import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.Player;
+import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
+import ca.mcgill.ecse223.quoridor.model.Quoridor;
+import ca.mcgill.ecse223.quoridor.model.Wall;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+import static org.junit.Assert.*;
+
+import java.util.List;
+
+
+
 /*
- * Note that the classes may not conatain all relative steps for a certain feature, 
+ * Note that the classes may not contain all relative steps for a certain feature, 
  * since there are duplicate steps between scenarios.
  */
 
+/**
+ * 
+ * @author Francis Comeau
+ *
+ */
 public class LoadPositionStepDefinitions {
 	@When("I initiate to load a saved game {string}")
 	public void i_initiate_to_load_a_saved_game(String string) {
 	    // Write code here that turns the phrase above into concrete actions
+		QuoridorController.loadPosition(string);
 	    throw new cucumber.api.PendingException();
 	}
 
 	@When("The position to load is valid")
 	public void the_position_to_load_is_valid() {
 	    // Write code here that turns the phrase above into concrete actions
+		assertTrue(QuoridorController.validatePosition(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()));
 	    throw new cucumber.api.PendingException();
 	}
 
 	@Then("It shall be {string}'s turn")
 	public void it_shall_be_s_turn(String string) {
 	    // Write code here that turns the phrase above into concrete actions
+		assertEquals(string, QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName());		
 	    throw new cucumber.api.PendingException();
 	}
 
 	@Then("{string} shall be at {int}:{int}")
 	public void shall_be_at(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
+		PlayerPosition playerPosition;
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getUser().getName().equals(string)) {
+			playerPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
+		} else {
+			playerPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
+		}	
+		assertEquals(playerPosition.getTile().getColumn(), int1, 0);
+		assertEquals(playerPosition.getTile().getRow(), int2, 0);
+	
 	    throw new cucumber.api.PendingException();
 	}
 
 	@Then("{string} shall have a vertical wall at {int}:{int}")
 	public void shall_have_a_vertical_wall_at(String string, Integer int1, Integer int2) {
 	    // Write code here that turns the phrase above into concrete actions
+		List<Wall> walls;
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getUser().getName().equals(string)) {
+			walls = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getWalls();
+		} else {
+			walls = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().getWalls();
+		}
+		//incomplete
 	    throw new cucumber.api.PendingException();
 	}
 
@@ -52,8 +89,9 @@ public class LoadPositionStepDefinitions {
 	}
 
 	@When("The position to load is invalid")
-	public void the_position_to_load_is_invalid() {
+	public void the_position_to_load_is_invalid(GamePosition gamePosition) {
 	    // Write code here that turns the phrase above into concrete actions
+		assertFalse(QuoridorController.validatePosition(gamePosition));
 	    throw new cucumber.api.PendingException();
 	}
 
