@@ -1,30 +1,152 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
-import ca.mcgill.ecse223.quoridor.QuoridorApplication;
-import ca.mcgill.ecse223.quoridor.model.Game;
-import ca.mcgill.ecse223.quoridor.model.Player;
-import ca.mcgill.ecse223.quoridor.model.Quoridor;
+import java.sql.Time;
+
+import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.User;
 
 public class QuoridorController {
-	
+
 	public QuoridorController() {
-		
-	}
-	
-	public static void creatUser(String name) {
-		//to do check inputs
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		quoridor.addUser(name);
-	}
-	public static void setBlackPlayer(User user) {
-		Player player = new Player(null, user, 0, null);
-		//Game game = new Game();
-	}
-	
-	public static void setWhitePlayer() {
-		
+
 	}
 
+	// ------------------------
+	// Remi
+	// ------------------------
+
+	/**
+	 * <Description>
+	 * 
+	 * @author Remi Carriere
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void initializeGame() throws java.lang.UnsupportedOperationException {
+		// TODO
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * <Description>
+	 * 
+	 * @author Remi Carriere
+	 * @param name
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void createUser(String name) throws java.lang.UnsupportedOperationException {
+		// TODO
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+
+	/**
+	 * <Description>
+	 * 
+	 * @author Remi Carriere
+	 * @param totalTime
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void setTotalThinkingTime(Time totalTime)
+			throws java.lang.UnsupportedOperationException {
+		// TODO Auto-generated method stub
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * <Description>
+	 * 
+	 * @author Remi Carriere
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void startClock() throws java.lang.UnsupportedOperationException {
+		// TODO
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * <Description>
+	 * 
+	 * @author Remi Carriere
+	 * @param gamePosition
+	 * @return
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static boolean validatePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * 
+	 * <Description>
+	 * @author Remi Carriere
+	 * @param userByName
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void setWhitePlayerInGame(User userByName)
+			throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * 
+	 * <Description>
+	 * @author Remi Carriere
+	 * @param userByName
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void setBlackPlayerInGame(User userByName)
+			throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	public static void setNewUserAsWhite(String name) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException("The username " + name + " already exists");
+	}
+	
+	public static void setNewUserAsBlack(String name) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException("The username " + name + " already exists");
+	}
+
+	// ------------------------
+	// Francis
+	// ------------------------
+
+	/**
+	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
+	 */
+	public static void loadPosition(String fullPath) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * @author Francis Comeau Gherkin feature: SavePosition.feature
+	 */
+	public static void savePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	// ------------------------
+	// Weige
+	// ------------------------
+
+	/**
+	 * @author Weige qian
+	 * Gherkin feature:InitializeBoard.feature
+	 */
+	public static void initBoard() throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	// ------------------------
+	// Khan
+	// ------------------------
+
+	// TODO
+
+	// ------------------------
+	// Zechen
+	// ------------------------
+
+	// TODO
 
 }
