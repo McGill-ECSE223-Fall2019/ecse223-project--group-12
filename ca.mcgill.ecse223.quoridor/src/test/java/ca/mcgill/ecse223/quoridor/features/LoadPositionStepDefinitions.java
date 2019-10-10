@@ -65,7 +65,7 @@ public class LoadPositionStepDefinitions {
 		}
 		assertEquals(playerPosition.getTile().getColumn(), int1, 0);
 		assertEquals(playerPosition.getTile().getRow(), int2, 0);
-		throw new cucumber.api.PendingException();
+		//throw new cucumber.api.PendingException();
 	}
 
 	@Then("{string} shall have a vertical wall at {int}:{int}")

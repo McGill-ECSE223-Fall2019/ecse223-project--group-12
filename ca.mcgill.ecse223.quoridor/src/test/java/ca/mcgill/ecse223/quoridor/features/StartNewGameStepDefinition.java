@@ -58,7 +58,7 @@ public class StartNewGameStepDefinition {
 	@When("White player chooses a username")
 	public void white_player_chooses_a_username() {
 		try {
-			QuoridorController.setWhitePlayer(getUser(0));
+			QuoridorController.setWhitePlayerInGame(getUser(0));
 		} catch (java.lang.UnsupportedOperationException | NullPointerException e) {
 			/*
 			 * no handling necessary at this stage. Temporarily catch null pointers, must be
@@ -70,7 +70,7 @@ public class StartNewGameStepDefinition {
 	@When("Black player chooses a username")
 	public void black_player_chooses_a_username() {
 		try {
-			QuoridorController.setBlackPlayer(getUser(1));
+			QuoridorController.setBlackPlayerInGame(getUser(1));
 		} catch (java.lang.UnsupportedOperationException | NullPointerException e) {
 			/*
 			 * no handling necessary at this stage. Temporarily catch null pointers, must be
@@ -82,7 +82,8 @@ public class StartNewGameStepDefinition {
 	@When("Total thinking time is set")
 	public void total_thinking_time_is_set() {
 		try {
-			QuoridorController.setTotalThinkingTime(getWhiteTime(), getBlackTime());
+			// choose whiteTime by default for scenario
+			QuoridorController.setTotalThinkingTime(getWhiteTime());
 		} catch (java.lang.UnsupportedOperationException | NullPointerException e) {
 			/*
 			 * no handling necessary at this stage. Temporarily catch null pointers, must be
@@ -208,11 +209,6 @@ public class StartNewGameStepDefinition {
 
 	private Time getWhiteTime() {
 		return QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getRemainingTime();
-
-	}
-
-	private Time getBlackTime() {
-		return QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().getRemainingTime();
 
 	}
 

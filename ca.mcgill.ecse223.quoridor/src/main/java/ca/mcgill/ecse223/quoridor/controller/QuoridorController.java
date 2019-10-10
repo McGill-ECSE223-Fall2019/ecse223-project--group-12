@@ -2,6 +2,7 @@ package ca.mcgill.ecse223.quoridor.controller;
 
 import java.sql.Time;
 
+import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.User;
 
@@ -17,6 +18,7 @@ public class QuoridorController {
 
 	/**
 	 * <Description>
+	 * 
 	 * @author Remi Carriere
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -27,45 +29,25 @@ public class QuoridorController {
 
 	/**
 	 * <Description>
+	 * 
 	 * @author Remi Carriere
 	 * @param name
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void createUser(String name) throws java.lang.UnsupportedOperationException {
-		// TODO 
+		// TODO
 		throw new java.lang.UnsupportedOperationException();
 	}
 
-	/**
-	 * <Description>
-	 * @author Remi Carriere
-	 * @param user
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	public static void setBlackPlayer(User user) throws java.lang.UnsupportedOperationException {
-		// TODO 
-		throw new java.lang.UnsupportedOperationException();
-	}
 
 	/**
 	 * <Description>
+	 * 
 	 * @author Remi Carriere
-	 * @param user
+	 * @param totalTime
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void setWhitePlayer(User user) throws java.lang.UnsupportedOperationException {
-		// TODO 
-		throw new java.lang.UnsupportedOperationException();
-	}
-
-	/**
-	 * <Description>
-	 * @author Remi Carriere
-	 * @param whiteTime
-	 * @param blackTime
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	public static void setTotalThinkingTime(Time whiteTime, Time blackTime)
+	public static void setTotalThinkingTime(Time totalTime)
 			throws java.lang.UnsupportedOperationException {
 		// TODO Auto-generated method stub
 		throw new java.lang.UnsupportedOperationException();
@@ -73,6 +55,7 @@ public class QuoridorController {
 
 	/**
 	 * <Description>
+	 * 
 	 * @author Remi Carriere
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -83,6 +66,7 @@ public class QuoridorController {
 
 	/**
 	 * <Description>
+	 * 
 	 * @author Remi Carriere
 	 * @param gamePosition
 	 * @return
@@ -90,6 +74,38 @@ public class QuoridorController {
 	 */
 	public static boolean validatePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * 
+	 * <Description>
+	 * @author Remi Carriere
+	 * @param userByName
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void setWhitePlayerInGame(User userByName)
+			throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * 
+	 * <Description>
+	 * @author Remi Carriere
+	 * @param userByName
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void setBlackPlayerInGame(User userByName)
+			throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	public static void setNewUserAsWhite(String name) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException("The username " + name + " already exists");
+	}
+	
+	public static void setNewUserAsBlack(String name) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException("The username " + name + " already exists");
 	}
 
 	// ------------------------
