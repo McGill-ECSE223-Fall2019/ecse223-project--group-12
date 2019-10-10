@@ -1,54 +1,131 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
-import ca.mcgill.ecse223.quoridor.QuoridorApplication;
-import ca.mcgill.ecse223.quoridor.model.Game;
+import java.sql.Time;
+
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
-import ca.mcgill.ecse223.quoridor.model.Player;
-import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.User;
 
 public class QuoridorController {
-	
+
 	public QuoridorController() {
-		
-	}
-	/**
-	 * 
-	 * @param name
-	 */
-	public static void creatUser(String name) {
-		//to do check inputs
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		quoridor.addUser(name);
-	}
-	public static void setBlackPlayer(User user) {
-		Player player = new Player(null, user, 0, null);
-		//Game game = new Game();
-	}
-	
-	public static void setWhitePlayer() {
-		
-	}
-	
-	public static boolean validatePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException(); 
-	}
-	
-	/**
-	 * @author Francis Comeau
-	 * Gherkin feature: LoadPosition.feature
-	 */
-	public static void loadPosition(String fullPath) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException(); 
-	}
-	
-	/**
-	 * @author Francis Comeau
-	 * Gherkin feature: SavePosition.feature
-	 */
-	public static void savePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException(); 
+
 	}
 
+	// ------------------------
+	// Remi
+	// ------------------------
+
+	/**
+	 * <Description>
+	 * @author Remi Carriere
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void initializeGame() throws java.lang.UnsupportedOperationException {
+		// TODO
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * <Description>
+	 * @author Remi Carriere
+	 * @param name
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void createUser(String name) throws java.lang.UnsupportedOperationException {
+		// TODO 
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * <Description>
+	 * @author Remi Carriere
+	 * @param user
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void setBlackPlayer(User user) throws java.lang.UnsupportedOperationException {
+		// TODO 
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * <Description>
+	 * @author Remi Carriere
+	 * @param user
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void setWhitePlayer(User user) throws java.lang.UnsupportedOperationException {
+		// TODO 
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * <Description>
+	 * @author Remi Carriere
+	 * @param whiteTime
+	 * @param blackTime
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void setTotalThinkingTime(Time whiteTime, Time blackTime)
+			throws java.lang.UnsupportedOperationException {
+		// TODO Auto-generated method stub
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * <Description>
+	 * @author Remi Carriere
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void startClock() throws java.lang.UnsupportedOperationException {
+		// TODO
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * <Description>
+	 * @author Remi Carriere
+	 * @param gamePosition
+	 * @return
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static boolean validatePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	// ------------------------
+	// Francis
+	// ------------------------
+
+	/**
+	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
+	 */
+	public static void loadPosition(String fullPath) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * @author Francis Comeau Gherkin feature: SavePosition.feature
+	 */
+	public static void savePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	// ------------------------
+	// Weige
+	// ------------------------
+
+	// TODO
+
+	// ------------------------
+	// Khan
+	// ------------------------
+
+	// TODO
+
+	// ------------------------
+	// Zechen
+	// ------------------------
+
+	// TODO
 
 }

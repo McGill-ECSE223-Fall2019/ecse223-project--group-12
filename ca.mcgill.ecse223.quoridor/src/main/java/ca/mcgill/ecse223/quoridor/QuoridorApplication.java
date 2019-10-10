@@ -1,5 +1,6 @@
 package ca.mcgill.ecse223.quoridor;
 
+import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 
 public class QuoridorApplication {

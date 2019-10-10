@@ -30,11 +30,6 @@ import io.cucumber.java.en.When;
  */
 
 public class DropWallStepDefinitions {
-	@Given("^The game is not running$")
-	public void theGameIsNotRunning() {
-		initQuoridorAndBoard();
-		createUsersAndPlayers("user1", "user2");
-	}
 
 	@Given("^The game is running$")
 	public void theGameIsRunning() {
