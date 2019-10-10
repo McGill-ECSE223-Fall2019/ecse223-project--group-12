@@ -2,7 +2,6 @@ package ca.mcgill.ecse223.quoridor.controller;
 
 import java.sql.Time;
 
-import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.User;
 
@@ -130,7 +129,13 @@ public class QuoridorController {
 	// Weige
 	// ------------------------
 
-	// TODO
+	/**
+	 * @author Weige qian
+	 * Gherkin feature:InitializeBoard.feature
+	 */
+	public static void initBoard() throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
 
 	// ------------------------
 	// Khan
