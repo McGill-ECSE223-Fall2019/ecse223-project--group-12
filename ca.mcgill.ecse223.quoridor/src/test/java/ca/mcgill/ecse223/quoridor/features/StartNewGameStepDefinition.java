@@ -18,6 +18,7 @@ import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
+import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -119,6 +120,15 @@ public class StartNewGameStepDefinition {
 		// check pawn is in starting positions
 		assertEquals(getBoard().getTile(36), getWhitePositionTile());
 		assertEquals(getBoard().getTile(44), getBlackPositionTile());
+	}
+	
+	/**
+	 * Reset variable just in case
+	 * 
+	 */
+	@After
+	public void reset() {
+		players = null;
 	}
 
 	// Place your extracted methods below

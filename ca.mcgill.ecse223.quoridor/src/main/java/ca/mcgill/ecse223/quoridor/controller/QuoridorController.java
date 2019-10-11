@@ -23,7 +23,7 @@ public class QuoridorController {
 	 */
 	public static void initializeGame() throws java.lang.UnsupportedOperationException {
 		// TODO
-		throw new java.lang.UnsupportedOperationException();
+		throw new java.lang.UnsupportedOperationException("");
 	}
 
 	/**

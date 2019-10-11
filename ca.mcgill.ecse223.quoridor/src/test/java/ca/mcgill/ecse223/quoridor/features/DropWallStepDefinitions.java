@@ -259,5 +259,7 @@ public class DropWallStepDefinitions {
 		}
 
 		game.setCurrentPosition(gamePosition);
+		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+		.getBlackPosition();
 	}
 }

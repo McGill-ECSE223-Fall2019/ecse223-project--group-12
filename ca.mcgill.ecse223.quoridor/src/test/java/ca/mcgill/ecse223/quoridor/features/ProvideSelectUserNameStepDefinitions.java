@@ -22,6 +22,7 @@ import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
+import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -155,6 +156,17 @@ public class ProvideSelectUserNameStepDefinitions {
 		default:
 			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);
 		}
+	}
+	
+	/**
+	 * Reset variable just in case
+	 * 
+	 */
+	@After
+	public void reset() {
+		nextPlayerIsWhite = false;
+		nextPlayeColorWasSet = false;
+		error = "";
 	}
 
 	// Place your extracted methods below
