@@ -10,8 +10,10 @@ import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Wall;
+import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -28,10 +30,10 @@ import io.cucumber.java.en.When;
 public class LoadPositionStepDefinitions {
 
 	@When("I initiate to load a saved game {string}")
-	public void i_initiate_to_load_a_saved_game(String string) {
+	public void i_initiate_to_load_a_saved_game(String fileName) {
 		// Write code here that turns the phrase above into concrete actions
 		try {
-			QuoridorController.loadPosition(string);
+			QuoridorController.loadPosition(fileName);
 		} catch (java.lang.UnsupportedOperationException e) {
 			// Skip test if method not implemented
 			throw new cucumber.api.PendingException();
@@ -52,38 +54,29 @@ public class LoadPositionStepDefinitions {
 	}
 
 	@Then("It shall be {string}'s turn")
-	public void it_shall_be_s_turn(String string) {
+	public void it_shall_be_s_turn(String color) {
 		// Write code here that turns the phrase above into concrete actions
-		assertEquals(string, QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
+		assertEquals(color, QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
 				.getUser().getName());
 	}
 
 	@Then("{string} shall be at {int}:{int}")
-	public void shall_be_at(String string, Integer int1, Integer int2) {
+	public void shall_be_at(String color, Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
-		PlayerPosition playerPosition;
-		if (QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getUser().getName().equals(string)) {
-			playerPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
-		} else {
-			playerPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
-		}
-		assertEquals(playerPosition.getTile().getColumn(), int1, 0);
-		assertEquals(playerPosition.getTile().getRow(), int2, 0);
+		PlayerPosition playerPosition = TestUtil.getPlayerPositionByColor(color);
+		assertEquals(playerPosition.getTile().getColumn(), col, 0);
+		assertEquals(playerPosition.getTile().getRow(), row, 0);
 	}
 
 	@Then("{string} shall have a vertical wall at {int}:{int}")
-	public void shall_have_a_vertical_wall_at(String string, Integer int1, Integer int2) {
+	public void shall_have_a_vertical_wall_at(String color, Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
-		List<Wall> walls;
-		if (QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getUser().getName().equals(string)) {
-			walls = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getWalls();
-		} else {
-			walls = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().getWalls();
-		}
+		Player player = TestUtil.getPlayerByColor(color);
+		List<Wall> walls = player.getWalls();
 		boolean wallExists = false;
 		for (int i = 0; i < walls.size(); i++) {
-			if (walls.get(i).getMove().getTargetTile().getColumn() == int1
-					&& walls.get(i).getMove().getTargetTile().getRow() == int2
+			if (walls.get(i).getMove().getTargetTile().getColumn() == col
+					&& walls.get(i).getMove().getTargetTile().getRow() == row
 					&& walls.get(i).getMove().getWallDirection() == Direction.Vertical) {
 				wallExists = true;
 				break;
@@ -94,18 +87,14 @@ public class LoadPositionStepDefinitions {
 	}
 
 	@Then("{string} shall have a horizontal wall at {int}:{int}")
-	public void shall_have_a_horizontal_wall_at(String string, Integer int1, Integer int2) {
+	public void shall_have_a_horizontal_wall_at(String color, Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
-		List<Wall> walls;
-		if (QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getUser().getName().equals(string)) {
-			walls = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getWalls();
-		} else {
-			walls = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().getWalls();
-		}
+		Player player = TestUtil.getPlayerByColor(color);
+		List<Wall> walls = player.getWalls();
 		boolean wallExists = false;
 		for (int i = 0; i < walls.size(); i++) {
-			if (walls.get(i).getMove().getTargetTile().getColumn() == int1
-					&& walls.get(i).getMove().getTargetTile().getRow() == int2
+			if (walls.get(i).getMove().getTargetTile().getColumn() == col
+					&& walls.get(i).getMove().getTargetTile().getRow() == row
 					&& walls.get(i).getMove().getWallDirection() == Direction.Horizontal) {
 				wallExists = true;
 				break;
@@ -115,7 +104,7 @@ public class LoadPositionStepDefinitions {
 	}
 
 	@Then("Both players shall have {int} in their stacks")
-	public void both_players_shall_have_in_their_stacks(Integer int1) {
+	public void both_players_shall_have_in_their_stacks(Integer remainingWalls) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}

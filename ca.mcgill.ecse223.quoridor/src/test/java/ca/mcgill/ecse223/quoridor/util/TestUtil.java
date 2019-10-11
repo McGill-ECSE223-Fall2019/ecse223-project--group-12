@@ -138,7 +138,7 @@ public class TestUtil {
 				return t;
 			}
 		}
-		return null;
+		throw new java.lang.IllegalArgumentException("tile does not exist:  row=" + row + " col=" +col);
 
 	}
 	/**
@@ -154,7 +154,7 @@ public class TestUtil {
 		case "vertical":
 			return Direction.Vertical;
 		default:
-			return null;
+			throw new java.lang.IllegalArgumentException("Invalid direction: " + dir);
 		}
 	}
 	
@@ -173,6 +173,7 @@ public class TestUtil {
 			}
 		}
 		return null;
+		//throw new java.lang.IllegalArgumentException("Username does not exist: " + name);
 	}
 
 	/**
@@ -186,4 +187,28 @@ public class TestUtil {
 		int mills = (60 * minutes + seconds) * 1000;
 		return new Time(mills);
 	}
+	
+	public static Player getPlayerByColor(String color) {
+		switch(color) {
+		case "white":
+			return QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
+		case "black":
+			return QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
+		default:
+			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);
+		}
+		}
+	
+	public static PlayerPosition getPlayerPositionByColor(String color) {
+		switch(color) {
+		case "white":
+			return QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
+		case "black":
+			return QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
+		default:
+			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);
+		}
+		}
+	
+	
 }

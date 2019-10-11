@@ -37,7 +37,11 @@ public class ValidatePositionStepDefinition {
 	public void a_game_position_is_supplied_with_pawn_coordinate(Integer row, Integer col) {
 		// White will be the player to move for this test test (arbitrary)
 		Player whitePlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
-		Tile tile = TestUtil.getTile(row, col);
+		Tile tile = null;
+		try {
+			tile = TestUtil.getTile(row, col);
+		} catch (java.lang.IllegalArgumentException e) {
+		}
 		if (tile != null) {
 			PlayerPosition whitePos = new PlayerPosition(whitePlayer, tile);
 			position = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
@@ -66,8 +70,14 @@ public class ValidatePositionStepDefinition {
 		QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(null);
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		Player whitePlayer = game.getWhitePlayer();
-		Tile tile = TestUtil.getTile(row, col);
-		Direction direction = TestUtil.getDirection(dir);
+		Tile tile = null;
+		Direction direction = null;
+		try {
+			tile = TestUtil.getTile(row, col);
+			direction = TestUtil.getDirection(dir);
+		} catch (java.lang.IllegalArgumentException e) {
+
+		}
 		position = game.getCurrentPosition();
 		Wall wall = position.getWhiteWallsInStock().get(1);
 		if (tile != null) {
@@ -85,7 +95,7 @@ public class ValidatePositionStepDefinition {
 	public void the_position_shall_be_invalid() {
 		assertFalse(isValidPosition);
 	}
-	
+
 	/**
 	 * Reset variables
 	 * 
@@ -95,6 +105,5 @@ public class ValidatePositionStepDefinition {
 		position = null;
 		isValidPosition = false;
 	}
-
 
 }

@@ -85,19 +85,9 @@ public class ProvideSelectUserNameStepDefinitions {
 
 	@Then("The name of player {string} in the new game shall be {string}")
 	public void the_name_of_player_in_the_new_game_shall_be(String color, String name) {
-		switch (color) {
-		case "white":
-			String actual1 = getCurrentGame().getWhitePlayer().getUser().getName();
-			assertEquals(name, actual1);
-			break;
-		case "black":
-			String actual2 = getCurrentGame().getBlackPlayer().getUser().getName();
-			assertEquals(name, actual2);
-			break;
-		default:
-			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);
-		}
-
+		Player player = TestUtil.getPlayerByColor(color);
+		String actual = player.getUser().getName();
+		assertEquals(name, actual);
 	}
 
 	@Given("There is no existing user {string}")
@@ -134,11 +124,11 @@ public class ProvideSelectUserNameStepDefinitions {
 	@Then("Next player to set user name shall be {string}")
 	public void next_player_to_set_user_name_shall_be(String color) {
 		/*
-		 * Verify that the players names have not been updated. This is a compromise because
-		 * ideally we could initialize a game with no players, and just verify if the
-		 * player is null, but the model prevents a game without players. For now, if a
-		 * player has not been updated, then it must still be their turn to set user
-		 * name
+		 * Verify that the players names have not been updated. This is a compromise
+		 * because ideally we could initialize a game with no players, and just verify
+		 * if the player is null, but the model prevents a game without players. For
+		 * now, if a player has not been updated, then it must still be their turn to
+		 * set user name
 		 */
 		switch (color) {
 		case "white":
@@ -151,7 +141,7 @@ public class ProvideSelectUserNameStepDefinitions {
 			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);
 		}
 	}
-	
+
 	/**
 	 * Reset variables
 	 * 

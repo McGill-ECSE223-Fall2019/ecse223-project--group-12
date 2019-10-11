@@ -26,7 +26,7 @@ public class DropWallStepDefinitions {
 	 * @author Marton
 	 */
 	@Given("^The game is running$")
-	public void theGameIsRunning() {
+	public void the_game_is_running() {
 		TestUtil.initQuoridorAndBoard();
 		ArrayList<Player> createUsersAndPlayers = TestUtil.createUsersAndPlayers("user1", "user2");
 		TestUtil.createAndStartGame(createUsersAndPlayers);
@@ -36,7 +36,7 @@ public class DropWallStepDefinitions {
 	 * @author Marton
 	 */
 	@And("^It is my turn to move$")
-	public void itIsMyTurnToMove() throws Throwable {
+	public void it_is_my_turn_to_move() throws Throwable {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Player currentPlayer = quoridor.getCurrentGame().getWhitePlayer();
 		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().setPlayerToMove(currentPlayer);
@@ -46,7 +46,7 @@ public class DropWallStepDefinitions {
 	 * @author Marton
 	 */
 	@Given("The following walls exist:")
-	public void theFollowingWallsExist(io.cucumber.datatable.DataTable dataTable) {
+	public void the_following_walls_exist(io.cucumber.datatable.DataTable dataTable) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
 		// keys: wrow, wcol, wdir
@@ -92,17 +92,17 @@ public class DropWallStepDefinitions {
 	}
 
 	@And("I do not have a wall in my hand")
-	public void iDoNotHaveAWallInMyHand() {
+	public void i_do_not_have_a_wall_in_my_hand() {
 		// GUI-related feature -- TODO for later
 	}
 
 	@And("^I have a wall in my hand over the board$")
-	public void iHaveAWallInMyHandOverTheBoard() throws Throwable {
+	public void i_have_a_wall_in_my_hand_over_the_board() throws Throwable {
 		// GUI-related feature -- TODO for later
 	}
 
 	@Given("The wall move candidate with {string} at position \\({int}, {int}) is valid")
-	public void the_wall_move_candidate_with_at_position_is_valid(String string, Integer int1, Integer int2) {
+	public void the_wall_move_candidate_with_at_position_is_valid(String dir, Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}
@@ -114,7 +114,7 @@ public class DropWallStepDefinitions {
 	}
 
 	@Then("A wall move shall be registered with {string} at position \\({int}, {int})")
-	public void a_wall_move_shall_be_registered_with_at_position(String string, Integer int1, Integer int2) {
+	public void a_wall_move_shall_be_registered_with_at_position(String dir, Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}
@@ -162,7 +162,7 @@ public class DropWallStepDefinitions {
 	}
 
 	@Then("No wall move shall be registered with {string} at position \\({int}, {int})")
-	public void no_wall_move_shall_be_registered_with_at_position(String string, Integer int1, Integer int2) {
+	public void no_wall_move_shall_be_registered_with_at_position(String dir, Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}

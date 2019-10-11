@@ -37,7 +37,7 @@ public class StartNewGameStepDefinition {
 	 * @author Marton
 	 */
 	@Given("^The game is not running$")
-	public void theGameIsNotRunning() {
+	public void the_game_is_not_running() {
 		TestUtil.initQuoridorAndBoard();
 		players = TestUtil.createUsersAndPlayers("user1", "user2");
 	}

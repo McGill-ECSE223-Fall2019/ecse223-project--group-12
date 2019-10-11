@@ -5,16 +5,13 @@ import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import io.cucumber.java.After;
 
-public class CucumberStepDefinitions {
+/**
+ * 
+ * @author Remi Carriere
+ *
+ */
+public class CucumberCleanUp {
 
-	/*
-	 * Note that all the Step Definitions were moved to their respective classes.
-	 * Implement your Step Definitions in those classes, not here. Note that the
-	 * classes may not conatain all relative steps for a certain feature, since
-	 * there are duplicate steps between scenarios.
-	 * 
-	 * 
-	 */
 	/**
 	 * Tear Down
 	 * 
