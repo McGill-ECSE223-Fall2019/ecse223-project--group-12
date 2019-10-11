@@ -138,7 +138,7 @@ public class DropWallStepDefinitions {
 	}
 
 	@Given("The wall move candidate with {string} at position \\({int}, {int}) is invalid")
-	public void the_wall_move_candidate_with_at_position_is_invalid(String string, Integer int1, Integer int2) {
+	public void the_wall_move_candidate_with_at_position_is_invalid(String dir, Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}

@@ -17,25 +17,25 @@ import io.cucumber.java.en.When;
 public class SavePositionStepDefinitions {
 
 	@Given("No file {string} exists in the filesystem")
-	public void no_file_exists_in_the_filesystem(String string) {
+	public void no_file_exists_in_the_filesystem(String fileName) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
 	@When("The user initiates to save the game with name {string}")
-	public void the_user_initiates_to_save_the_game_with_name(String string) {
+	public void the_user_initiates_to_save_the_game_with_name(String fileName) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
 	@Then("A file with {string} shall be created in the filesystem")
-	public void a_file_with_shall_be_created_in_the_filesystem(String string) {
+	public void a_file_with_shall_be_created_in_the_filesystem(String fileName) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
 
 	@Given("File {string} exists in the filesystem")
-	public void file_exists_in_the_filesystem(String string) {
+	public void file_exists_in_the_filesystem(String fileName) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -47,7 +47,7 @@ public class SavePositionStepDefinitions {
 	}
 
 	@Then("File with {string} shall be updated in the filesystem")
-	public void file_with_shall_be_updated_in_the_filesystem(String string) {
+	public void file_with_shall_be_updated_in_the_filesystem(String fileName) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
@@ -59,7 +59,7 @@ public class SavePositionStepDefinitions {
 	}
 
 	@Then("File {string} shall not be changed in the filesystem")
-	public void file_shall_not_be_changed_in_the_filesystem(String string) {
+	public void file_shall_not_be_changed_in_the_filesystem(String fileName) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}

@@ -17,7 +17,7 @@ public class RotateWallStepDefinitions {
 	}
 
 	@Then("The wall shall be rotated over the board to {string}")
-	public void the_wall_shall_be_rotated_over_the_board_to(String string) {
+	public void the_wall_shall_be_rotated_over_the_board_to(String newDir) {
 	    // Write code here that turns the phrase above into concrete actions
 	    throw new cucumber.api.PendingException();
 	}
