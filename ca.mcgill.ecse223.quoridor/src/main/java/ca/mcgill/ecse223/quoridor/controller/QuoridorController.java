@@ -164,6 +164,21 @@ public class QuoridorController {
 	// Zechen
 	// ------------------------
 
-	// TODO
+	/**
+	 * @author Zechen Ren
+	 * Gherkin feature: RotateWall.feature
+	 */
+	public static void rotateWall () throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * @author Zechen Ren
+	 * Gherkin feature: MoveWall.feature
+	 */
+	
+	public static void moveWall (String side) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
 
 }
