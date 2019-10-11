@@ -24,7 +24,6 @@ public class QuoridorController {
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void initializeGame() throws java.lang.UnsupportedOperationException {
-		// TODO
 		throw new java.lang.UnsupportedOperationException("");
 	}
 
@@ -48,7 +47,6 @@ public class QuoridorController {
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setTotalThinkingTime(Time totalTime) throws java.lang.UnsupportedOperationException {
-		// TODO 
 		throw new java.lang.UnsupportedOperationException();
 	}
 
@@ -60,7 +58,6 @@ public class QuoridorController {
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void startClock() throws java.lang.UnsupportedOperationException {
-		// TODO
 		throw new java.lang.UnsupportedOperationException();
 	}
 
@@ -134,6 +131,29 @@ public class QuoridorController {
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static List<User> getAllUsers() throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * Gets the game position so that a player can see the board in its current position
+	 * 
+	 * @author Remi Carriere
+	 * @return The current game position
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static GamePosition getGamePosition() throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * Gets the remaining time of a player so that a player can see his clock counting down
+	 * 
+	 * @author Remi Carriere
+	 * @param player
+	 * @return The remaining time of the given player
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static Time getPlayerClock(Player player) throws java.lang.UnsupportedOperationException{
 		throw new java.lang.UnsupportedOperationException();
 	}
 
