@@ -37,29 +37,7 @@ public class MoveWallStepDefinitions {
 		} catch (java.lang.IllegalArgumentException e) {
 		}
 		Wall wall = game.getCurrentPosition().getBlackWallsInStock().get(1);
-		game.setWallMoveCandidate (new WallMove(1, 1, blackPlayer , tile, game, direction,wall));
-				
-				
-				
-		boolean existWall = false;
-		switch(dir){
-		case "horizontal":
-			if(Direction.Horizontal == QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getWallDirection()
-				&& QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile().getRow() == row
-				&& QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile().getColumn() == col) {
-			existWall = true;
-			break;
-			}
-		case "vertical":
-			if(Direction.Vertical == QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getWallDirection()
-			&& QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile().getRow() == row
-			&& QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile().getColumn() == col) {
-			existWall = true;
-			break;	
-		}
-		}
-		assertTrue(existWall);
-		
+		game.setWallMoveCandidate (new WallMove(1, 1, blackPlayer , tile, game, direction,wall));		
 		throw new cucumber.api.PendingException();
 	}
 
