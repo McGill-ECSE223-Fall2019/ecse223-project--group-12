@@ -3,21 +3,18 @@ package ca.mcgill.ecse223.quoridor.features;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.List;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Board;
-import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 import ca.mcgill.ecse223.quoridor.model.Player;
-import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
-import ca.mcgill.ecse223.quoridor.model.Wall;
+import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -36,11 +33,13 @@ import io.cucumber.java.en.When;
 public class StartNewGameStepDefinition {
 
 	private List<Player> players;
-
+	/**
+	 * @author Marton
+	 */
 	@Given("^The game is not running$")
 	public void theGameIsNotRunning() {
-		initQuoridorAndBoard();
-		players = createUsersAndPlayers("user1", "user2");
+		TestUtil.initQuoridorAndBoard();
+		players = TestUtil.createUsersAndPlayers("user1", "user2");
 	}
 
 	@When("A new game is being initialized")
@@ -123,7 +122,7 @@ public class StartNewGameStepDefinition {
 	}
 	
 	/**
-	 * Reset variable just in case
+	 * Reset variables
 	 * 
 	 */
 	@After
@@ -132,45 +131,6 @@ public class StartNewGameStepDefinition {
 	}
 
 	// Place your extracted methods below
-
-	private void initQuoridorAndBoard() {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		Board board = new Board(quoridor);
-		// Creating tiles by rows, i.e., the column index changes with every tile
-		// creation
-		for (int i = 1; i <= 9; i++) { // rows
-			for (int j = 1; j <= 9; j++) { // columns
-				board.addTile(i, j);
-			}
-		}
-	}
-
-	private ArrayList<Player> createUsersAndPlayers(String userName1, String userName2) {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		User user1 = quoridor.addUser(userName1);
-		User user2 = quoridor.addUser(userName2);
-
-		int thinkingTime = 180;
-
-		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
-		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
-
-		Player[] players = { player1, player2 };
-
-		// Create all walls. Walls with lower ID belong to player1,
-		// while the second half belongs to player 2
-		for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < 10; j++) {
-				new Wall(i * 10 + j, players[i]);
-			}
-		}
-
-		ArrayList<Player> playersList = new ArrayList<Player>();
-		playersList.add(player1);
-		playersList.add(player2);
-
-		return playersList;
-	}
 
 	private Game getCurrentGame() {
 		return QuoridorApplication.getQuoridor().getCurrentGame();

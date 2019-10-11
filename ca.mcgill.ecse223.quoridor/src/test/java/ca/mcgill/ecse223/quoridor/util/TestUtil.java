@@ -2,6 +2,7 @@ package ca.mcgill.ecse223.quoridor.util;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.Board;
@@ -17,10 +18,19 @@ import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 
+/**
+ * Contains useful methods for performing tests
+ * 
+ * @author Remi Carriere
+ *
+ */
 public class TestUtil {
-	// Place your extracted methods below
 
-	public void initQuoridorAndBoard() {
+	/**
+	 * Create a new board with 81 Tiles
+	 * @author Marton
+	 */
+	public static void initQuoridorAndBoard() {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Board board = new Board(quoridor);
 		// Creating tiles by rows, i.e., the column index changes with every tile
@@ -32,7 +42,15 @@ public class TestUtil {
 		}
 	}
 
-	public ArrayList<Player> createUsersAndPlayers(String userName1, String userName2) {
+	/**
+	 * Creates Users and associates them with black and white player with default thinking time
+	 * @author Marton
+	 * @param userName1
+	 * @param userName2
+	 * @return
+	 * 
+	 */
+	public static ArrayList<Player> createUsersAndPlayers(String userName1, String userName2) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		User user1 = quoridor.addUser(userName1);
 		User user2 = quoridor.addUser(userName2);
@@ -72,7 +90,12 @@ public class TestUtil {
 		return playersList;
 	}
 
-	public void createAndStartGame(ArrayList<Player> players) {
+	/**
+	 * Starts a new Game with Running Game status. initializes board with pawns and walls
+	 * @author Marton
+	 * @param players
+	 */
+	public static void createAndStartGame(ArrayList<Player> players) {
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		// There are total 36 tiles in the first four rows and
 		// indexing starts from 0 -> tiles with indices 36 and 36+8=44 are the starting
@@ -98,5 +121,69 @@ public class TestUtil {
 		}
 
 		game.setCurrentPosition(gamePosition);
+	}
+	
+	/**
+	 * Gets the Tile at the specified coordinates
+	 * @author Remi Carriere
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	public static Tile getTile(int row, int col) {
+		Iterator<Tile> itr = QuoridorApplication.getQuoridor().getBoard().getTiles().iterator();
+		while (itr.hasNext()) {
+			Tile t = itr.next();
+			if (t.getRow() == row && t.getColumn() == col) {
+				return t;
+			}
+		}
+		return null;
+
+	}
+	/**
+	 * Returns Direction Object based on string input
+	 * @author Remi Carriere
+	 * @param dir
+	 * @return
+	 */
+	public static Direction getDirection(String dir) {
+		switch (dir) {
+		case "horizontal":
+			return Direction.Horizontal;
+		case "vertical":
+			return Direction.Vertical;
+		default:
+			return null;
+		}
+	}
+	
+	/**
+	 * Gets a user of quoridor by username
+	 * @author Remi Carriere
+	 * @param name
+	 * @return
+	 */
+	public static User getUserByName(String name) {
+		Iterator<User> users = QuoridorApplication.getQuoridor().getUsers().iterator();
+		while (users.hasNext()) {
+			User u = users.next();
+			if (u.getName().equals(name)) {
+				return u;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Creates a time object from int values
+	 * @author Remi Carriere
+	 * @param minutes
+	 * @param seconds
+	 * @return
+	 */
+	public static Time createTime(int minutes, int seconds) {
+		int mills = (60 * minutes + seconds) * 1000;
+		return new Time(mills);
 	}
 }

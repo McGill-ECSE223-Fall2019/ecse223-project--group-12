@@ -1,8 +1,8 @@
 package ca.mcgill.ecse223.quoridor.features;
 
-import static org.junit.Assert.*;
-
-import java.util.Iterator;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -14,6 +14,7 @@ import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
+import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -36,7 +37,7 @@ public class ValidatePositionStepDefinition {
 	public void a_game_position_is_supplied_with_pawn_coordinate(Integer row, Integer col) {
 		// White will be the player to move for this test test (arbitrary)
 		Player whitePlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
-		Tile tile = getTile(row, col);
+		Tile tile = TestUtil.getTile(row, col);
 		if (tile != null) {
 			PlayerPosition whitePos = new PlayerPosition(whitePlayer, tile);
 			position = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
@@ -56,8 +57,8 @@ public class ValidatePositionStepDefinition {
 
 	@Then("The position shall be {string}")
 	public void the_position_shall_be(String result) {
-		boolean b = result.equals("ok");
-		assertEquals(b, isValidPosition);
+		boolean expected = result.equals("ok");
+		assertEquals(expected, isValidPosition);
 	}
 
 	@Given("A game position is supplied with wall coordinate {int}:{int}-{string}")
@@ -65,8 +66,8 @@ public class ValidatePositionStepDefinition {
 		QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(null);
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		Player whitePlayer = game.getWhitePlayer();
-		Tile tile = getTile(row, col);
-		Direction direction = getDirection(dir);
+		Tile tile = TestUtil.getTile(row, col);
+		Direction direction = TestUtil.getDirection(dir);
 		position = game.getCurrentPosition();
 		Wall wall = position.getWhiteWallsInStock().get(1);
 		if (tile != null) {
@@ -86,7 +87,7 @@ public class ValidatePositionStepDefinition {
 	}
 	
 	/**
-	 * Reset variable just in case
+	 * Reset variables
 	 * 
 	 */
 	@After
@@ -95,27 +96,5 @@ public class ValidatePositionStepDefinition {
 		isValidPosition = false;
 	}
 
-	private Tile getTile(int row, int col) {
-		Iterator<Tile> itr = QuoridorApplication.getQuoridor().getBoard().getTiles().iterator();
-		while (itr.hasNext()) {
-			Tile t = itr.next();
-			if (t.getRow() == row && t.getColumn() == col) {
-				return t;
-			}
-		}
-		return null;
 
-	}
-
-	private Direction getDirection(String dir) {
-		switch (dir) {
-		case "horizontal":
-			return Direction.Horizontal;
-		case "vertical":
-			return Direction.Vertical;
-		default:
-			return null;
-		}
-
-	}
 }
