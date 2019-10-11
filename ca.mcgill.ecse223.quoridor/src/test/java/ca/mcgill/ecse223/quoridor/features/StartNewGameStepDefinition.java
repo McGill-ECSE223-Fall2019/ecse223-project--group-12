@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.List;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -11,6 +12,7 @@ import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
+import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
@@ -32,21 +34,21 @@ import io.cucumber.java.en.When;
  */
 public class StartNewGameStepDefinition {
 
+	private List<Player> players;
+
 	@Given("^The game is not running$")
 	public void theGameIsNotRunning() {
 		initQuoridorAndBoard();
-		createUsersAndPlayers("user1", "user2");
+		players = createUsersAndPlayers("user1", "user2");
 	}
 
 	@When("A new game is being initialized")
 	public void a_new_game_is_being_initialized() {
 		try {
 			QuoridorController.initializeGame();
-		} catch (java.lang.UnsupportedOperationException | NullPointerException e) {
-			/*
-			 * no handling necessary at this stage. Temporarily catch null pointers, must be
-			 * removed once controller methods are implemented
-			 */
+		} catch (java.lang.UnsupportedOperationException e) {
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
 		}
 	}
 
@@ -54,11 +56,9 @@ public class StartNewGameStepDefinition {
 	public void white_player_chooses_a_username() {
 		try {
 			QuoridorController.setWhitePlayerInGame(getUser(0));
-		} catch (java.lang.UnsupportedOperationException | NullPointerException e) {
-			/*
-			 * no handling necessary at this stage. Temporarily catch null pointers, must be
-			 * removed once controller methods are implemented
-			 */
+		} catch (java.lang.UnsupportedOperationException e) {
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
 		}
 	}
 
@@ -66,11 +66,9 @@ public class StartNewGameStepDefinition {
 	public void black_player_chooses_a_username() {
 		try {
 			QuoridorController.setBlackPlayerInGame(getUser(1));
-		} catch (java.lang.UnsupportedOperationException | NullPointerException e) {
-			/*
-			 * no handling necessary at this stage. Temporarily catch null pointers, must be
-			 * removed once controller methods are implemented
-			 */
+		} catch (java.lang.UnsupportedOperationException e) {
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
 		}
 	}
 
@@ -78,83 +76,49 @@ public class StartNewGameStepDefinition {
 	public void total_thinking_time_is_set() {
 		try {
 			// choose whiteTime by default for scenario
-			QuoridorController.setTotalThinkingTime(getWhiteTime());
-		} catch (java.lang.UnsupportedOperationException | NullPointerException e) {
-			/*
-			 * no handling necessary at this stage. Temporarily catch null pointers, must be
-			 * removed once controller methods are implemented
-			 */
+			QuoridorController.setTotalThinkingTime(getTotalTime());
+		} catch (java.lang.UnsupportedOperationException e) {
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
 		}
 	}
 
 	@Then("The game shall become ready to start")
 	public void the_game_shall_become_ready_to_start() {
-		try {
-			assertEquals(GameStatus.ReadyToStart, getCurrentGame().getGameStatus());
-		} catch (NullPointerException e) {
-			/*
-			 * no handling necessary at this stage. Temporarily catch null pointers, must be
-			 * removed once controller methods are implemented
-			 */
-		}
-		throw new cucumber.api.PendingException();
+		assertEquals(GameStatus.ReadyToStart, getCurrentGame().getGameStatus());
 	}
 
 	@Given("The game is ready to start")
 	public void the_game_is_ready_to_start() {
-		try {
-			getCurrentGame().setGameStatus(GameStatus.ReadyToStart);
-		} catch (NullPointerException e) {
-			/*
-			 * no handling necessary at this stage. Temporarily catch null pointers, must be
-			 * removed once controller methods are implemented
-			 */
-		}
+		new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, players.get(0), players.get(1),
+				QuoridorApplication.getQuoridor());
 	}
 
 	@When("I start the clock")
 	public void i_start_the_clock() {
 		try {
 			QuoridorController.startClock();
-		} catch (java.lang.UnsupportedOperationException | NullPointerException e) {
-			/*
-			 * no handling necessary at this stage. Temporarily catch null pointers, must be
-			 * removed once controller methods are implemented
-			 */
+		} catch (java.lang.UnsupportedOperationException e) {
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
 		}
 	}
 
 	@Then("The game shall be running")
 	public void the_game_shall_be_running() {
-		try {
-			assertEquals(GameStatus.Running, getCurrentGame().getGameStatus());
-		} catch (NullPointerException e) {
-			/*
-			 * no handling necessary at this stage. Temporarily catch null pointers, must be
-			 * removed once controller methods are implemented
-			 */
-		}
-		throw new cucumber.api.PendingException();
+		assertEquals(GameStatus.Running, getCurrentGame().getGameStatus());
 	}
 
 	@Then("The board shall be initialized")
 	public void the_board_shall_be_initialized() {
-		try {
-			// check amount of tiles
-			assertEquals(81, getBoard().getTiles().size()); 
-			// check amount of walls
-			assertEquals(10, getCurrentGame().getCurrentPosition().getBlackWallsInStock().size()); 
-			assertEquals(10, getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
-			 // check pawn is in starting positions
-			assertEquals(getBoard().getTile(36), getWhitePositionTile());
-			assertEquals(getBoard().getTile(44), getBlackPositionTile());
-		} catch (NullPointerException e) {
-			/*
-			 * no handling necessary at this stage. Temporarily catch null pointers, must be
-			 * removed once controller methods are implemented
-			 */
-		}
-		throw new cucumber.api.PendingException();
+		// check amount of tiles
+		assertEquals(81, getBoard().getTiles().size());
+		// check amount of walls
+		assertEquals(10, getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size());
+		assertEquals(10, getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
+		// check pawn is in starting positions
+		assertEquals(getBoard().getTile(36), getWhitePositionTile());
+		assertEquals(getBoard().getTile(44), getBlackPositionTile());
 	}
 
 	// Place your extracted methods below
@@ -202,8 +166,8 @@ public class StartNewGameStepDefinition {
 		return QuoridorApplication.getQuoridor().getCurrentGame();
 	}
 
-	private Time getWhiteTime() {
-		return QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getRemainingTime();
+	private Time getTotalTime() {
+		return players.get(0).getRemainingTime();
 
 	}
 

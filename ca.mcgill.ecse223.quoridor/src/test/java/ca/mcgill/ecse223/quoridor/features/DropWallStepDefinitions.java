@@ -211,7 +211,6 @@ public class DropWallStepDefinitions {
 		// @formatter:on
 		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
 		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
-
 		Player[] players = { player1, player2 };
 
 		// Create all walls. Walls with lower ID belong to player1,

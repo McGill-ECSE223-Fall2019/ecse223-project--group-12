@@ -15,7 +15,6 @@ import ca.mcgill.ecse223.quoridor.model.Wall;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-
 /*
  * Note that the classes may not contain all relative steps for a certain feature, 
  * since there are duplicate steps between scenarios.
@@ -34,9 +33,10 @@ public class LoadPositionStepDefinitions {
 		try {
 			QuoridorController.loadPosition(string);
 		} catch (java.lang.UnsupportedOperationException e) {
-
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
 		}
-		throw new cucumber.api.PendingException();
+
 	}
 
 	@When("The position to load is valid")
@@ -46,9 +46,9 @@ public class LoadPositionStepDefinitions {
 			assertTrue(QuoridorController
 					.validatePosition(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()));
 		} catch (java.lang.UnsupportedOperationException e) {
-
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
 		}
-		throw new cucumber.api.PendingException();
 	}
 
 	@Then("It shall be {string}'s turn")
@@ -56,7 +56,6 @@ public class LoadPositionStepDefinitions {
 		// Write code here that turns the phrase above into concrete actions
 		assertEquals(string, QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
 				.getUser().getName());
-		throw new cucumber.api.PendingException();
 	}
 
 	@Then("{string} shall be at {int}:{int}")
@@ -70,7 +69,6 @@ public class LoadPositionStepDefinitions {
 		}
 		assertEquals(playerPosition.getTile().getColumn(), int1, 0);
 		assertEquals(playerPosition.getTile().getRow(), int2, 0);
-		//throw new cucumber.api.PendingException();
 	}
 
 	@Then("{string} shall have a vertical wall at {int}:{int}")
@@ -114,7 +112,6 @@ public class LoadPositionStepDefinitions {
 			}
 		}
 		assertTrue(wallExists);
-		throw new cucumber.api.PendingException();
 	}
 
 	@Then("Both players shall have {int} in their stacks")
@@ -126,8 +123,12 @@ public class LoadPositionStepDefinitions {
 	@When("The position to load is invalid")
 	public void the_position_to_load_is_invalid(GamePosition gamePosition) {
 		// Write code here that turns the phrase above into concrete actions
-		assertFalse(QuoridorController.validatePosition(gamePosition));
-		throw new cucumber.api.PendingException();
+		try {
+			assertFalse(QuoridorController.validatePosition(gamePosition));
+		} catch (java.lang.UnsupportedOperationException e) {
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
+		}
 	}
 
 	@Then("The load shall return an error")
