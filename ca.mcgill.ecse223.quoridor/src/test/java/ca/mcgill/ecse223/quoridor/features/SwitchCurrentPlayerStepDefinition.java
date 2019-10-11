@@ -70,6 +70,6 @@ public class SwitchCurrentPlayerStepDefinition {
 	public void the_next_player_to_move_shall_be(String color) {
 		// Write code here that turns the phrase above into concrete actions
 		Player player = TestUtil.getPlayerByColor(color);
-		assertEquals(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove(),player);
+		assertEquals(player,quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
 	}
 }

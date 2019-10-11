@@ -32,31 +32,31 @@ public class InitializeBoardStepDefinitions {
 
 	@Then("It shall be white player to move")
 	public void it_shall_be_white_player_to_move() {
-		assertEquals(quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove(),
-				quoridor.getCurrentGame().getWhitePlayer());
+		assertEquals(quoridor.getCurrentGame().getWhitePlayer(),
+				quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
 	}
 
 	@Then("White's pawn shall be in its initial position")
 	public void white_s_pawn_shall_be_in_its_initial_position() {
-		assertEquals(quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow(), 9);
-		assertEquals(quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn(), 5);
+		assertEquals(9,quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow());
+		assertEquals(5,quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn());
 	}
 
 	@Then("Black's pawn shall be in its initial position")
 	public void black_s_pawn_shall_be_in_its_initial_position() {
 
-		assertEquals(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow(), 1);
-		assertEquals(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn(), 5);
+		assertEquals(1,quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow());
+		assertEquals(5,quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn());
 	}
 
 	@Then("All of White's walls shall be in stock")
 	public void all_of_White_s_walls_shall_be_in_stock() {
-		assertEquals(quoridor.getCurrentGame().getWhitePlayer().getWalls().size(), 10);
+		assertEquals(10,quoridor.getCurrentGame().getWhitePlayer().getWalls().size());
 	}
 
 	@Then("All of Black's walls shall be in stock")
 	public void all_of_Black_s_walls_shall_be_in_stock() {
-		assertEquals(quoridor.getCurrentGame().getBlackPlayer().getWalls().size(), 10);
+		assertEquals(10,quoridor.getCurrentGame().getBlackPlayer().getWalls().size());
 	}
 
 	@Then("White's clock shall be counting down")
