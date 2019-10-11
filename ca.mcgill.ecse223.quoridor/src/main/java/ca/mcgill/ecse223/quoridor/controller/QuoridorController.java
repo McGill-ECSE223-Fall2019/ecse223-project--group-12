@@ -3,6 +3,7 @@ package ca.mcgill.ecse223.quoridor.controller;
 import java.sql.Time;
 
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.User;
 
 public class QuoridorController {
@@ -136,6 +137,22 @@ public class QuoridorController {
 	public static void initBoard() throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
+	/**
+	 * @param player
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void stopClock(Player player) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	/**
+	 * 
+	 * @param player
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static void makeMove(Player player) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
 
 	// ------------------------
 	// Khan

@@ -45,7 +45,7 @@ public class InitializeBoardStepDefinitions {
 	@Then("Black's pawn shall be in its initial position")
 	public void black_s_pawn_shall_be_in_its_initial_position() {
 
-		assertEquals(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow(), 9);
+		assertEquals(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow(), 1);
 		assertEquals(quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn(), 5);
 	}
 
