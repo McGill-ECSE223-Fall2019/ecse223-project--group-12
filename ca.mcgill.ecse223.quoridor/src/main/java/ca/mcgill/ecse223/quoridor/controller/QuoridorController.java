@@ -100,11 +100,11 @@ public class QuoridorController {
 	}
 	
 	public static void setNewUserAsWhite(String name) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException("The username " + name + " already exists");
+		throw new java.lang.UnsupportedOperationException();
 	}
 	
 	public static void setNewUserAsBlack(String name) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException("The username " + name + " already exists");
+		throw new java.lang.UnsupportedOperationException();
 	}
 
 	// ------------------------

@@ -46,7 +46,6 @@ public class ProvideSelectUserNameStepDefinitions {
 		ArrayList<Player> players = createUsersAndPlayers("user1", "user2");
 		new Game(GameStatus.Initializing, MoveMode.PlayerMove, players.get(0), players.get(1),
 				QuoridorApplication.getQuoridor());
-
 	}
 
 	@Given("Next player to set user name is {string}")
@@ -73,22 +72,20 @@ public class ProvideSelectUserNameStepDefinitions {
 
 	@When("The player selects existing {string}")
 	public void the_player_selects_existing(String name) {
-		if (nextPlayerIsWhite && nextPlayeColorWasSet) {
-			try {
+		try {
+			if (nextPlayerIsWhite && nextPlayeColorWasSet) {
 				QuoridorController.setWhitePlayerInGame(getUserByName(name));
-			} catch (java.lang.UnsupportedOperationException e) {
 
-			}
-		} else if (!nextPlayerIsWhite && nextPlayeColorWasSet) {
-			try {
+			} else if (!nextPlayerIsWhite && nextPlayeColorWasSet) {
+
 				QuoridorController.setBlackPlayerInGame(getUserByName(name));
-			} catch (java.lang.UnsupportedOperationException e) {
-
+			} else {
+				throw new java.lang.IllegalArgumentException("player color was not properly set");
 			}
-		} else {
-			throw new java.lang.IllegalArgumentException("player color was not properly set");
+		} catch (java.lang.UnsupportedOperationException e) {
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
 		}
-		throw new cucumber.api.PendingException();
 	}
 
 	@Then("The name of player {string} in the new game shall be {string}")
@@ -115,24 +112,23 @@ public class ProvideSelectUserNameStepDefinitions {
 
 	@When("The player provides new user name: {string}")
 	public void the_player_provides_new_user_name(String name) {
-		if (nextPlayerIsWhite && nextPlayeColorWasSet) {
-			try {
+		try {
+			if (nextPlayerIsWhite && nextPlayeColorWasSet) {
+
 				QuoridorController.setNewUserAsWhite(name);
 				;
-			} catch (java.lang.UnsupportedOperationException e) {
-				error = e.getMessage();
-			}
-		} else if (!nextPlayerIsWhite && nextPlayeColorWasSet) {
-			try {
+
+			} else if (!nextPlayerIsWhite && nextPlayeColorWasSet) {
+
 				QuoridorController.setNewUserAsBlack(name);
-				;
-			} catch (java.lang.UnsupportedOperationException e) {
-				error = e.getMessage();
+			} else {
+				throw new java.lang.IllegalArgumentException("player color was not properly set");
 			}
-		} else {
-			throw new java.lang.IllegalArgumentException("player color was not properly set");
+		} catch (java.lang.UnsupportedOperationException e) {
+			error = e.getMessage();
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
 		}
-		throw new cucumber.api.PendingException();
 	}
 
 	@Then("The player shall be warned that {string} already exists")
@@ -143,7 +139,7 @@ public class ProvideSelectUserNameStepDefinitions {
 	@Then("Next player to set user name shall be {string}")
 	public void next_player_to_set_user_name_shall_be(String color) {
 		/*
-		 * Verify that the players names not been updated. This is a compromise because
+		 * Verify that the players names have not been updated. This is a compromise because
 		 * ideally we could initialize a game with no players, and just verify if the
 		 * player is null, but the model prevents a game without players. For now, if a
 		 * player has not been updated, then it must still be their turn to set user
@@ -159,8 +155,6 @@ public class ProvideSelectUserNameStepDefinitions {
 		default:
 			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);
 		}
-
-		throw new cucumber.api.PendingException();
 	}
 
 	// Place your extracted methods below
@@ -188,7 +182,6 @@ public class ProvideSelectUserNameStepDefinitions {
 		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
 
 		Player[] players = { player1, player2 };
-
 		// Create all walls. Walls with lower ID belong to player1,
 		// while the second half belongs to player 2
 		for (int i = 0; i < 2; i++) {

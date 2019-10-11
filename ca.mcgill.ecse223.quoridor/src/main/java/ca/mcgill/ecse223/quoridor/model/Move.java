@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 
-// line 72 "../../../../../QuoridorGame.ump"
+// line 73 "../../../../../QuoridorGame.ump"
 public abstract class Move
 {
 
