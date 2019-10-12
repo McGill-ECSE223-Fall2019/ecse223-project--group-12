@@ -3,6 +3,7 @@ package ca.mcgill.ecse223.quoridor.util;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.Board;
@@ -187,7 +188,11 @@ public class TestUtil {
 		int mills = (60 * minutes + seconds) * 1000;
 		return new Time(mills);
 	}
-	
+	/**
+	 * @author Remi Carriere
+	 * @param color
+	 * @return
+	 */
 	public static Player getPlayerByColor(String color) {
 		switch(color) {
 		case "white":
@@ -199,6 +204,11 @@ public class TestUtil {
 		}
 		}
 	
+	/**
+	 * @author Remi Carriere
+	 * @param color
+	 * @return
+	 */
 	public static PlayerPosition getPlayerPositionByColor(String color) {
 		switch(color) {
 		case "white":
@@ -208,7 +218,63 @@ public class TestUtil {
 		default:
 			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);
 		}
+	}
+	/**
+	 * @author Remi Carriere
+	 */
+	public static void removeCurrentPlayersWalls() {
+		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		Player currentPlayer = getCurrentPlayer();
+		Wall wall = null;
+		if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+			List<Wall> walls = gamePosition.getWhiteWallsInStock();	
+			for (int i = 0 ;  i< walls.size(); i++) {
+				wall = walls.get(i);
+				gamePosition.removeWhiteWallsInStock(wall);
+			}
+		} else if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+			List<Wall> walls = gamePosition.getBlackWallsInStock();	
+			for (int i = 0 ;  i< walls.size(); i++) {
+				wall = walls.get(i);
+				gamePosition.removeBlackWallsInStock(wall);
+			}
+
 		}
+	}
+	/**
+	 * @author Kaan Gure
+	 * @return
+	 */
+	public static Player getCurrentPlayer() {
+		Player currentPlayer = null;
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
+				.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+
+			currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
+		} else if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
+				.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+
+			currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
+
+		}
+		return currentPlayer;
+	}
 	
-	
+	public static Wall getAWallInStockForCurrenPlayer() {
+		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		Player currentPlayer = getCurrentPlayer();
+		
+		if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+			List<Wall> walls = gamePosition.getWhiteWallsInStock();
+			if (!walls.isEmpty()) {
+				return walls.get(1);
+			}
+		} else if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+			List<Wall> walls = gamePosition.getBlackWallsInStock();
+			if (!walls.isEmpty()) {
+				return walls.get(1);
+			}
+		} 
+		return null;
+	}
 }

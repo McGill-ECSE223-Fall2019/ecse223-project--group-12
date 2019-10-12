@@ -207,10 +207,32 @@ public class QuoridorController {
 	}
 
 	// ------------------------
-	// Khan
+	// Kaan
 	// ------------------------
 
-	// TODO
+	/**
+	 * 
+	 * @author Kaan Gure
+	 * Gherkin Feature: GrabWall.feature
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static void grabWall() throws java.lang.UnsupportedOperationException{
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * 
+	 * @author Kaan Gure
+	 * Gherkin Feature: GrabWall.feature - alert if player has no more walls in stock
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static boolean alertStockIsEmpty() throws java.lang.UnsupportedOperationException{ //full implementation of GUI needed for implementation
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	
 
 	// ------------------------
 	// Zechen

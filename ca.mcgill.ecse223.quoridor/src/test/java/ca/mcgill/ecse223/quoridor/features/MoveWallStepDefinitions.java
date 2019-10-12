@@ -1,5 +1,9 @@
 package ca.mcgill.ecse223.quoridor.features;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
@@ -13,9 +17,6 @@ import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotEquals;
 
 /*
  * Note that the classes may not conatain all relative steps for a certain feature, 
