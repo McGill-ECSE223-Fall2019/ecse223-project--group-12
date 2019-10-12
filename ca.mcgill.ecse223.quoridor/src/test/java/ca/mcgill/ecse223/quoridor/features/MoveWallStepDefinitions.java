@@ -5,6 +5,7 @@ import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Player;
+import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
@@ -79,6 +80,16 @@ public class MoveWallStepDefinitions {
 	@Then("The wall shall be moved over the board to position \\({int}, {int})")
 	public void the_wall_shall_be_moved_over_the_board_to_position(Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
+		boolean existWall = false;
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		PlayerPosition playerPosition = TestUtil.getPlayerPositionByColor
+				(game.getCurrentPosition().getPlayerToMove().getUser().getName());
+		if(col == playerPosition.getTile().getColumn() && playerPosition.getTile().getRow() == row)
+			{
+			existWall = true;
+			};
+			assertTrue(existWall);
+
 		throw new cucumber.api.PendingException();
 	}
 
