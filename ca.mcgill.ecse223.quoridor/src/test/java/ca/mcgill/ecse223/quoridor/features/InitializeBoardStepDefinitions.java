@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.features;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -61,8 +62,7 @@ public class InitializeBoardStepDefinitions {
 
 	@Then("White's clock shall be counting down")
 	public void white_s_clock_shall_be_counting_down() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		assertTrue(QuoridorController.ifClockCount());
 	}
 
 	@Then("It shall be shown that this is White's turn")

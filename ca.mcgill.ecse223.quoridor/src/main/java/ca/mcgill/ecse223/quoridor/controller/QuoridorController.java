@@ -202,6 +202,9 @@ public class QuoridorController {
 	public static void makeMove(Player player) throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
+	public static boolean ifClockCount() throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
 
 	// ------------------------
 	// Khan
