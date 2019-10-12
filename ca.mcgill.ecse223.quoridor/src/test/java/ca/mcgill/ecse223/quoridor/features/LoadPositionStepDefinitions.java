@@ -31,7 +31,6 @@ public class LoadPositionStepDefinitions {
 
 	@When("I initiate to load a saved game {string}")
 	public void i_initiate_to_load_a_saved_game(String fileName) {
-		// Write code here that turns the phrase above into concrete actions
 		try {
 			QuoridorController.loadPosition(fileName);
 		} catch (java.lang.UnsupportedOperationException e) {
@@ -43,7 +42,6 @@ public class LoadPositionStepDefinitions {
 
 	@When("The position to load is valid")
 	public void the_position_to_load_is_valid() {
-		// Write code here that turns the phrase above into concrete actions
 		try {
 			assertTrue(QuoridorController
 					.validatePosition(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()));
@@ -55,14 +53,12 @@ public class LoadPositionStepDefinitions {
 
 	@Then("It shall be {string}'s turn")
 	public void it_shall_be_s_turn(String color) {
-		// Write code here that turns the phrase above into concrete actions
 		assertEquals(color, QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
 				.getUser().getName());
 	}
 
 	@Then("{string} shall be at {int}:{int}")
 	public void shall_be_at(String color, Integer row, Integer col) {
-		// Write code here that turns the phrase above into concrete actions
 		PlayerPosition playerPosition = TestUtil.getPlayerPositionByColor(color);
 		assertEquals(playerPosition.getTile().getColumn(), col, 0);
 		assertEquals(playerPosition.getTile().getRow(), row, 0);
@@ -70,7 +66,6 @@ public class LoadPositionStepDefinitions {
 
 	@Then("{string} shall have a vertical wall at {int}:{int}")
 	public void shall_have_a_vertical_wall_at(String color, Integer row, Integer col) {
-		// Write code here that turns the phrase above into concrete actions
 		Player player = TestUtil.getPlayerByColor(color);
 		List<Wall> walls = player.getWalls();
 		boolean wallExists = false;
@@ -83,12 +78,10 @@ public class LoadPositionStepDefinitions {
 			}
 		}
 		assertTrue(wallExists);
-		throw new cucumber.api.PendingException();
 	}
 
 	@Then("{string} shall have a horizontal wall at {int}:{int}")
 	public void shall_have_a_horizontal_wall_at(String color, Integer row, Integer col) {
-		// Write code here that turns the phrase above into concrete actions
 		Player player = TestUtil.getPlayerByColor(color);
 		List<Wall> walls = player.getWalls();
 		boolean wallExists = false;
@@ -111,7 +104,6 @@ public class LoadPositionStepDefinitions {
 
 	@When("The position to load is invalid")
 	public void the_position_to_load_is_invalid(GamePosition gamePosition) {
-		// Write code here that turns the phrase above into concrete actions
 		try {
 			assertFalse(QuoridorController.validatePosition(gamePosition));
 		} catch (java.lang.UnsupportedOperationException e) {
