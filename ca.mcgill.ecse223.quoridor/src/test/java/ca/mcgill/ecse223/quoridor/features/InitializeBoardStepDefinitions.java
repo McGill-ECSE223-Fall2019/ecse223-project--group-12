@@ -67,7 +67,8 @@ public class InitializeBoardStepDefinitions {
 
 	@Then("It shall be shown that this is White's turn")
 	public void it_shall_be_shown_that_this_is_White_s_turn() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		assertEquals(quoridor.getCurrentGame().getWhitePlayer(),
+				quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
+		
 	}
 }

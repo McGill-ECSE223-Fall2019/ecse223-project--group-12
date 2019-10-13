@@ -1,6 +1,6 @@
 package ca.mcgill.ecse223.quoridor.features;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -20,7 +20,12 @@ public class SwitchCurrentPlayerStepDefinition {
 	private Quoridor quoridor = QuoridorApplication.getQuoridor();
 	@Given("The clock of {string} is running")
 	public void the_clock_of_is_running(String color) {
-		throw new cucumber.api.PendingException();
+		try {
+			QuoridorController.startClock();
+		}catch (java.lang.UnsupportedOperationException e) {
+			// Skip test if method not implemented
+			throw new cucumber.api.PendingException();
+		}
 	}
 
 	@Given("The clock of {string} is stopped")
@@ -47,20 +52,22 @@ public class SwitchCurrentPlayerStepDefinition {
 
 	@Then("The user interface shall be showing it is {string} turn")
 	public void the_user_interface_shall_be_showing_it_is_turn(String color) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Player player = TestUtil.getPlayerByColor(color);
+		assertEquals(player,
+				quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
+		
 	}
 
 	@Then("The clock of {string} shall be stopped")
 	public void the_clock_of_shall_be_stopped(String color) {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		assertTrue(!QuoridorController.ifClockCount());
 	}
 
 	@Then("The clock of {string} shall be running")
 	public void the_clock_of_shall_be_running(String color) {
 		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		assertTrue(QuoridorController.ifClockCount());
 	}
 
 	@Then("The next player to move shall be {string}")
