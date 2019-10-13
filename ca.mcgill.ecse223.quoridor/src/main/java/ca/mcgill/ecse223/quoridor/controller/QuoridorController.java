@@ -171,7 +171,19 @@ public class QuoridorController {
 	/**
 	 * @author Francis Comeau Gherkin feature: SavePosition.feature
 	 */
-	public static void savePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
+	public static void savePosition(GamePosition gamePosition, String fullPath) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * Asks the user if they want to overwrite the already existing file
+	 * 
+	 * @author Francis Comeau
+	 * @param player
+	 * @return The user's answer to overwriting the file
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static boolean askOverwriteFile() {
 		throw new java.lang.UnsupportedOperationException();
 	}
 

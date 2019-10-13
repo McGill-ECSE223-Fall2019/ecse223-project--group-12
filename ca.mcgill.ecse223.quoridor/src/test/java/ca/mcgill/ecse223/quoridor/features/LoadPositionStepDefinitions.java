@@ -98,7 +98,10 @@ public class LoadPositionStepDefinitions {
 
 	@Then("Both players shall have {int} in their stacks")
 	public void both_players_shall_have_in_their_stacks(Integer remainingWalls) {
-		// Write code here that turns the phrase above into concrete actions
+		int whiteRemainingWalls = TestUtil.getPlayerByColor("white").numberOfWalls();
+		int blackRemainingWalls = TestUtil.getPlayerByColor("black").numberOfWalls();
+		assertEquals(whiteRemainingWalls, remainingWalls, 0);
+		assertEquals(blackRemainingWalls, remainingWalls, 0);
 		throw new cucumber.api.PendingException();
 	}
 
