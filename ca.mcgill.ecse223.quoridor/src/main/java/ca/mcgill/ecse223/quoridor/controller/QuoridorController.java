@@ -6,6 +6,7 @@ import java.util.List;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.User;
+import ca.mcgill.ecse223.quoridor.model.Wall;
 
 public class QuoridorController {
 
@@ -228,11 +229,34 @@ public class QuoridorController {
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	
-	public static boolean alertStockIsEmpty() throws java.lang.UnsupportedOperationException{ //full implementation of GUI needed for implementation
+	public static boolean alertStockIsEmpty() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation
 		throw new java.lang.UnsupportedOperationException();
 	}
 	
+	/**
+	 * 
+	 * @author Kaan Gure
+	 * Gherkin Feature: GrabWall.feature - get wall in hand that is represented in the GUI
+	 * @throws java.lang.UnsupportedOperationException
+	 */
 	
+	public static Wall getWallInHand() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * 
+	 * @author Kaan Gure
+	 * Gherkin Feature: GrabWall.feature - set wall in hand that will be represented in the GUI
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static Wall setWallInHand() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
 
 	// ------------------------
 	// Zechen
