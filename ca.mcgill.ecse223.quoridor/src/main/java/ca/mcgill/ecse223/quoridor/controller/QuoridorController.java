@@ -237,7 +237,31 @@ public class QuoridorController {
 	/**
 	 * 
 	 * @author Kaan Gure
-	 * Gherkin Feature: GrabWall.feature - get wall in hand that is represented in the GUI
+	 * Checks if there is wall in hand that is represented in the GUI
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static boolean hasWallInHand() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * 
+	 * @author Kaan Gure
+	 * Sets wall in hand that will be represented in the GUI
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static void setWallInHand(Wall wallInHand) throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * 
+	 * @author Kaan Gure
+	 * Gets wall in hand that will be represented in the GUI
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	
@@ -246,18 +270,44 @@ public class QuoridorController {
 		throw new java.lang.UnsupportedOperationException();
 	}
 	
+	
 	/**
 	 * 
 	 * @author Kaan Gure
-	 * Gherkin Feature: GrabWall.feature - set wall in hand that will be represented in the GUI
+	 * Clears wall in hand that will be represented in the GUI
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	
-	public static Wall setWallInHand() throws java.lang.UnsupportedOperationException{ 
+	public static void clearWallInHand() throws java.lang.UnsupportedOperationException{ 
 		//full implementation of GUI needed for implementation 
 		throw new java.lang.UnsupportedOperationException();
 	}
+	
+	/**
+	 * 
+	 * @author Kaan Gure
+	 * Gherkin Feature: DropWall.feature
+	 * @throws java.lang.UnsupportedOperationException
+	 */
 
+	public static void dropWall() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * 
+	 * @author Kaan Gure
+	 * Gherkin Feature: DropWall.feature - notify invalid move in GUI
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+
+	public static boolean notifyInvalidMove() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation
+		//returns true if player is notified of invalid move in GUI
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
 	// ------------------------
 	// Zechen
 	// ------------------------

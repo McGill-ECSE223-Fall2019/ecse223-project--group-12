@@ -75,6 +75,7 @@ public class GrabWallStepDefinitions {
 		try {
 			QuoridorController.grabWall();
 		} catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
 			throw new cucumber.api.PendingException();
 		}
 	}
@@ -98,12 +99,10 @@ public class GrabWallStepDefinitions {
 		boolean hasWallInStock = true;
 		if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
 
-			//QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(aWall);
 			hasWallInStock = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
 					.getWhiteWallsInStock().contains(wall);
 		} else if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
 
-			//QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().removeBlackWallsInStock(aWall);
 			hasWallInStock = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
 					.getBlackWallsInStock().contains(wall);
 
@@ -122,6 +121,7 @@ public class GrabWallStepDefinitions {
 			boolean hasAlerted = QuoridorController.alertStockIsEmpty();
 			assertEquals(true, hasAlerted);
 		} catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
 			throw new cucumber.api.PendingException();
 		}
 
@@ -129,7 +129,7 @@ public class GrabWallStepDefinitions {
 
 	@Then("I shall have no walls in my hand")
 	public void i_shall_have_no_walls_in_my_hand() {
-		assertEquals(null, QuoridorController.getWallInHand());
+		assertEquals(false, QuoridorController.hasWallInHand());
 		
 	}
 }
