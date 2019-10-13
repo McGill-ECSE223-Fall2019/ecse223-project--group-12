@@ -1,7 +1,13 @@
 package ca.mcgill.ecse223.quoridor.features;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Timestamp;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -24,7 +30,8 @@ public class SavePositionStepDefinitions {
 
 	@Given("No file {string} exists in the filesystem")
 	public void no_file_exists_in_the_filesystem(String fileName) {
-	    // Write code here that turns the phrase above into concrete actions
+		File file = new File(fileName); 
+        file.delete();
 	    throw new cucumber.api.PendingException();
 	}
 
@@ -42,13 +49,20 @@ public class SavePositionStepDefinitions {
 
 	@Then("A file with {string} shall be created in the filesystem")
 	public void a_file_with_shall_be_created_in_the_filesystem(String fileName) {
-	    // Write code here that turns the phrase above into concrete actions
+		boolean fileExists = new File(fileName).exists();
+		assertTrue(fileExists);
 	    throw new cucumber.api.PendingException();
 	}
 
 	@Given("File {string} exists in the filesystem")
 	public void file_exists_in_the_filesystem(String fileName) {
-	    // Write code here that turns the phrase above into concrete actions
+		File file = new File(fileName);
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    throw new cucumber.api.PendingException();
 	}
 
@@ -64,7 +78,10 @@ public class SavePositionStepDefinitions {
 
 	@Then("File with {string} shall be updated in the filesystem")
 	public void file_with_shall_be_updated_in_the_filesystem(String fileName) {
-	    // Write code here that turns the phrase above into concrete actions
+		File file = new File(fileName);
+	    Timestamp lastModified = new Timestamp(file.lastModified());
+	    Timestamp now = new Timestamp(System.currentTimeMillis());
+	    assertEquals(lastModified.compareTo(now), 0, 0);
 	    throw new cucumber.api.PendingException();
 	}
 
@@ -80,7 +97,10 @@ public class SavePositionStepDefinitions {
 
 	@Then("File {string} shall not be changed in the filesystem")
 	public void file_shall_not_be_changed_in_the_filesystem(String fileName) {
-	    //Do not overwrite so do nothing
+	    File file = new File(fileName);
+	    Timestamp now = new Timestamp(System.currentTimeMillis());
+	    Timestamp lastModified = new Timestamp(file.lastModified());
+	    assertNotEquals(lastModified.compareTo(now), 0, 0);
 	    throw new cucumber.api.PendingException();
 	}
 }
