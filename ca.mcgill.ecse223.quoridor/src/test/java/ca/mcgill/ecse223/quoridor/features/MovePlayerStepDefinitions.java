@@ -65,17 +65,20 @@ public class MovePlayerStepDefinitions {
 	@Then("Player's new position shall be {int}:{int}")
 	public void player_s_new_position_shall_be(Integer row, Integer col) {
 	    // Write code here that turns the phrase above into concrete actions
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition position = game.getCurrentPosition();
-		throw new cucumber.api.PendingException();
+		boolean existPlayer = false;
+		PlayerPosition playerPosition = TestUtil.getPlayerPositionByColor
+				(TestUtil.getCurrentPlayer().getUser().getName());		
+		if(col == playerPosition.getTile().getColumn() && playerPosition.getTile().getRow() == row)
+		{
+		existPlayer = true;
+		}
+		assertTrue (existPlayer);
 	}
 
 	@Then("The next player to move shall become {string}")
 	public void the_next_player_to_move_shall_become(String colorOfNextPlayer) {
 	    // Write code here that turns the phrase above into concrete actions
-		assertEquals(colorOfNextPlayer,QuoridorApplication.
-				getQuoridor().getCurrentGame().getCurrentPosition().
-				getPlayerToMove().getUser().getName());
+		assertEquals(colorOfNextPlayer,TestUtil.getCurrentPlayer().getUser().getName());
 	}
 	
 	@Given("There is a {string} wall {string} from the player")
