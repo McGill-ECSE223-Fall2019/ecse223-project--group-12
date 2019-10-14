@@ -116,7 +116,7 @@ public class GrabWallStepDefinitions {
 	}
 
 	@Then("I shall be notified that I have no more walls")
-	public void i_shall_be_notified_that_I_have_no_more_walls() {
+	public void i_shall_be_notified_that_I_have_no_more_walls() { //GUI related
 		try {
 			boolean hasAlerted = QuoridorController.alertStockIsEmpty();
 			assertEquals(true, hasAlerted);
@@ -128,8 +128,12 @@ public class GrabWallStepDefinitions {
 	}
 
 	@Then("I shall have no walls in my hand")
-	public void i_shall_have_no_walls_in_my_hand() {
+	public void i_shall_have_no_walls_in_my_hand() { //GUI related
+		try {
 		assertEquals(false, QuoridorController.hasWallInHand());
-		
+		}catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
+			throw new cucumber.api.PendingException();
+		}
 	}
 }

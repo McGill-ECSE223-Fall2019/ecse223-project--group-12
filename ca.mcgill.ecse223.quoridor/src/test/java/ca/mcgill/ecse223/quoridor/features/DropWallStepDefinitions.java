@@ -103,9 +103,14 @@ public class DropWallStepDefinitions {
 	 */
 
 	@And("I do not have a wall in my hand")
-	public void i_do_not_have_a_wall_in_my_hand() {
+	public void i_do_not_have_a_wall_in_my_hand() { //GUI related feature
+		try {
 	if(QuoridorController.hasWallInHand() == true) {
 		QuoridorController.clearWallInHand();
+	}
+	}catch (java.lang.UnsupportedOperationException e) {
+		//skips test if method is not yet implemented
+		throw new cucumber.api.PendingException();
 	}
 	}
 	
@@ -121,10 +126,15 @@ public class DropWallStepDefinitions {
 			//then create a new wall...
 			wall = new Wall(21, currentPlayer);
 		}
-		if(QuoridorController.hasWallInHand() == false) {
+		try {
+		if(QuoridorController.hasWallInHand() == false) { //GUI related
 			QuoridorController.setWallInHand(wall);
 		}
 		else return;
+		}catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
+			throw new cucumber.api.PendingException();
+		}
 	}
 	
 	/**
@@ -142,26 +152,20 @@ public class DropWallStepDefinitions {
 		Board board = QuoridorApplication.getQuoridor().getBoard();
 		Tile tile = new Tile(row, col, board);
 		Game game =  QuoridorApplication.getQuoridor().getCurrentGame();
-		
-		Direction direction;
-		switch (dir) {
-		case "horizontal":
-			direction = Direction.Horizontal;
-			break;
-		case "vertical":
-			direction = Direction.Vertical;
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported wall direction was provided: " + dir);
-		}
+		Direction direction = TestUtil.getDirection(dir);
 		
 		WallMove wallMoveCandidate = new WallMove(2, 2, player, tile, game, direction, wall);
 		GamePosition casePosition  = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		casePosition.getGame().setWallMoveCandidate(wallMoveCandidate);
+		try {
 		if(QuoridorController.validatePosition(casePosition) == false) {
 			throw new IllegalStateException("Wall move candidate at current position is invalid, position has to be valid for test to commence");
 		}
+			}catch (java.lang.UnsupportedOperationException e) {
+				//skips test if method is not yet implemented
+				throw new cucumber.api.PendingException();
 			}
+	}
 	
 	/**
 	 * @author Kaan Gure
@@ -186,24 +190,31 @@ public class DropWallStepDefinitions {
 	public void a_wall_move_shall_be_registered_with_at_position(String dir, Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
 		Player player = TestUtil.getCurrentPlayer();
-		Board board = QuoridorApplication.getQuoridor().getBoard();
-		Tile tile = new Tile(row, col, board);
-		Game game =  QuoridorApplication.getQuoridor().getCurrentGame();
-		Direction direction;
-		switch (dir) {
-		case "horizontal":
-			direction = Direction.Horizontal;
-			break;
-		case "vertical":
-			direction = Direction.Vertical;
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported wall direction was provided: " + dir);}
-		
-		Wall wallInHand = QuoridorController.getWallInHand();
-	WallMove wallMoveSet = new WallMove(2, 2, player, tile, game, direction, wallInHand);
-	boolean isSet = wallMoveSet.setWallPlaced(wallInHand);
-	assertEquals(true, isSet);
+		Direction direction = TestUtil.getDirection(dir);
+		List<Wall> allWalls = null;
+		boolean isSet = false;
+		if (player.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+
+			allWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard();
+
+		} else if (player.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+			
+			allWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackWallsOnBoard();
+
+		}
+		for(int i=0; i< allWalls.size(); i++) {
+			int selectedRow = allWalls.get(i).getMove().getTargetTile().getRow();
+			int selectedColumn = allWalls.get(i).getMove().getTargetTile().getColumn();
+			Direction selectedDirection = allWalls.get(i).getMove().getWallDirection();
+			
+			if(selectedDirection == direction && selectedRow == row && selectedColumn == col) {
+				isSet = true;
+			}
+			else {
+				isSet = false;
+			}
+		}
+		assertEquals(true, isSet);
 	}
 	
 	/**
@@ -212,7 +223,12 @@ public class DropWallStepDefinitions {
 
 	@Then("I shall not have a wall in my hand")
 	public void i_shall_not_have_a_wall_in_my_hand() {
-		assertEquals(false, QuoridorController.hasWallInHand());
+		try {
+		assertEquals(false, QuoridorController.hasWallInHand()); //GUI related
+	}catch (java.lang.UnsupportedOperationException e) {
+		//skips test if method is not yet implemented
+		throw new cucumber.api.PendingException();
+	}
 	}
 	
 	/**
@@ -259,24 +275,18 @@ public class DropWallStepDefinitions {
 		Board board = QuoridorApplication.getQuoridor().getBoard();
 		Tile tile = new Tile(row, col, board);
 		Game game =  QuoridorApplication.getQuoridor().getCurrentGame();
-		
-		Direction direction;
-		switch (dir) {
-		case "horizontal":
-			direction = Direction.Horizontal;
-			break;
-		case "vertical":
-			direction = Direction.Vertical;
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported wall direction was provided: " + dir);
-		}
+		Direction direction = TestUtil.getDirection(dir);
 		
 		WallMove wallMoveCandidate = new WallMove(2, 2, player, tile, game, direction, wall);
 		GamePosition casePosition  = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		casePosition.getGame().setWallMoveCandidate(wallMoveCandidate);
+		try {
 		if(QuoridorController.validatePosition(casePosition) == true) {
 			throw new IllegalStateException("Wall move candidate at current position is valid, position has to be invalid for test to commence");
+		}
+		}catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
+			throw new cucumber.api.PendingException();
 		}
 	}
 	
@@ -284,11 +294,16 @@ public class DropWallStepDefinitions {
 	 * @author Kaan Gure
 	 */
 
-	@Then("I shall be notified that my wall move is invalid")
+	@Then("I shall be notified that my wall move is invalid") //GUI related
 	public void i_shall_be_notified_that_my_wall_move_is_invalid() {
 		boolean hasNotified;
+		try {
 		hasNotified = QuoridorController.notifyInvalidMove();
 		assertEquals(true, hasNotified);
+		}catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
+			throw new cucumber.api.PendingException();
+		}
 	}
 	
 	/**
@@ -296,10 +311,15 @@ public class DropWallStepDefinitions {
 	 */
 
 	@Then("I shall have a wall in my hand over the board")
-	public void i_shall_have_a_wall_in_my_hand_over_the_board() {
+	public void i_shall_have_a_wall_in_my_hand_over_the_board() { //GUI related
 		boolean hasWallInHand;
+		try {
 		hasWallInHand = QuoridorController.hasWallInHand();
 		assertEquals(true, hasWallInHand);
+		}catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
+			throw new cucumber.api.PendingException();
+		}
 	}
 	
 	/**
@@ -328,24 +348,31 @@ public class DropWallStepDefinitions {
 	@Then("No wall move shall be registered with {string} at position \\({int}, {int})")
 	public void no_wall_move_shall_be_registered_with_at_position(String dir, Integer row, Integer col) {
 		Player player = TestUtil.getCurrentPlayer();
-		Board board = QuoridorApplication.getQuoridor().getBoard();
-		Tile tile = new Tile(row, col, board);
-		Game game =  QuoridorApplication.getQuoridor().getCurrentGame();
-		Direction direction;
-		switch (dir) {
-		case "horizontal":
-			direction = Direction.Horizontal;
-			break;
-		case "vertical":
-			direction = Direction.Vertical;
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported wall direction was provided: " + dir);}
-		
-		Wall wallInHand = QuoridorController.getWallInHand();
-	WallMove wallMoveSet = new WallMove(2, 2, player, tile, game, direction, wallInHand);
-	boolean isSet = wallMoveSet.setWallPlaced(wallInHand);
-	assertEquals(false, isSet);
+		Direction direction = TestUtil.getDirection(dir);
+		List<Wall> allWalls = null;
+		boolean isSet = false;
+		if (player.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+
+			allWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhiteWallsOnBoard();
+
+		} else if (player.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+			
+			allWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackWallsOnBoard();
+
+		}
+		for(int i=0; i< allWalls.size(); i++) {
+			int selectedRow = allWalls.get(i).getMove().getTargetTile().getRow();
+			int selectedColumn = allWalls.get(i).getMove().getTargetTile().getColumn();
+			Direction selectedDirection = allWalls.get(i).getMove().getWallDirection();
+			
+			if(selectedDirection == direction && selectedRow == row && selectedColumn == col) {
+				isSet = true;
+			}
+			else {
+				isSet = false;
+			}
+		}
+		assertEquals(false, isSet);
 	}
 
 }

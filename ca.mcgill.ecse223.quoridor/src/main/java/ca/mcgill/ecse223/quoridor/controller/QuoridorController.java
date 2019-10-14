@@ -212,7 +212,7 @@ public class QuoridorController {
 	// ------------------------
 
 	/**
-	 * 
+	 * Grabs a wall from the current players stock
 	 * @author Kaan Gure
 	 * Gherkin Feature: GrabWall.feature
 	 * @throws java.lang.UnsupportedOperationException
@@ -223,68 +223,7 @@ public class QuoridorController {
 	}
 	
 	/**
-	 * 
-	 * @author Kaan Gure
-	 * Gherkin Feature: GrabWall.feature - alert if player has no more walls in stock
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static boolean alertStockIsEmpty() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	/**
-	 * 
-	 * @author Kaan Gure
-	 * Checks if there is wall in hand that is represented in the GUI
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static boolean hasWallInHand() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	/**
-	 * 
-	 * @author Kaan Gure
-	 * Sets wall in hand that will be represented in the GUI
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static void setWallInHand(Wall wallInHand) throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	/**
-	 * 
-	 * @author Kaan Gure
-	 * Gets wall in hand that will be represented in the GUI
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static Wall getWallInHand() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	
-	/**
-	 * 
-	 * @author Kaan Gure
-	 * Clears wall in hand that will be represented in the GUI
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static void clearWallInHand() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	/**
-	 * 
+	 * Drops the wall from the current player's hand to the board
 	 * @author Kaan Gure
 	 * Gherkin Feature: DropWall.feature
 	 * @throws java.lang.UnsupportedOperationException
@@ -295,10 +234,100 @@ public class QuoridorController {
 		throw new java.lang.UnsupportedOperationException();
 	}
 	
-	/**
+	/*
 	 * 
+	 * Query Methods
+	 * 
+	 */
+	
+	/**
+	 * Query method: Gets the number of walls in stock of the current player so that it can be displayed in the GUI
 	 * @author Kaan Gure
-	 * Gherkin Feature: DropWall.feature - notify invalid move in GUI
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static int getRemainingWallsInStock() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * Query method: Checks if current wall placement move is valid so that the player can be notified in the GUI via another method call
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static boolean isCurrentWallMoveValid() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/*
+	 * 
+	 * Future GUI Related Methods
+	 * 
+	 */
+	
+	/**
+	 * Future GUI related method: Alert if player has no more walls in stock
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static boolean alertStockIsEmpty() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * Future GUI related method: Checks if there is wall in hand that is represented in the GUI
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static boolean hasWallInHand() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * Future GUI related method: Sets wall in hand that will be represented in the GUI
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static void setWallInHand(Wall wallInHand) throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * Future GUI related method: Gets wall in hand that will be represented in the GUI
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static Wall getWallInHand() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	
+	/**
+	 * Future GUI related method: Clears wall in hand that will be represented in the GUI
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	
+	public static void clearWallInHand() throws java.lang.UnsupportedOperationException{ 
+		//full implementation of GUI needed for implementation 
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	
+	/**
+	 * Future GUI related method: notify invalid move in GUI
+	 * @author Kaan Gure
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 
