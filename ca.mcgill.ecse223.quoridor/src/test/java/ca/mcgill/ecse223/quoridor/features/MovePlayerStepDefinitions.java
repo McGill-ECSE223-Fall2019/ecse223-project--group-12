@@ -81,10 +81,6 @@ public class MovePlayerStepDefinitions {
 
 	@Then("Player's new position shall be {int}:{int}")
 	public void player_s_new_position_shall_be(Integer row, Integer col) {
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition position = game.getCurrentPosition();
-
-
 		boolean existPlayer = false;
 		PlayerPosition playerPosition = TestUtil
 				.getPlayerPositionByColor(TestUtil.getCurrentPlayer().getUser().getName());
@@ -97,19 +93,22 @@ public class MovePlayerStepDefinitions {
 
 	@Then("The next player to move shall become {string}")
 	public void the_next_player_to_move_shall_become(String colorOfNextPlayer) {
-
 		// Write code here that turns the phrase above into concrete actions
+		assertEquals(colorOfNextPlayer,
+				QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName());
 		throw new cucumber.api.PendingException();
-
-		// Write code here that turns the phrase above into concrete actions
-		// assertEquals(colorOfNextPlayer,QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName());
-
-		// Write code here that turns the phrase above into concrete actions
 	}
 
 	@Given("There is a {string} wall {string} from the player")
 	public void there_is_a_wall_from_the_player(String dir, String side) {
-
+		//Here we add the wall to blackplayer
+		PlayerPosition playerPosition = TestUtil
+				.getPlayerPositionByColor(TestUtil.getCurrentPlayer().getUser().getName());
+		Tile tile = playerPosition.getTile();
+		
+		
+		
+		
 		throw new cucumber.api.PendingException();
 	}
 
