@@ -8,6 +8,7 @@ import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
+import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Tile;
@@ -29,6 +30,7 @@ import io.cucumber.java.en.When;
  *
  */
 public class MoveWallStepDefinitions {
+
 	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
 	public void a_wall_move_candidate_exists_with_at_position(String dir, Integer row, Integer col) {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
@@ -151,7 +153,9 @@ public class MoveWallStepDefinitions {
 
 	@Then("I shall be notified that my move is illegal")
 	public void i_shall_be_notified_that_my_move_is_illegal() {
-		// GUI Related Step
+		GamePosition currentPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		assertTrue (QuoridorController.validatePosition(currentPosition));
 		throw new cucumber.api.PendingException();
+	
 	}
 }

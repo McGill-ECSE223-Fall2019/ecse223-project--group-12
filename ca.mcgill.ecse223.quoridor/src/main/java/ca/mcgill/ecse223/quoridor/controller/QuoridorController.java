@@ -162,16 +162,37 @@ public class QuoridorController {
 	// ------------------------
 
 	/**
+	 * Loads a previously saved game position into the current game position
+	 * 
 	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
+	 * @param fullPath of the saved file
+	 * @return True if load was successful, false is unable to load
+	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void loadPosition(String fullPath) throws java.lang.UnsupportedOperationException {
+	public static boolean loadPosition(String fullPath) throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
 
 	/**
+	 * Saves the current game position into a file
+	 * 
 	 * @author Francis Comeau Gherkin feature: SavePosition.feature
+	 * @param gamePosiion to save and fullPath of where to save it
+	 * @return True if load was successful, false is unable to load
+	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void savePosition(GamePosition gamePosition) throws java.lang.UnsupportedOperationException {
+	public static void savePosition(GamePosition gamePosition, String fullPath) throws java.lang.UnsupportedOperationException {
+		throw new java.lang.UnsupportedOperationException();
+	}
+	
+	/**
+	 * Asks the user if they want to overwrite the already existing file
+	 * 
+	 * @author Francis Comeau
+	 * @return The user's answer to overwriting the file
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+	public static boolean askOverwriteFile() {
 		throw new java.lang.UnsupportedOperationException();
 	}
 

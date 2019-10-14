@@ -28,11 +28,13 @@ import io.cucumber.java.en.When;
  *
  */
 public class LoadPositionStepDefinitions {
+	
+	private Boolean isValid;
 
 	@When("I initiate to load a saved game {string}")
 	public void i_initiate_to_load_a_saved_game(String fileName) {
 		try {
-			QuoridorController.loadPosition(fileName);
+			isValid = QuoridorController.loadPosition(fileName);
 		} catch (java.lang.UnsupportedOperationException e) {
 			// Skip test if method not implemented
 			throw new cucumber.api.PendingException();
@@ -42,13 +44,8 @@ public class LoadPositionStepDefinitions {
 
 	@When("The position to load is valid")
 	public void the_position_to_load_is_valid() {
-		try {
-			assertTrue(QuoridorController
-					.validatePosition(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()));
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
-		}
+		assertTrue(isValid);
+		throw new cucumber.api.PendingException();
 	}
 
 	@Then("It shall be {string}'s turn")
@@ -98,23 +95,22 @@ public class LoadPositionStepDefinitions {
 
 	@Then("Both players shall have {int} in their stacks")
 	public void both_players_shall_have_in_their_stacks(Integer remainingWalls) {
-		// Write code here that turns the phrase above into concrete actions
+		int whiteRemainingWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size();
+		int blackRemainingWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackWallsInStock().size();
+		assertEquals(whiteRemainingWalls, remainingWalls, 0);
+		assertEquals(blackRemainingWalls, remainingWalls, 0);
 		throw new cucumber.api.PendingException();
 	}
 
 	@When("The position to load is invalid")
 	public void the_position_to_load_is_invalid(GamePosition gamePosition) {
-		try {
-			assertFalse(QuoridorController.validatePosition(gamePosition));
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
-		}
+		assertFalse(isValid);
+		throw new cucumber.api.PendingException();
 	}
 
 	@Then("The load shall return an error")
 	public void the_load_shall_return_an_error() {
-		// Write code here that turns the phrase above into concrete actions
+		assertFalse(isValid);
 		throw new cucumber.api.PendingException();
 	}
 }
