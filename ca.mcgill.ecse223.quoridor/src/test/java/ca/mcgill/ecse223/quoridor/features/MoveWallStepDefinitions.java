@@ -4,13 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
-import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
@@ -83,16 +84,19 @@ public class MoveWallStepDefinitions {
 	@Then("The wall shall be moved over the board to position \\({int}, {int})")
 	public void the_wall_shall_be_moved_over_the_board_to_position(Integer row, Integer col) {
 		// Write code here that turns the phrase above into concrete actions
-		boolean existWall = false;
+		boolean wallExists = false;
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		PlayerPosition playerPosition = TestUtil.getPlayerPositionByColor
-				(game.getCurrentPosition().getPlayerToMove().getUser().getName());
-		if(col == playerPosition.getTile().getColumn() && playerPosition.getTile().getRow() == row)
+		List<Wall> walls = game.getCurrentPosition().getPlayerToMove().getWalls();
+		for (int i = 0; i < walls.size(); i++) {
+			if (walls.get(i).getMove().getTargetTile().getColumn() == col
+					&& walls.get(i).getMove().getTargetTile().getRow() == row
+				) 
 			{
-			existWall = true;
-			};
-			assertTrue(existWall);
-
+				wallExists = true;
+				break;
+			}
+		}
+		assertTrue(wallExists);
 		throw new cucumber.api.PendingException();
 	}
 
