@@ -27,7 +27,6 @@ import io.cucumber.java.en.When;
  *
  */
 public class GrabWallStepDefinitions {
-	private Wall aWall;
 
 	// ------------Helper Methods----------------//
 
@@ -76,6 +75,7 @@ public class GrabWallStepDefinitions {
 		try {
 			QuoridorController.grabWall();
 		} catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
 			throw new cucumber.api.PendingException();
 		}
 	}
@@ -94,19 +94,17 @@ public class GrabWallStepDefinitions {
 
 	@Then("The wall in my hand shall disappear from my stock")
 	public void the_wall_in_my_hand_shall_disappear_from_my_stock() {
-		// Write code here that turns the phrase above into concrete actions
+		Wall wall = TestUtil.getAWallInStockForCurrenPlayer();
 		Player currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
 		boolean hasWallInStock = true;
 		if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
 
-			QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(aWall);
 			hasWallInStock = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
-					.getWhiteWallsInStock().contains(aWall);
+					.getWhiteWallsInStock().contains(wall);
 		} else if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
 
-			QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().removeBlackWallsInStock(aWall);
 			hasWallInStock = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
-					.getBlackWallsInStock().contains(aWall);
+					.getBlackWallsInStock().contains(wall);
 
 		}
 		assertEquals(false, hasWallInStock);
@@ -118,19 +116,24 @@ public class GrabWallStepDefinitions {
 	}
 
 	@Then("I shall be notified that I have no more walls")
-	public void i_shall_be_notified_that_I_have_no_more_walls() {
+	public void i_shall_be_notified_that_I_have_no_more_walls() { //GUI related
 		try {
 			boolean hasAlerted = QuoridorController.alertStockIsEmpty();
 			assertEquals(true, hasAlerted);
 		} catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
 			throw new cucumber.api.PendingException();
 		}
 
 	}
 
 	@Then("I shall have no walls in my hand")
-	public void i_shall_have_no_walls_in_my_hand() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+	public void i_shall_have_no_walls_in_my_hand() { //GUI related
+		try {
+		assertEquals(false, QuoridorController.hasWallInHand());
+		}catch (java.lang.UnsupportedOperationException e) {
+			//skips test if method is not yet implemented
+			throw new cucumber.api.PendingException();
+		}
 	}
 }
