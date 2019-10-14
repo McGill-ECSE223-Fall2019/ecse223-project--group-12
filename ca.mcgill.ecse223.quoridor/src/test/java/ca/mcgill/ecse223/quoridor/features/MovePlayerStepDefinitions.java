@@ -6,6 +6,9 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Iterator;
+import java.util.List;
+
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -51,14 +54,57 @@ public class MovePlayerStepDefinitions {
 
 	@Given("There are no {string} walls {string} from the player")
 	public void there_are_no_walls_from_the_player(String dir, String side) {
-		Player player = TestUtil.getCurrentPlayer();
-		Tile tile;
-		if (player.hasGameAsWhite()) {
-			tile = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile();
-		} else if (player.hasGameAsBlack()) {
-			tile = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile();
+		PlayerPosition playerPosition = null;
+		if (TestUtil.getCurrentPlayer().hasGameAsWhite()) {
+			playerPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
+		} else if (TestUtil.getCurrentPlayer().hasGameAsBlack()) {
+			playerPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
 		}
-		// tile.
+
+		Tile playerTile = playerPosition.getTile();
+		int playerCol = playerTile.getColumn();
+		int playerRow = playerTile.getColumn();
+		// Get a list of all walls on the board
+		List<Wall> allWallsOnBoard = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+				.getBlackWallsOnBoard();
+		List<Wall> whiteWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+				.getWhiteWallsOnBoard();
+		allWallsOnBoard.addAll(whiteWalls);
+
+		Iterator<Wall> itr = allWallsOnBoard.iterator();
+		Direction direction = TestUtil.getDirection(dir);
+		// check all the walls on board to see if we have issue
+		while (itr.hasNext()) {
+			Wall wall = itr.next();
+			if (wall.getMove().getWallDirection() == direction) {
+				int wallCol = wall.getMove().getTargetTile().getColumn();
+				int wallRow = wall.getMove().getTargetTile().getRow();
+				switch (side) {
+				case "up":
+					if (direction == Direction.Vertical) {
+						//TODO implement logic to see if move is illegal
+					}
+					break;
+				case "down":
+					if (direction == Direction.Vertical) {
+						//TODO implement logic to see if move is illegal
+					}
+					break;
+				case "left":
+					if (direction == Direction.Horizontal) {
+						//TODO implement logic to see if move is illegal
+					}
+					break;
+				case "right":
+					if (direction == Direction.Horizontal) {
+						//TODO implement logic to see if move is illegal
+					}
+					break;
+				default:
+					throw new java.lang.IllegalArgumentException("Direction not valid: " + dir);
+				}
+			}
+		}
 	}
 
 	@Given("The opponent is not {string} from the player")
@@ -83,7 +129,6 @@ public class MovePlayerStepDefinitions {
 	public void player_s_new_position_shall_be(Integer row, Integer col) {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition position = game.getCurrentPosition();
-
 
 		boolean existPlayer = false;
 		PlayerPosition playerPosition = TestUtil
