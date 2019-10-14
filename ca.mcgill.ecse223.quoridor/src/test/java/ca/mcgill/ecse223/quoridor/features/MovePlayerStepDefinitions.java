@@ -5,7 +5,6 @@ import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ca.mcgill.ecse223.quoridor.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.Direction;
@@ -59,7 +58,7 @@ public class MovePlayerStepDefinitions {
 		} else if (player.hasGameAsBlack()) {
 			tile = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile();
 		}
-		tile.
+		// tile.
 	}
 
 	@Given("The opponent is not {string} from the player")
@@ -82,13 +81,18 @@ public class MovePlayerStepDefinitions {
 
 	@Then("Player's new position shall be {int}:{int}")
 	public void player_s_new_position_shall_be(Integer row, Integer col) {
-
-		// Write code here that turns the phrase above into concrete actions
-
-		// Write code here that turns the phrase above into concrete actions
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition position = game.getCurrentPosition();
-		throw new cucumber.api.PendingException();
+
+
+		boolean existPlayer = false;
+		PlayerPosition playerPosition = TestUtil
+				.getPlayerPositionByColor(TestUtil.getCurrentPlayer().getUser().getName());
+		if (col == playerPosition.getTile().getColumn() && playerPosition.getTile().getRow() == row) {
+			existPlayer = true;
+		}
+		assertTrue(existPlayer);
+
 	}
 
 	@Then("The next player to move shall become {string}")
@@ -99,6 +103,8 @@ public class MovePlayerStepDefinitions {
 
 		// Write code here that turns the phrase above into concrete actions
 		// assertEquals(colorOfNextPlayer,QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName());
+
+		// Write code here that turns the phrase above into concrete actions
 	}
 
 	@Given("There is a {string} wall {string} from the player")
