@@ -259,7 +259,10 @@ public class TestUtil {
 		}
 		return currentPlayer;
 	}
-	
+	/**
+	 * @author Remi Carriere
+	 * @return
+	 */
 	public static Wall getAWallInStockForCurrenPlayer() {
 		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Player currentPlayer = getCurrentPlayer();
