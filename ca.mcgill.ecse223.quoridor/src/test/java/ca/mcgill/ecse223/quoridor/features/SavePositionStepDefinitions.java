@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-import ca.mcgill.ecse223.quoridor.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import io.cucumber.java.en.Given;
