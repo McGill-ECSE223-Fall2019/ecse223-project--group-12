@@ -11,14 +11,24 @@ import javax.swing.SwingConstants;
 
 public class MenuPage extends JFrame {
 	private static final long serialVersionUID = -4426310869335015542L;
+	
+	// elements for new user
 	private JTextField userNameTextField;
 	private JLabel userNameLabel;
 	private JButton addUserButton;
+	
+	// elements for start new game
 	private JComboBox<String> player1ToggleList;
 	private JLabel player1ToggleLable;
+	
 	private JComboBox<String> player2ToggleList;
 	private JLabel player2ToggleLable;
 	
+	private JLabel setThinkingTimeLable;
+	private JTextField thinkingTimeTextField;
+	private JButton stertGameButton;
+	
+	// Sizing
 	private final int MIN_WIDTH = 100;
 	private final int PREF_WIDTH = 100;
 	private final int MAX_WIDTH = 200;
@@ -28,7 +38,6 @@ public class MenuPage extends JFrame {
 	private final int MAX_HEIGHT = 30;
 	
 	
-
 	public MenuPage() {
 		initComponents();
 		refreshData();
@@ -47,6 +56,7 @@ public class MenuPage extends JFrame {
 		userNameLabel.setText("New User Name:");
 		addUserButton = new JButton();
 		addUserButton.setText("Add Player");
+		
 		// elements for start new game
 		player1ToggleList = new JComboBox<String>(new String[0]);
 		player1ToggleLable = new JLabel();
@@ -55,6 +65,13 @@ public class MenuPage extends JFrame {
 		player2ToggleList = new JComboBox<String>(new String[0]);
 		player2ToggleLable = new JLabel();
 		player2ToggleLable.setText("Select Player2:");
+		
+		setThinkingTimeLable = new JLabel();
+		setThinkingTimeLable.setText("Total Thinking TIme per player");
+		thinkingTimeTextField = new JTextField();
+		
+		stertGameButton = new JButton();
+		stertGameButton.setText("Start Game");
 		
 		// horizontal line elements
 		JSeparator horizontalLine = new JSeparator();
@@ -71,12 +88,16 @@ public class MenuPage extends JFrame {
 						.addComponent(userNameTextField, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
 						.addComponent(player1ToggleLable)
 						.addComponent(player1ToggleList, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
-						
+						.addComponent(stertGameButton)
 				)
 				.addGroup(layout.createParallelGroup() // Column 2
 						.addComponent(addUserButton)
 						.addComponent(player2ToggleLable)
 						.addComponent(player2ToggleList, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
+				)
+				.addGroup(layout.createParallelGroup() // Column 3
+						.addComponent(setThinkingTimeLable)
+						.addComponent(thinkingTimeTextField, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
 				)
 		);
 
@@ -92,10 +113,16 @@ public class MenuPage extends JFrame {
 				.addGroup(layout.createParallelGroup() // Row 3
 						.addComponent(player1ToggleLable)
 						.addComponent(player2ToggleLable)
+						.addComponent(setThinkingTimeLable)
 				)
 				.addGroup(layout.createParallelGroup() // Row 4
 						.addComponent(player1ToggleList, MIN_HEIGHT, PREF_HEIGHT, MAX_HEIGHT)
 						.addComponent(player2ToggleList, MIN_HEIGHT, PREF_HEIGHT, MAX_HEIGHT)
+						.addComponent(thinkingTimeTextField, MIN_HEIGHT, PREF_HEIGHT, MAX_HEIGHT)
+						
+				)
+				.addGroup(layout.createParallelGroup() // Row 5
+						.addComponent(stertGameButton)
 				)
 		);
 		pack();
