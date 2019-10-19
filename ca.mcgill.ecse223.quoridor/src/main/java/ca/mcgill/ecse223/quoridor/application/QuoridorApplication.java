@@ -1,6 +1,6 @@
 package ca.mcgill.ecse223.quoridor.application;
 
-import ca.mcgill.ecse223.quoridor.view.MenuPage;
+import ca.mcgill.ecse223.quoridor.view.QuoridorFrame;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 
 public class QuoridorApplication {
@@ -11,7 +11,8 @@ public class QuoridorApplication {
 		// start UI
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MenuPage().setVisible(true);
+                new QuoridorFrame().setVisible(true);
+                
             }
         });
 	}
@@ -22,5 +23,4 @@ public class QuoridorApplication {
 		}
  		return quoridor;
 	}
-
 }

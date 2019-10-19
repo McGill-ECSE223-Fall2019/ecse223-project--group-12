@@ -1,15 +1,25 @@
 package ca.mcgill.ecse223.quoridor.view;
 
+import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.text.ParseException;
+import java.util.HashMap;
+
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.text.MaskFormatter;
 
-public class MenuPage extends JFrame {
+import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
+import ca.mcgill.ecse223.quoridor.to.UserTO;
+
+public class MenuPanel extends JPanel {
 	private static final long serialVersionUID = -4426310869335015542L;
 	
 	// elements for new user
@@ -18,39 +28,39 @@ public class MenuPage extends JFrame {
 	private JButton addUserButton;
 	
 	// elements for start new game
+	// Player 1
 	private JComboBox<String> player1ToggleList;
 	private JLabel player1ToggleLable;
-	
+	// Player 2
 	private JComboBox<String> player2ToggleList;
 	private JLabel player2ToggleLable;
-	
+	// Thinking Time
 	private JLabel setThinkingTimeLable;
-	private JTextField thinkingTimeTextField;
+	private JFormattedTextField thinkingTimeTextField;
 	private JButton stertGameButton;
+	
+	// Data elements
+	private HashMap<Integer, UserTO> users;
 	
 	// Sizing
 	private final int MIN_WIDTH = 100;
 	private final int PREF_WIDTH = 100;
 	private final int MAX_WIDTH = 200;
-	
 	private final int MIN_HEIGHT = 30;
 	private final int PREF_HEIGHT = 30;
 	private final int MAX_HEIGHT = 30;
 	
 	
-	public MenuPage() {
+	public MenuPanel() {
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		setTitle("Quoridor Menu");
 		initComponents();
 		refreshData();
 	}
 
-	private void refreshData() {
-		// TODO Auto-generated method stub
-
-	}
-
 	private void initComponents() {
 
-		// elements for new user
+		// Elements for new user
 		userNameTextField = new JTextField();
 		userNameLabel = new JLabel();
 		userNameLabel.setText("New User Name:");
@@ -58,30 +68,55 @@ public class MenuPage extends JFrame {
 		addUserButton.setText("Add Player");
 		
 		// elements for start new game
+		// Player 1
 		player1ToggleList = new JComboBox<String>(new String[0]);
 		player1ToggleLable = new JLabel();
 		player1ToggleLable.setText("Select Player1:");
-		
+		// Player 2
 		player2ToggleList = new JComboBox<String>(new String[0]);
 		player2ToggleLable = new JLabel();
 		player2ToggleLable.setText("Select Player2:");
-		
+		// Thinking time format
 		setThinkingTimeLable = new JLabel();
 		setThinkingTimeLable.setText("Total Thinking TIme per player");
-		thinkingTimeTextField = new JTextField();
-		
+		MaskFormatter timeFormat = null;
+		try {
+			timeFormat = new MaskFormatter("##min##s");
+			timeFormat.setPlaceholderCharacter('#');
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}	
+		thinkingTimeTextField = new JFormattedTextField(timeFormat);
+		// start game button
 		stertGameButton = new JButton();
 		stertGameButton.setText("Start Game");
 		
+		// Action Listeners
+		
+		// listeners for driver
+		addUserButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				addDriverButtonActionPerformed(evt);
+			}
+		});
+		
+		stertGameButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				stertGameButtonActionPerformed(evt);
+			}
+		});
+		
+		
 		// horizontal line elements
-		JSeparator horizontalLine = new JSeparator();
+		//JSeparator horizontalLine = new JSeparator();
 
 		// layout
-		GroupLayout layout = new GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
+		GroupLayout layout = new GroupLayout(this);
+		setLayout(layout);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
-
+		
+		// Horizontal Layout
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup() // Column 1
 						.addComponent(userNameLabel)
@@ -101,7 +136,7 @@ public class MenuPage extends JFrame {
 				)
 		);
 
-
+		// Vertical Layout
 		layout.setVerticalGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup() // Row 1
 						.addComponent(userNameLabel)
@@ -125,6 +160,38 @@ public class MenuPage extends JFrame {
 						.addComponent(stertGameButton)
 				)
 		);
-		pack();
+		//pack();
+	}
+	
+	private void refreshData() {
+		users = new HashMap<Integer, UserTO>();
+		int index = 0;
+		player1ToggleList.removeAllItems();
+		player2ToggleList.removeAllItems();
+		for (UserTO user : QuoridorController.getAllUsers()) {
+			users.put(index, user);
+			player1ToggleList.addItem(user.getName());
+			// TODO: Remove player 1 element from list to populate player 2 selection
+			player2ToggleList.addItem(user.getName());
+			index++;
+		}
+		
+		
+		//Clean up text fields and selections
+		player1ToggleList.setSelectedItem(null);
+		player2ToggleList.setSelectedItem(null);
+		userNameTextField.setText("");
+		
+	}
+	
+	private void addDriverButtonActionPerformed(ActionEvent evt) {
+			QuoridorController.createUser(userNameTextField.getText());
+			refreshData();
+	}
+	
+	private void stertGameButtonActionPerformed(ActionEvent evt) {
+		CardLayout cardLayout = (CardLayout) this.getParent().getLayout();
+		cardLayout.show(this.getParent(), "Game Panel");
+		
 	}
 }

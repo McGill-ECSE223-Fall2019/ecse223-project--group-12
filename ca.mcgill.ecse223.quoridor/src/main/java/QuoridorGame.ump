@@ -98,3 +98,8 @@ class PlayerPosition {
 	* -> 1 Tile tile; 
 }
 
+namespace ca.mcgill.ecse223.quoridor.to;
+
+class UserTO {
+	name;
+}

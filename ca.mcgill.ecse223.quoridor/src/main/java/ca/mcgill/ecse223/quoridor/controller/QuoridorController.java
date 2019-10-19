@@ -1,12 +1,15 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 
+import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
+import ca.mcgill.ecse223.quoridor.to.UserTO;
 
 public class QuoridorController {
 
@@ -36,8 +39,7 @@ public class QuoridorController {
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void createUser(String name) throws java.lang.UnsupportedOperationException {
-		// TODO
-		throw new java.lang.UnsupportedOperationException();
+		QuoridorApplication.getQuoridor().addUser(name);
 	}
 
 	/**
@@ -131,8 +133,13 @@ public class QuoridorController {
 	 * @return List<User> A list of all existing users
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static List<User> getAllUsers() throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
+	public static List<UserTO> getAllUsers() throws java.lang.UnsupportedOperationException {
+		ArrayList<UserTO> users = new ArrayList<UserTO>();
+		for(User user : QuoridorApplication.getQuoridor().getUsers()) {
+			UserTO userTO = new UserTO(user.getName());
+			users.add(userTO);
+		}
+		return users;
 	}
 	
 	/**
