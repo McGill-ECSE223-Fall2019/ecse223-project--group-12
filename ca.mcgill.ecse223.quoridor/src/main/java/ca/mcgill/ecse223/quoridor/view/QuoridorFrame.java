@@ -27,7 +27,7 @@ public class QuoridorFrame extends JFrame {
 		setLocationByPlatform(true);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(800, 600);
+		//setSize(800, 600);
 		setTitle("Quridor Application");
 	}
 }

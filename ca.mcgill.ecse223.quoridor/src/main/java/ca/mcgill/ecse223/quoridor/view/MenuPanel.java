@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.view;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -16,12 +17,13 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
+import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.to.UserTO;
 
 public class MenuPanel extends JPanel {
 	private static final long serialVersionUID = -4426310869335015542L;
-	
+	private JLabel addUserErrorMessage;
 	// elements for new user
 	private JTextField userNameTextField;
 	private JLabel userNameLabel;
@@ -52,14 +54,14 @@ public class MenuPanel extends JPanel {
 	
 	
 	public MenuPanel() {
-//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		setTitle("Quoridor Menu");
 		initComponents();
 		refreshData();
 	}
 
 	private void initComponents() {
 
+		addUserErrorMessage = new JLabel();
+		addUserErrorMessage.setForeground(Color.RED);
 		// Elements for new user
 		userNameTextField = new JTextField();
 		userNameLabel = new JLabel();
@@ -119,11 +121,17 @@ public class MenuPanel extends JPanel {
 		// Horizontal Layout
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup() // Column 1
-						.addComponent(userNameLabel)
-						.addComponent(userNameTextField, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
-						.addComponent(player1ToggleLable)
-						.addComponent(player1ToggleList, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
+						.addGroup(layout.createParallelGroup()
+							.addComponent(userNameLabel)
+							.addComponent(userNameTextField, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
+						)
+						
+						.addGroup(layout.createParallelGroup()
+							.addComponent(player1ToggleLable)
+							.addComponent(player1ToggleList, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
+						)
 						.addComponent(stertGameButton)
+						.addComponent(addUserErrorMessage)
 				)
 				.addGroup(layout.createParallelGroup() // Column 2
 						.addComponent(addUserButton)
@@ -145,6 +153,7 @@ public class MenuPanel extends JPanel {
 						.addComponent(userNameTextField, MIN_HEIGHT, PREF_HEIGHT, MAX_HEIGHT)
 						.addComponent(addUserButton)
 				)
+				.addComponent(addUserErrorMessage)
 				.addGroup(layout.createParallelGroup() // Row 3
 						.addComponent(player1ToggleLable)
 						.addComponent(player2ToggleLable)
@@ -160,7 +169,6 @@ public class MenuPanel extends JPanel {
 						.addComponent(stertGameButton)
 				)
 		);
-		//pack();
 	}
 	
 	private void refreshData() {
@@ -177,16 +185,21 @@ public class MenuPanel extends JPanel {
 		}
 		
 		
-		//Clean up text fields and selections
+		//Clean up text fields, errors and selections
 		player1ToggleList.setSelectedItem(null);
 		player2ToggleList.setSelectedItem(null);
 		userNameTextField.setText("");
+		addUserErrorMessage.setText("");
 		
 	}
 	
 	private void addDriverButtonActionPerformed(ActionEvent evt) {
-			QuoridorController.createUser(userNameTextField.getText());
-			refreshData();
+			try {
+				QuoridorController.createUser(userNameTextField.getText());
+				refreshData();
+			} catch (InvalidInputException e) {
+				addUserErrorMessage.setText(e.getMessage());
+			}	
 	}
 	
 	private void stertGameButtonActionPerformed(ActionEvent evt) {

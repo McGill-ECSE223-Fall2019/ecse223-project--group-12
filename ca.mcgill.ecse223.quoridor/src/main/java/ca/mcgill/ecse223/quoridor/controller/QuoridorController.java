@@ -37,9 +37,17 @@ public class QuoridorController {
 	 * @author Remi Carriere
 	 * @param name The name of the user
 	 * @throws java.lang.UnsupportedOperationException
+	 * @throws ca.mcgill.ecse223.quoridor.controller.InvalidInputException 
 	 */
-	public static void createUser(String name) throws java.lang.UnsupportedOperationException {
-		QuoridorApplication.getQuoridor().addUser(name);
+	public static void createUser(String name) throws InvalidInputException {
+		if (name.trim().length() == 0 || name == null || name.length() < 3) {
+			throw new InvalidInputException("Name must 3 or more charcters!");
+		}
+		try {
+			QuoridorApplication.getQuoridor().addUser(name);
+		}catch(RuntimeException e) {
+			throw new InvalidInputException("User name already exists");
+		}
 	}
 
 	/**
