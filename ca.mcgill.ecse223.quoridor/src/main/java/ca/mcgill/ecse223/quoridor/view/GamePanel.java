@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 
 import javax.swing.GroupLayout;
@@ -37,7 +38,7 @@ public class GamePanel extends JPanel {
 
 		controlUI = new JPanel();
 		gameBoard = new JPanel(new GridBagLayout());
-		//gameBoard.setBorder(new LineBorder(Color.BLACK));
+		gameBoard.setBorder(new LineBorder(Color.BLACK));
 
 		// Layout for Game Panel
 		GroupLayout layout = new GroupLayout(this);
@@ -71,21 +72,43 @@ public class GamePanel extends JPanel {
 			}
 		});
 		
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
+		for (int i = 0; i < 19; i++) {
+			for (int j = 0; j < 19; j++) {
 				GridBagConstraints c = new GridBagConstraints();
 				//JPanel square = new JPanel(new BorderLayout());
 				JButton square = new JButton();
-				//square.setPreferredSize(new Dimension(50,50));
-				square.setMaximumSize(new Dimension(500,500));
 				c.gridx=i;
 				c.gridy=j;
 				c.weightx=1.0;
-				c.weighty=0.5;
+				c.weighty=1.0;
 				c.fill=GridBagConstraints.BOTH;
-				gameBoard.add(square,c);
+				c.insets=new Insets(2, 2, 2, 2);
+				
 				square.setBackground(Color.LIGHT_GRAY);
+
+				if ( j%2 == 0 || i%2 == 0) {
+					square.setBackground(Color.blue);
+					
+					c.insets=new Insets(0, 0, 0, 0);
+					
+					if ( j%2 == 0 && i%2 == 0) {
+						square.setPreferredSize(new Dimension(10, 10));
+						c.fill=GridBagConstraints.NONE;
+					} else if(j%2==0) {
+						square.setPreferredSize(new Dimension(0, 10));
+						c.fill=GridBagConstraints.HORIZONTAL;
+					} else { 
+						square.setPreferredSize(new Dimension(10, 0));
+						c.fill=GridBagConstraints.VERTICAL;
+					}
+					c.weightx=0.0;
+					c.weighty=0.0;
+				}
+				if(j==0||j==18||i==0||i==18) {
+					square.setBackground(Color.BLACK);
+				}
 				square.setBorder(new LineBorder(Color.BLACK));
+				gameBoard.add(square,c);
 			}
 		}
 
