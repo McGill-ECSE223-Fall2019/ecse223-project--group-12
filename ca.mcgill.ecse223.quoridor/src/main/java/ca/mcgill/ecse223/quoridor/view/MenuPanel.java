@@ -4,16 +4,13 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.text.ParseException;
-import java.util.HashMap;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
@@ -40,9 +37,6 @@ public class MenuPanel extends JPanel {
 	private JLabel setThinkingTimeLable;
 	private JFormattedTextField thinkingTimeTextField;
 	private JButton stertGameButton;
-	
-	// Data elements
-	private HashMap<Integer, UserTO> users;
 	
 	// Sizing
 	private final int MIN_WIDTH = 100;
@@ -172,16 +166,11 @@ public class MenuPanel extends JPanel {
 	}
 	
 	private void refreshData() {
-		users = new HashMap<Integer, UserTO>();
-		int index = 0;
 		player1ToggleList.removeAllItems();
 		player2ToggleList.removeAllItems();
 		for (UserTO user : QuoridorController.getAllUsers()) {
-			users.put(index, user);
 			player1ToggleList.addItem(user.getName());
-			// TODO: Remove player 1 element from list to populate player 2 selection
 			player2ToggleList.addItem(user.getName());
-			index++;
 		}
 		
 		

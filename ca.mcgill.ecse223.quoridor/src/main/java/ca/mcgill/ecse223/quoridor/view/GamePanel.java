@@ -24,7 +24,7 @@ public class GamePanel extends JPanel {
 	private JButton grabWallButton;
 	private JPanel controlUI;
 	private JPanel gameBoard;
-	//private JButton pawn;
+	private final int BOARD_SIZE = 19; // 9*2+1 to accommodate for slots
 
 	public GamePanel() {
 		initComponents();
@@ -44,15 +44,7 @@ public class GamePanel extends JPanel {
 		gameBoard = new JPanel(new GridBagLayout());
 		gameBoard.setBorder(new LineBorder(Color.BLACK));
 		gameBoard.setPreferredSize(new Dimension(600, 600));
-		//Icon for Pawns
-		ImageIcon wPawnIcon = new ImageIcon(getClass().getClassLoader().getResource("whitePawn.png"));
-		Image img = wPawnIcon.getImage();
-		img = img.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH);
-		wPawnIcon.setImage(img);
-		ImageIcon bPawnIcon = new ImageIcon(getClass().getClassLoader().getResource("blackPawn.jpg"));
-		Image img1 = bPawnIcon.getImage();
-		img1 = img1.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH);
-		bPawnIcon.setImage(img1);
+		
 		
 		//------------------------	
 		// Group Layout Managers
@@ -98,7 +90,7 @@ public class GamePanel extends JPanel {
 			.addGroup(controlUILayout.createParallelGroup() // Row 1
 				.addComponent(saveExitToMenuButton)
 			)
-			.addGroup(controlUILayout.createParallelGroup() // Row 1
+			.addGroup(controlUILayout.createParallelGroup() // Row 2
 				.addComponent(grabWallButton)
 			)
 		);
@@ -114,11 +106,93 @@ public class GamePanel extends JPanel {
 			}
 		});
 		
-		//------------------------	
-		// Game Board
-		//------------------------
-		for (int i = 0; i < 19; i++) {
-			for (int j = 0; j < 19; j++) {
+		creatBoardPane(); // create the board panel
+
+		// Just run a few methods to test the board
+		showPawn(1,5,Color.black, true); // black pawn at E1
+		showPawn(9,5,Color.white, true); // white pawn at E9
+		drawWall(1,4,Direction.Vertical); // wall at D1V
+		drawWall(3,5,Direction.Vertical); // wall at E3V
+		drawWall(1,1,Direction.Horizontal); // wall at A1H
+		drawWall(5,5,Direction.Horizontal); // wall at E5H
+		drawWall(5,7,Direction.Horizontal); // wall at G5H
+		
+	}
+
+	private void saveExitToMenuButtonActionPerformed(ActionEvent evt) {
+		CardLayout cardLayout = (CardLayout) this.getParent().getLayout();
+		cardLayout.show(this.getParent(), "Menu Panel");
+	}
+	
+	/**
+	 * Show or hide pawn at certain tile
+	 * @param row rows 1 to 9
+	 * @param col cols 1 to 9
+	 * @param c the color of the pawn to show
+	 * @param visible 
+	 */
+	private void showPawn(int row, int col, Color c, boolean visible) {
+		row= 2*row -1;
+		col = 2*col-1;
+		int index = col * BOARD_SIZE + row;
+		JButton tile = (JButton) gameBoard.getComponent(index);
+		if (c.equals(Color.white)) {
+			tile.getComponent(0).setVisible(visible);		
+		} else {
+			tile.getComponent(1).setVisible(visible);
+		}
+	}
+	
+	/**
+	 * Draw a wall at specific tile
+	 * @param row 1 to 9
+	 * @param col 1 to 9 (A to I in specification)
+	 * @param dir the direction of the wall
+	 */
+	private void drawWall(int row, int col, Direction dir) {
+		// Walls are made of three sections (two tile lengths and the slot between them)
+		JButton wallA = null;
+		JButton wallB = null;
+		JButton wallC = null;
+		int index = 0;
+		if(dir.equals(Direction.Vertical)){
+			col = 2*col;
+			row = 2*row - 1;
+			index = BOARD_SIZE*col +row;
+			wallA = (JButton) gameBoard.getComponent(index);
+			wallB = (JButton) gameBoard.getComponent(index + 1);
+			wallC = (JButton) gameBoard.getComponent(index + 2);
+		} else {
+			col = 2*col - 1;
+			row = 2*row;
+			index = BOARD_SIZE*col +row;
+			wallA = (JButton) gameBoard.getComponent(index);
+			wallB = (JButton) gameBoard.getComponent(index + BOARD_SIZE);
+			wallC = (JButton) gameBoard.getComponent(index + 2*BOARD_SIZE);		
+		}
+		
+		wallA.setBackground(Color.red);
+		wallB.setBackground(Color.red);
+		wallC.setBackground(Color.red);
+	}
+	
+	/**
+	 * Creates a 9x9 board of tiles with slots between tiles. Adds invisible pawn of each color to each tile.
+	 * (Use showPawn() to change visibility of pawns)
+	 */
+	private void creatBoardPane() {
+		//Icon for Pawns
+		ImageIcon wPawnIcon = new ImageIcon(getClass().getClassLoader().getResource("whitePawn.png"));
+		Image img = wPawnIcon.getImage();
+		img = img.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH);
+		wPawnIcon.setImage(img);
+		ImageIcon bPawnIcon = new ImageIcon(getClass().getClassLoader().getResource("blackPawn.png"));
+		Image img1 = bPawnIcon.getImage();
+		img1 = img1.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH);
+		bPawnIcon.setImage(img1);
+		// create board
+		for (int i = 0; i < BOARD_SIZE; i++) {
+			for (int j = 0; j < BOARD_SIZE; j++) {
 				GridBagConstraints c = new GridBagConstraints();
 				JButton  square = new JButton ();
 				square.setOpaque(true);
@@ -164,7 +238,6 @@ public class GamePanel extends JPanel {
 					JButton blackPawn = new JButton();   
 					blackPawn.setIcon(bPawnIcon);
 					square.setLayout(new OverlayLayout(square));
-					//pawn.setBackground(Color.WHITE);
 					blackPawn.setVisible(false);
 					blackPawn.setAlignmentX(CENTER_ALIGNMENT);
 					blackPawn.setAlignmentY(CENTER_ALIGNMENT);
@@ -174,49 +247,11 @@ public class GamePanel extends JPanel {
 					square.add(blackPawn);	
 				}
 				// Make the outline of the board black
-				if(j==0||j==18||i==0||i==18) {
+				if(j==0||j==BOARD_SIZE-1||i==0||i==BOARD_SIZE-1) {
 					square.setBackground(Color.BLACK);
 				}
 				gameBoard.add(square,c);
 			}
-		}
-		// Just run a few methods to test the board
-		showPawn(0,0,null);
-		drawWall(0,0,null);
+		}	
 	}
-
-	private void saveExitToMenuButtonActionPerformed(ActionEvent evt) {
-		CardLayout cardLayout = (CardLayout) this.getParent().getLayout();
-		cardLayout.show(this.getParent(), "Menu Panel");
-	}
-	
-	/**
-	 * currently just a demo to show how to display pawns
-	 * @param x
-	 * @param y
-	 * @param c
-	 */
-	private void showPawn(int x, int y, Color c) {
-		JButton whiteStart = (JButton) gameBoard.getComponent(20 + 19*8);
-		whiteStart.getComponent(0).setVisible(true);
-		JButton blackStart = (JButton) gameBoard.getComponent(20 + 19*8 + 16);
-		blackStart.getComponent(1).setVisible(true);
-	}
-	/**
-	 * currently just a demo to show how to display walls
-	 * @param x
-	 * @param y
-	 * @param dir
-	 */
-	private void drawWall(int x, int y, Direction dir) {
-		// Walls are made of three sections (two tile lengths and the slot between them)
-		JButton wallA = (JButton) gameBoard.getComponent(20 + 19*7);
-		JButton wallB = (JButton) gameBoard.getComponent(20 + 19*7 + 1);
-		JButton wallC = (JButton) gameBoard.getComponent(20 + 19*7 + 2);
-		
-		wallA.setBackground(Color.red);
-		wallB.setBackground(Color.red);
-		wallC.setBackground(Color.red);
-	}
-
 }

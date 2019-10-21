@@ -2,13 +2,17 @@ package ca.mcgill.ecse223.quoridor.controller;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
+import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
+import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.to.UserTO;
 
 public class QuoridorController {
@@ -27,7 +31,7 @@ public class QuoridorController {
 	 * @author Remi Carriere
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void initializeGame() throws java.lang.UnsupportedOperationException {
+	public static void initializeGame(String whiteName, String blackName) throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException("");
 	}
 
@@ -93,6 +97,7 @@ public class QuoridorController {
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setWhitePlayerInGame(User user) throws java.lang.UnsupportedOperationException {
+		
 		throw new java.lang.UnsupportedOperationException();
 	}
 
@@ -171,6 +176,27 @@ public class QuoridorController {
 	 */
 	public static Time getPlayerClock(Player player) throws java.lang.UnsupportedOperationException{
 		throw new java.lang.UnsupportedOperationException();
+	}
+	/*
+	 * Private Helper Methods
+	 */
+	
+	/**
+	 * Gets a user of quoridor by username
+	 * @author Remi Carriere
+	 * @param name
+	 * @return
+	 */
+	private static User getUserByName(String name) {
+		Iterator<User> users = QuoridorApplication.getQuoridor().getUsers().iterator();
+		while (users.hasNext()) {
+			User u = users.next();
+			if (u.getName().equals(name)) {
+				return u;
+			}
+		}
+		return null;
+		//throw new java.lang.IllegalArgumentException("Username does not exist: " + name);
 	}
 
 	// ------------------------

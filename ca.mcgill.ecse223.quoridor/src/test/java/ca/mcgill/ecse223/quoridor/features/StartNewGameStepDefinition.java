@@ -45,7 +45,7 @@ public class StartNewGameStepDefinition {
 	@When("A new game is being initialized")
 	public void a_new_game_is_being_initialized() {
 		try {
-			QuoridorController.initializeGame();
+			QuoridorController.initializeGame("","");
 		} catch (java.lang.UnsupportedOperationException e) {
 			// Skip test if method not implemented
 			throw new cucumber.api.PendingException();
