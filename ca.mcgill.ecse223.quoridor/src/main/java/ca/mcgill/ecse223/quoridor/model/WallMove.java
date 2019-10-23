@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 
-// line 90 "../../../../../QuoridorGame.ump"
+// line 89 "../../../../../QuoridorGame.ump"
 public class WallMove extends Move
 {
 

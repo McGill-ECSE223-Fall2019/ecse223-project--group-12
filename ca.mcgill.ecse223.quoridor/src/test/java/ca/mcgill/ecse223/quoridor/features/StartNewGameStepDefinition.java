@@ -44,8 +44,9 @@ public class StartNewGameStepDefinition {
 
 	@When("A new game is being initialized")
 	public void a_new_game_is_being_initialized() {
+		
 		try {
-			QuoridorController.initializeGame("","");
+			QuoridorController.initializeGame();
 		} catch (java.lang.UnsupportedOperationException e) {
 			// Skip test if method not implemented
 			throw new cucumber.api.PendingException();
@@ -90,8 +91,13 @@ public class StartNewGameStepDefinition {
 
 	@Given("The game is ready to start")
 	public void the_game_is_ready_to_start() {
-		new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, players.get(0), players.get(1),
-				QuoridorApplication.getQuoridor());
+		if (players ==  null) {
+			players = TestUtil.createUsersAndPlayers("user1", "user2");
+		}
+		//players = TestUtil.createUsersAndPlayers("user1", "user2");
+		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, QuoridorApplication.getQuoridor());
+		game.setWhitePlayer(players.get(0));
+		game.setBlackPlayer(players.get(1));
 	}
 
 	@When("I start the clock")

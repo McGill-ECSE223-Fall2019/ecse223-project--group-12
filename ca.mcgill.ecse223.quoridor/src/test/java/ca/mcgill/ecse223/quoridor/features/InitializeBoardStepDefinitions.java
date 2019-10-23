@@ -39,36 +39,40 @@ public class InitializeBoardStepDefinitions {
 
 	@Then("White's pawn shall be in its initial position")
 	public void white_s_pawn_shall_be_in_its_initial_position() {
-		assertEquals(9,quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow());
-		assertEquals(5,quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn());
+		assertEquals(5, quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow());
+		assertEquals(1, quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn());
 	}
 
 	@Then("Black's pawn shall be in its initial position")
 	public void black_s_pawn_shall_be_in_its_initial_position() {
 
-		assertEquals(1,quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow());
-		assertEquals(5,quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn());
+		assertEquals(5, quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow());
+		assertEquals(9, quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn());
 	}
 
 	@Then("All of White's walls shall be in stock")
 	public void all_of_White_s_walls_shall_be_in_stock() {
-		assertEquals(10,quoridor.getCurrentGame().getWhitePlayer().getWalls().size());
+		assertEquals(10, quoridor.getCurrentGame().getWhitePlayer().getWalls().size());
 	}
 
 	@Then("All of Black's walls shall be in stock")
 	public void all_of_Black_s_walls_shall_be_in_stock() {
-		assertEquals(10,quoridor.getCurrentGame().getBlackPlayer().getWalls().size());
+		assertEquals(10, quoridor.getCurrentGame().getBlackPlayer().getWalls().size());
 	}
 
 	@Then("White's clock shall be counting down")
 	public void white_s_clock_shall_be_counting_down() {
-		assertTrue(QuoridorController.ifClockCount());
+		try {
+			assertTrue(QuoridorController.ifClockCount());
+		} catch (java.lang.UnsupportedOperationException e) {
+			throw new cucumber.api.PendingException();
+		}
 	}
 
 	@Then("It shall be shown that this is White's turn")
 	public void it_shall_be_shown_that_this_is_White_s_turn() {
 		assertEquals(quoridor.getCurrentGame().getWhitePlayer(),
 				quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
-		
+
 	}
 }

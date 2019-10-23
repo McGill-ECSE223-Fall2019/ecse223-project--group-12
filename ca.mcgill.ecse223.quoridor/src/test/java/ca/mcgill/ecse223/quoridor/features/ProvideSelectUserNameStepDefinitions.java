@@ -7,7 +7,6 @@ package ca.mcgill.ecse223.quoridor.features;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.util.ArrayList;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -38,9 +37,8 @@ public class ProvideSelectUserNameStepDefinitions {
 	@Given("A new game is initializing")
 	public void a_new_game_is_initializing() {
 		TestUtil.initQuoridorAndBoard();
-		ArrayList<Player> players = TestUtil.createUsersAndPlayers("user1", "user2");
-		new Game(GameStatus.Initializing, MoveMode.PlayerMove, players.get(0), players.get(1),
-				QuoridorApplication.getQuoridor());
+		TestUtil.createUsersAndPlayers("user1", "user2");
+		new Game(GameStatus.Initializing, MoveMode.PlayerMove, QuoridorApplication.getQuoridor());
 	}
 
 	@Given("Next player to set user name is {string}")

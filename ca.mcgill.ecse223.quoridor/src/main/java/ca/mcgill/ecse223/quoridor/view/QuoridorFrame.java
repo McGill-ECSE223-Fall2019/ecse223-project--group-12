@@ -2,7 +2,6 @@ package ca.mcgill.ecse223.quoridor.view;
 
 import java.awt.CardLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -13,21 +12,26 @@ public class QuoridorFrame extends JFrame {
 	private GamePanel gamePanel;
 
 	public QuoridorFrame() {
+		// Initialize main Panel
 		contentPane = new JPanel();
-		contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new CardLayout());
 
+		// Set up Card Layout
 		menuPanel = new MenuPanel();
 		gamePanel = new GamePanel();
 		contentPane.add(menuPanel, "Menu Panel");
 		contentPane.add(gamePanel, "Game Panel");
-
+		
+		//Frame settings
 		setContentPane(contentPane);
-		pack();
 		setLocationByPlatform(true);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//setSize(800, 600);
 		setTitle("Quridor Application");
+		pack();
+	}
+	
+	public GamePanel getGamePanel() {
+		return this.getGamePanel();
 	}
 }

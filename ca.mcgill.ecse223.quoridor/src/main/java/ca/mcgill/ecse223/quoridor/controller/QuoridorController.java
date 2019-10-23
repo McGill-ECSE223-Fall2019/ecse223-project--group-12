@@ -6,13 +6,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.model.Board;
+import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
-import ca.mcgill.ecse223.quoridor.model.Quoridor;
+import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
+import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
+import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 import ca.mcgill.ecse223.quoridor.to.UserTO;
 
 public class QuoridorController {
@@ -31,17 +35,18 @@ public class QuoridorController {
 	 * @author Remi Carriere
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void initializeGame(String whiteName, String blackName) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException("");
+	public static void initializeGame() throws java.lang.UnsupportedOperationException {
+		new Game(GameStatus.Initializing, MoveMode.PlayerMove, QuoridorApplication.getQuoridor());
 	}
 
 	/**
 	 * Creates a new user
 	 * 
 	 * @author Remi Carriere
-	 * @param name The name of the user
+	 * @param name
+	 *            The name of the user
 	 * @throws java.lang.UnsupportedOperationException
-	 * @throws ca.mcgill.ecse223.quoridor.controller.InvalidInputException 
+	 * @throws ca.mcgill.ecse223.quoridor.controller.InvalidInputException
 	 */
 	public static void createUser(String name) throws InvalidInputException {
 		if (name.trim().length() == 0 || name == null || name.length() < 3) {
@@ -49,7 +54,7 @@ public class QuoridorController {
 		}
 		try {
 			QuoridorApplication.getQuoridor().addUser(name);
-		}catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			throw new InvalidInputException("User name already exists");
 		}
 	}
@@ -58,11 +63,16 @@ public class QuoridorController {
 	 * Sets the remainingTime of each player to totalTime
 	 * 
 	 * @author Remi Carriere
-	 * @param totalTime The desired thinking time
+	 * @param totalTime
+	 *            The desired thinking time
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setTotalThinkingTime(Time totalTime) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
+		Player w = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
+		Player b = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
+		b.setRemainingTime(totalTime);
+		w.setRemainingTime(totalTime);
+		QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.ReadyToStart);
 	}
 
 	/**
@@ -73,14 +83,18 @@ public class QuoridorController {
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void startClock() throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		initBoard();
+		game.setGameStatus(GameStatus.Running);
+
 	}
 
 	/**
 	 * Verfies if the given GamePosition is legal
 	 * 
 	 * @author Remi Carriere
-	 * @param gamePosition The game position to verify
+	 * @param gamePosition
+	 *            The game position to verify
 	 * @return
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -93,12 +107,18 @@ public class QuoridorController {
 	 * Sets the given user as the white player
 	 * 
 	 * @author Remi Carriere
-	 * @param user The selected user
+	 * @param user
+	 *            The selected user
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setWhitePlayerInGame(User user) throws java.lang.UnsupportedOperationException {
-		
-		throw new java.lang.UnsupportedOperationException();
+		Player player = new Player(null, user, 1, Direction.Vertical);
+		QuoridorApplication.getQuoridor().getCurrentGame().setWhitePlayer(player);
+		//throw new java.lang.UnsupportedOperationException();
+	}
+	public static void setWhitePlayerInGame(String userName) throws java.lang.UnsupportedOperationException {
+		User user = getUserByName(userName);
+		setWhitePlayerInGame(user);
 	}
 
 	/**
@@ -106,18 +126,37 @@ public class QuoridorController {
 	 * Sets the given user as the black player
 	 * 
 	 * @author Remi Carriere
-	 * @param user The selected user
+	 * @param user
+	 *            The selected user
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setBlackPlayerInGame(User user) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
+		Player player = new Player(null, user, 9, Direction.Vertical);
+		QuoridorApplication.getQuoridor().getCurrentGame().setBlackPlayer(player);
+		//throw new java.lang.UnsupportedOperationException();
+	}
+	public static void setBlackPlayerInGame(String userName ) throws java.lang.UnsupportedOperationException {
+		User user = getUserByName(userName);
+		setBlackPlayerInGame(user);
+	}
+	public static String getCurrentPlayer(){
+		if(QuoridorApplication.getQuoridor().getCurrentGame() != null) {
+			
+			return QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().getUser().getName();
+		} return null;
+	}
+	public static void destroyGame() {
+		if(QuoridorApplication.getQuoridor().getCurrentGame() != null) {
+			QuoridorApplication.getQuoridor().getCurrentGame().delete();
+		}
 	}
 
 	/**
 	 * Creates new user, and sets the user as the white player
 	 * 
 	 * @author Remi Carriere
-	 * @param name Name of the user
+	 * @param name
+	 *            Name of the user
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setNewUserAsWhite(String name) throws java.lang.UnsupportedOperationException {
@@ -126,8 +165,10 @@ public class QuoridorController {
 
 	/***
 	 * Creates new user, and sets the user as the black player
+	 * 
 	 * @author Remi Carriere
-	 * @param name Name of the user
+	 * @param name
+	 *            Name of the user
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setNewUserAsBlack(String name) throws java.lang.UnsupportedOperationException {
@@ -148,15 +189,16 @@ public class QuoridorController {
 	 */
 	public static List<UserTO> getAllUsers() throws java.lang.UnsupportedOperationException {
 		ArrayList<UserTO> users = new ArrayList<UserTO>();
-		for(User user : QuoridorApplication.getQuoridor().getUsers()) {
+		for (User user : QuoridorApplication.getQuoridor().getUsers()) {
 			UserTO userTO = new UserTO(user.getName());
 			users.add(userTO);
 		}
 		return users;
 	}
-	
+
 	/**
-	 * Gets the game position so that a player can see the board in its current position
+	 * Gets the game position so that a player can see the board in its current
+	 * position
 	 * 
 	 * @author Remi Carriere
 	 * @return The current game position
@@ -165,24 +207,26 @@ public class QuoridorController {
 	public static GamePosition getGamePosition() throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
-	
+
 	/**
-	 * Gets the remaining time of a player so that a player can see his clock counting down
+	 * Gets the remaining time of a player so that a player can see his clock
+	 * counting down
 	 * 
 	 * @author Remi Carriere
 	 * @param player
 	 * @return The remaining time of the given player
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static Time getPlayerClock(Player player) throws java.lang.UnsupportedOperationException{
+	public static Time getPlayerClock(Player player) throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
 	/*
 	 * Private Helper Methods
 	 */
-	
+
 	/**
 	 * Gets a user of quoridor by username
+	 * 
 	 * @author Remi Carriere
 	 * @param name
 	 * @return
@@ -196,7 +240,8 @@ public class QuoridorController {
 			}
 		}
 		return null;
-		//throw new java.lang.IllegalArgumentException("Username does not exist: " + name);
+		// throw new java.lang.IllegalArgumentException("Username does not exist: " +
+		// name);
 	}
 
 	// ------------------------
@@ -207,7 +252,8 @@ public class QuoridorController {
 	 * Loads a previously saved game position into the current game position
 	 * 
 	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
-	 * @param fullPath of the saved file
+	 * @param fullPath
+	 *            of the saved file
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -219,14 +265,16 @@ public class QuoridorController {
 	 * Saves the current game position into a file
 	 * 
 	 * @author Francis Comeau Gherkin feature: SavePosition.feature
-	 * @param gamePosiion to save and fullPath of where to save it
+	 * @param gamePosiion
+	 *            to save and fullPath of where to save it
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void savePosition(GamePosition gamePosition, String fullPath) throws java.lang.UnsupportedOperationException {
+	public static void savePosition(GamePosition gamePosition, String fullPath)
+			throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
-	
+
 	/**
 	 * Asks the user if they want to overwrite the already existing file
 	 * 
@@ -246,7 +294,37 @@ public class QuoridorController {
 	 * @author Weige qian Gherkin feature:InitializeBoard.feature
 	 */
 	public static void initBoard() throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
+		Board board;
+		Player w = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
+		if (QuoridorApplication.getQuoridor().getBoard() == null) {
+			// create a new board
+			board = new Board(QuoridorApplication.getQuoridor());
+			// Creating tiles by rows, i.e., the column index changes with every tile
+			// creation
+			for (int i = 1; i <= 9; i++) { // rows
+				for (int j = 1; j <= 9; j++) { // columns
+					board.addTile(i, j);
+				}
+			}
+		}
+		Tile player1StartPos = QuoridorApplication.getQuoridor().getBoard().getTile(36);
+		Tile player2StartPos = QuoridorApplication.getQuoridor().getBoard().getTile(44);
+
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		PlayerPosition player1Position = new PlayerPosition(game.getWhitePlayer(), player1StartPos);
+		PlayerPosition player2Position = new PlayerPosition(game.getBlackPlayer(), player2StartPos);
+
+		GamePosition gamePosition = new GamePosition(0, player1Position, player2Position, w, game);
+		// Add the walls as in stock for the players
+		for (int j = 0; j < 10; j++) {
+			Wall wall = Wall.getWithId(j);
+			gamePosition.addWhiteWallsInStock(wall);
+		}
+		for (int j = 0; j < 10; j++) {
+			Wall wall = Wall.getWithId(j + 10);
+			gamePosition.addBlackWallsInStock(wall);
+		}
+		game.setCurrentPosition(gamePosition);
 	}
 
 	/**
@@ -265,6 +343,7 @@ public class QuoridorController {
 	public static void makeMove(Player player) throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
+
 	public static boolean ifClockCount() throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
@@ -275,148 +354,158 @@ public class QuoridorController {
 
 	/**
 	 * Grabs a wall from the current players stock
-	 * @author Kaan Gure
-	 * Gherkin Feature: GrabWall.feature
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static void grabWall() throws java.lang.UnsupportedOperationException{
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	/**
-	 * Drops the wall from the current player's hand to the board
-	 * @author Kaan Gure
-	 * Gherkin Feature: DropWall.feature
+	 * 
+	 * @author Kaan Gure Gherkin Feature: GrabWall.feature
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 
-	public static void dropWall() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
+	public static void grabWall() throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
-	
+
+	/**
+	 * Drops the wall from the current player's hand to the board
+	 * 
+	 * @author Kaan Gure Gherkin Feature: DropWall.feature
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+
+	public static void dropWall() throws java.lang.UnsupportedOperationException {
+		// full implementation of GUI needed for implementation
+		throw new java.lang.UnsupportedOperationException();
+	}
+
 	/*
 	 * 
 	 * Query Methods
 	 * 
 	 */
-	
+
 	/**
-	 * Query method: Gets the number of walls in stock of the current player so that it can be displayed in the GUI
+	 * Query method: Gets the number of walls in stock of the current player so that
+	 * it can be displayed in the GUI
+	 * 
 	 * @author Kaan Gure
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	
-	public static int getRemainingWallsInStock() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
+
+	public static int getRemainingWallsInStock() throws java.lang.UnsupportedOperationException {
+		// full implementation of GUI needed for implementation
 		throw new java.lang.UnsupportedOperationException();
 	}
-	
+
 	/**
-	 * Query method: Checks if current wall placement move is valid so that the player can be notified in the GUI via another method call
+	 * Query method: Checks if current wall placement move is valid so that the
+	 * player can be notified in the GUI via another method call
+	 * 
 	 * @author Kaan Gure
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	
-	public static boolean isCurrentWallMoveValid() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
+
+	public static boolean isCurrentWallMoveValid() throws java.lang.UnsupportedOperationException {
+		// full implementation of GUI needed for implementation
 		throw new java.lang.UnsupportedOperationException();
 	}
-	
+
 	/*
 	 * 
 	 * Future GUI Related Methods
 	 * 
 	 */
-	
+
 	/**
 	 * Future GUI related method: Alert if player has no more walls in stock
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static boolean alertStockIsEmpty() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	/**
-	 * Future GUI related method: Checks if there is wall in hand that is represented in the GUI
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static boolean hasWallInHand() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	/**
-	 * Future GUI related method: Sets wall in hand that will be represented in the GUI
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static void setWallInHand(Wall wallInHand) throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	/**
-	 * Future GUI related method: Gets wall in hand that will be represented in the GUI
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static Wall getWallInHand() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	
-	/**
-	 * Future GUI related method: Clears wall in hand that will be represented in the GUI
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	
-	public static void clearWallInHand() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation 
-		throw new java.lang.UnsupportedOperationException();
-	}
-	
-	
-	/**
-	 * Future GUI related method: notify invalid move in GUI
+	 * 
 	 * @author Kaan Gure
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 
-	public static boolean notifyInvalidMove() throws java.lang.UnsupportedOperationException{ 
-		//full implementation of GUI needed for implementation
-		//returns true if player is notified of invalid move in GUI
+	public static boolean alertStockIsEmpty() throws java.lang.UnsupportedOperationException {
+		// full implementation of GUI needed for implementation
 		throw new java.lang.UnsupportedOperationException();
 	}
-	
+
+	/**
+	 * Future GUI related method: Checks if there is wall in hand that is
+	 * represented in the GUI
+	 * 
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+
+	public static boolean hasWallInHand() throws java.lang.UnsupportedOperationException {
+		// full implementation of GUI needed for implementation
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * Future GUI related method: Sets wall in hand that will be represented in the
+	 * GUI
+	 * 
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+
+	public static void setWallInHand(Wall wallInHand) throws java.lang.UnsupportedOperationException {
+		// full implementation of GUI needed for implementation
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * Future GUI related method: Gets wall in hand that will be represented in the
+	 * GUI
+	 * 
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+
+	public static Wall getWallInHand() throws java.lang.UnsupportedOperationException {
+		// full implementation of GUI needed for implementation
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * Future GUI related method: Clears wall in hand that will be represented in
+	 * the GUI
+	 * 
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+
+	public static void clearWallInHand() throws java.lang.UnsupportedOperationException {
+		// full implementation of GUI needed for implementation
+		throw new java.lang.UnsupportedOperationException();
+	}
+
+	/**
+	 * Future GUI related method: notify invalid move in GUI
+	 * 
+	 * @author Kaan Gure
+	 * @throws java.lang.UnsupportedOperationException
+	 */
+
+	public static boolean notifyInvalidMove() throws java.lang.UnsupportedOperationException {
+		// full implementation of GUI needed for implementation
+		// returns true if player is notified of invalid move in GUI
+		throw new java.lang.UnsupportedOperationException();
+	}
+
 	// ------------------------
 	// Zechen
 	// ------------------------
 
 	/**
-	 * @author Zechen Ren
-	 * Gherkin feature: RotateWall.feature
+	 * @author Zechen Ren Gherkin feature: RotateWall.feature
 	 */
-	public static void rotateWall () throws java.lang.UnsupportedOperationException {
+	public static void rotateWall() throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
-	
+
 	/**
-	 * @author Zechen Ren
-	 * Gherkin feature: MoveWall.feature
+	 * @author Zechen Ren Gherkin feature: MoveWall.feature
 	 */
-	
-	public static void moveWall (String side) throws java.lang.UnsupportedOperationException {
+
+	public static void moveWall(String side) throws java.lang.UnsupportedOperationException {
 		throw new java.lang.UnsupportedOperationException();
 	}
 

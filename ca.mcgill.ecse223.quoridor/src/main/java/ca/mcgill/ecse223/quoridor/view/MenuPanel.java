@@ -3,7 +3,9 @@ package ca.mcgill.ecse223.quoridor.view;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.sql.Time;
 import java.text.ParseException;
+import java.util.Iterator;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -17,6 +19,12 @@ import javax.swing.text.MaskFormatter;
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.to.UserTO;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.Font;
+
+import java.io.File;
+import org.apache.commons.io.FileUtils;
 
 public class MenuPanel extends JPanel {
 	private static final long serialVersionUID = -4426310869335015542L;
@@ -25,28 +33,34 @@ public class MenuPanel extends JPanel {
 	private JTextField userNameTextField;
 	private JLabel userNameLabel;
 	private JButton addUserButton;
-	
+
 	// elements for start new game
 	// Player 1
-	private JComboBox<String> player1ToggleList;
-	private JLabel player1ToggleLable;
+	private JComboBox<String> whiteToggleList;
+	private JLabel whiteToggleLable;
 	// Player 2
-	private JComboBox<String> player2ToggleList;
-	private JLabel player2ToggleLable;
+	private JComboBox<String> blackToggleList;
+	private JLabel blackToggleLable;
 	// Thinking Time
 	private JLabel setThinkingTimeLable;
 	private JFormattedTextField thinkingTimeTextField;
 	private JButton stertGameButton;
-	
-	// Sizing
-	private final int MIN_WIDTH = 100;
-	private final int PREF_WIDTH = 100;
-	private final int MAX_WIDTH = 200;
-	private final int MIN_HEIGHT = 30;
-	private final int PREF_HEIGHT = 30;
-	private final int MAX_HEIGHT = 30;
-	
-	
+	private JLabel loadGameLabel;
+
+	private JPanel interfacePanel;
+
+	private JPanel bannerPanel;
+
+	private JPanel imagePanel; // Place holder for ads lol
+
+	private JLabel startGameErrorLabel;
+
+	private JLabel titleLabel;
+
+	private JComboBox<String> loadGameToggelList;
+
+	private JButton loadGameButton;
+
 	public MenuPanel() {
 		initComponents();
 		refreshData();
@@ -54,146 +68,225 @@ public class MenuPanel extends JPanel {
 
 	private void initComponents() {
 
-		addUserErrorMessage = new JLabel();
-		addUserErrorMessage.setForeground(Color.RED);
-		// Elements for new user
-		userNameTextField = new JTextField();
-		userNameLabel = new JLabel();
-		userNameLabel.setText("New User Name:");
-		addUserButton = new JButton();
-		addUserButton.setText("Add Player");
-		
-		// elements for start new game
-		// Player 1
-		player1ToggleList = new JComboBox<String>(new String[0]);
-		player1ToggleLable = new JLabel();
-		player1ToggleLable.setText("Select Player1:");
-		// Player 2
-		player2ToggleList = new JComboBox<String>(new String[0]);
-		player2ToggleLable = new JLabel();
-		player2ToggleLable.setText("Select Player2:");
-		// Thinking time format
-		setThinkingTimeLable = new JLabel();
-		setThinkingTimeLable.setText("Total Thinking TIme per player");
+		// ------------------------
+		// Set up components
+		// ------------------------
+
+		// Panels
+		interfacePanel = new JPanel();
+		bannerPanel = new JPanel();
+		imagePanel = new JPanel();
+		// Time
 		MaskFormatter timeFormat = null;
 		try {
 			timeFormat = new MaskFormatter("##min##s");
 			timeFormat.setPlaceholderCharacter('#');
 		} catch (ParseException e) {
 			e.printStackTrace();
-		}	
+		}
+		setThinkingTimeLable = new JLabel();
+		setThinkingTimeLable.setText("Total Thinking TIme");
+		// Title
+		titleLabel = new JLabel("Quoridor");
+		titleLabel.setFont(new Font("Arial Narrow", Font.PLAIN, 44));
+		// Add user
+		userNameTextField = new JTextField();
+		userNameLabel = new JLabel();
+		userNameLabel.setText("New User Name:");
+		addUserButton = new JButton();
+		addUserButton.setText("Add Player");
+		addUserErrorMessage = new JLabel();
+		addUserErrorMessage.setForeground(Color.RED);
+		// Start Game
+		whiteToggleLable = new JLabel("Select White Player");
+		blackToggleLable = new JLabel("Select Black Player");
+		blackToggleList = new JComboBox<String>();
+		whiteToggleList = new JComboBox<String>();
 		thinkingTimeTextField = new JFormattedTextField(timeFormat);
-		// start game button
 		stertGameButton = new JButton();
 		stertGameButton.setText("Start Game");
-		
+		startGameErrorLabel = new JLabel();
+		startGameErrorLabel.setForeground(Color.RED);
+		// Load Games
+		loadGameToggelList = new JComboBox<String>();
+		loadGameButton = new JButton("Load Game");
+		loadGameLabel = new JLabel("Load Game");
+
+		// ------------------------
+		// Layout of Main Panel
+		// ------------------------
+		GroupLayout mainLayout = new GroupLayout(this);
+		mainLayout.setHorizontalGroup(mainLayout.createParallelGroup()
+				.addGroup(mainLayout
+						.createSequentialGroup().addContainerGap().addGroup(mainLayout.createParallelGroup()
+								.addComponent(imagePanel).addComponent(interfacePanel).addComponent(bannerPanel))
+						.addContainerGap()));
+		mainLayout.setVerticalGroup(mainLayout.createParallelGroup().addGroup(mainLayout.createSequentialGroup()
+				.addContainerGap().addComponent(bannerPanel, GroupLayout.PREFERRED_SIZE, 48, GroupLayout.PREFERRED_SIZE)
+				.addComponent(interfacePanel).addPreferredGap(ComponentPlacement.RELATED).addComponent(imagePanel)));
+		setLayout(mainLayout);
+		mainLayout.setAutoCreateGaps(true);
+		mainLayout.setAutoCreateContainerGaps(true);
+
+		// ------------------------
+		// Set up sub-panels
+		// ------------------------
+
+		createTitlePanel();
+		createInterfacePanel();
+
+		// ------------------------
 		// Action Listeners
-		
-		// listeners for driver
+		// ------------------------
+
 		addUserButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				addDriverButtonActionPerformed(evt);
+				addUserButtonActionPerformed(evt);
 			}
 		});
-		
+
 		stertGameButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				stertGameButtonActionPerformed(evt);
 			}
 		});
-		
-		
-		// horizontal line elements
-		//JSeparator horizontalLine = new JSeparator();
 
-		// layout
-		GroupLayout layout = new GroupLayout(this);
-		setLayout(layout);
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
-		
-		// Horizontal Layout
-		layout.setHorizontalGroup(layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup() // Column 1
-						.addGroup(layout.createParallelGroup()
-							.addComponent(userNameLabel)
-							.addComponent(userNameTextField, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
-						)
-						
-						.addGroup(layout.createParallelGroup()
-							.addComponent(player1ToggleLable)
-							.addComponent(player1ToggleList, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
-						)
-						.addComponent(stertGameButton)
-						.addComponent(addUserErrorMessage)
-				)
-				.addGroup(layout.createParallelGroup() // Column 2
-						.addComponent(addUserButton)
-						.addComponent(player2ToggleLable)
-						.addComponent(player2ToggleList, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
-				)
-				.addGroup(layout.createParallelGroup() // Column 3
-						.addComponent(setThinkingTimeLable)
-						.addComponent(thinkingTimeTextField, MIN_WIDTH, PREF_WIDTH, MAX_WIDTH)
-				)
-		);
-
-		// Vertical Layout
-		layout.setVerticalGroup(layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup() // Row 1
-						.addComponent(userNameLabel)
-				)
-				.addGroup(layout.createParallelGroup() // Row 2
-						.addComponent(userNameTextField, MIN_HEIGHT, PREF_HEIGHT, MAX_HEIGHT)
-						.addComponent(addUserButton)
-				)
-				.addComponent(addUserErrorMessage)
-				.addGroup(layout.createParallelGroup() // Row 3
-						.addComponent(player1ToggleLable)
-						.addComponent(player2ToggleLable)
-						.addComponent(setThinkingTimeLable)
-				)
-				.addGroup(layout.createParallelGroup() // Row 4
-						.addComponent(player1ToggleList, MIN_HEIGHT, PREF_HEIGHT, MAX_HEIGHT)
-						.addComponent(player2ToggleList, MIN_HEIGHT, PREF_HEIGHT, MAX_HEIGHT)
-						.addComponent(thinkingTimeTextField, MIN_HEIGHT, PREF_HEIGHT, MAX_HEIGHT)
-						
-				)
-				.addGroup(layout.createParallelGroup() // Row 5
-						.addComponent(stertGameButton)
-				)
-		);
 	}
-	
+
 	private void refreshData() {
-		player1ToggleList.removeAllItems();
-		player2ToggleList.removeAllItems();
+		whiteToggleList.removeAllItems();
+		blackToggleList.removeAllItems();
+		loadGameToggelList.removeAllItems();
 		for (UserTO user : QuoridorController.getAllUsers()) {
-			player1ToggleList.addItem(user.getName());
-			player2ToggleList.addItem(user.getName());
+			whiteToggleList.addItem(user.getName());
+			blackToggleList.addItem(user.getName());
 		}
 		
-		
-		//Clean up text fields, errors and selections
-		player1ToggleList.setSelectedItem(null);
-		player2ToggleList.setSelectedItem(null);
+		@SuppressWarnings("unchecked")
+		Iterator<File> it = FileUtils.iterateFiles(new File(getClass().getClassLoader().getResource("savedgames").getPath()), null, true);
+		while(it.hasNext()) {
+			String i = it.next().getName();
+			loadGameToggelList.addItem(i);
+		}
+
+		// Clean up text fields, errors and selections
+		whiteToggleList.setSelectedItem(null);
+		blackToggleList.setSelectedItem(null);
+		loadGameToggelList.setSelectedItem(null);
 		userNameTextField.setText("");
 		addUserErrorMessage.setText("");
-		
+		startGameErrorLabel.setText("");
+
 	}
-	
-	private void addDriverButtonActionPerformed(ActionEvent evt) {
-			try {
-				QuoridorController.createUser(userNameTextField.getText());
-				refreshData();
-			} catch (InvalidInputException e) {
-				addUserErrorMessage.setText(e.getMessage());
-			}	
+
+	private void addUserButtonActionPerformed(ActionEvent evt) {
+		try {
+			QuoridorController.createUser(userNameTextField.getText());
+			refreshData();
+		} catch (InvalidInputException e) {
+			addUserErrorMessage.setText(e.getMessage());
+		}
 	}
-	
+
 	private void stertGameButtonActionPerformed(ActionEvent evt) {
+		String w = null;
+		String b = null;
+		Time time = null;
+		try {
+			w = whiteToggleList.getSelectedItem().toString();
+			b = blackToggleList.getSelectedItem().toString();
+			int min = Integer.parseInt(thinkingTimeTextField.getText().substring(0, 2));
+			int sec = Integer.parseInt(thinkingTimeTextField.getText().substring(5, 7));
+			time = new Time((60 * min + sec) * 1000);
+		} catch (Exception e) {
+			startGameErrorLabel.setText("Could not parse selections");
+		}
+		if (w != null && b != null && time != null) {
+			QuoridorController.initializeGame();
+			QuoridorController.setWhitePlayerInGame(w);
+			QuoridorController.setBlackPlayerInGame(b);
+			QuoridorController.setTotalThinkingTime(time);
+			changeToGamePanel();
+		} else {
+			startGameErrorLabel.setText("Please select names and time");
+		}
+	}
+
+	private void changeToGamePanel() {
 		CardLayout cardLayout = (CardLayout) this.getParent().getLayout();
 		cardLayout.show(this.getParent(), "Game Panel");
-		
+		GamePanel a = (GamePanel) this.getParent().getComponent(1);
+		a.startGamePopUp();
+	}
+
+	private void createTitlePanel() {
+		GroupLayout gl_panel_1 = new GroupLayout(bannerPanel);
+		gl_panel_1.setHorizontalGroup(gl_panel_1.createParallelGroup()
+				.addGroup(gl_panel_1.createSequentialGroup().addContainerGap().addComponent(titleLabel)));
+		gl_panel_1.setVerticalGroup(
+				gl_panel_1.createParallelGroup().addGroup(gl_panel_1.createSequentialGroup().addComponent(titleLabel)));
+		gl_panel_1.setAutoCreateGaps(true);
+		bannerPanel.setLayout(gl_panel_1);
+	}
+
+	private void createInterfacePanel() {
+		GroupLayout interfaceLayout = new GroupLayout(interfacePanel);
+		interfaceLayout.setHorizontalGroup(interfaceLayout.createParallelGroup()
+				.addGroup(interfaceLayout.createSequentialGroup().addContainerGap()
+						.addGroup(interfaceLayout.createParallelGroup()
+								.addGroup(interfaceLayout.createParallelGroup().addComponent(userNameLabel)
+										.addComponent(addUserButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
+												Short.MAX_VALUE)
+										.addComponent(userNameTextField))
+								.addComponent(addUserErrorMessage))
+						.addGap(31)
+						.addGroup(interfaceLayout.createParallelGroup().addGroup(interfaceLayout.createSequentialGroup()
+								.addGroup(interfaceLayout.createParallelGroup(Alignment.LEADING, false)
+										.addGroup(interfaceLayout.createSequentialGroup()
+												.addGroup(interfaceLayout.createParallelGroup()
+														.addComponent(whiteToggleLable).addComponent(whiteToggleList))
+												.addPreferredGap(ComponentPlacement.RELATED)
+												.addGroup(interfaceLayout.createParallelGroup()
+														.addComponent(blackToggleList).addComponent(blackToggleLable))
+												.addPreferredGap(ComponentPlacement.RELATED)
+												.addGroup(interfaceLayout.createParallelGroup()
+														.addComponent(thinkingTimeTextField)
+														.addComponent(setThinkingTimeLable)))
+										.addComponent(stertGameButton, GroupLayout.DEFAULT_SIZE,
+												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGap(34)
+								.addGroup(interfaceLayout.createParallelGroup()
+										.addGroup(interfaceLayout.createSequentialGroup().addComponent(loadGameLabel)
+												.addContainerGap())
+										.addGroup(interfaceLayout.createSequentialGroup()
+												.addGroup(interfaceLayout.createParallelGroup()
+														.addComponent(loadGameButton, Alignment.LEADING,
+																GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
+																Short.MAX_VALUE)
+														.addComponent(loadGameToggelList))
+												.addContainerGap())))
+								.addComponent(startGameErrorLabel))));
+		interfaceLayout.setVerticalGroup(interfaceLayout.createParallelGroup().addGroup(interfaceLayout
+				.createSequentialGroup()
+				.addGroup(interfaceLayout
+						.createParallelGroup().addComponent(userNameLabel).addComponent(whiteToggleLable)
+						.addComponent(blackToggleLable).addComponent(loadGameLabel).addComponent(setThinkingTimeLable))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(interfaceLayout.createParallelGroup()
+						.addComponent(userNameTextField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+						.addComponent(whiteToggleList, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+						.addComponent(blackToggleList, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+						.addComponent(loadGameToggelList, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+						.addComponent(thinkingTimeTextField, GroupLayout.PREFERRED_SIZE, 30,
+								GroupLayout.PREFERRED_SIZE))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(interfaceLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(addUserButton, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+						.addComponent(stertGameButton, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+						.addComponent(loadGameButton, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(interfaceLayout.createParallelGroup(Alignment.BASELINE).addComponent(startGameErrorLabel)
+						.addComponent(addUserErrorMessage))));
+		interfacePanel.setLayout(interfaceLayout);
 	}
 }

@@ -104,7 +104,9 @@ public class TestUtil {
 		Tile player1StartPos = quoridor.getBoard().getTile(36);
 		Tile player2StartPos = quoridor.getBoard().getTile(44);
 		
-		Game game = new Game(GameStatus.Running, MoveMode.PlayerMove, players.get(0), players.get(1), quoridor);
+		Game game = new Game(GameStatus.Running, MoveMode.PlayerMove, quoridor);
+		game.setWhitePlayer(players.get(0));
+		game.setBlackPlayer(players.get(1));
 
 		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), player1StartPos);
 		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), player2StartPos);
