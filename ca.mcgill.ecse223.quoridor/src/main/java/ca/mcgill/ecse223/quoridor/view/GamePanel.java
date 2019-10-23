@@ -256,11 +256,12 @@ public class GamePanel extends JPanel {
 	 */
 	private void creatBoardPane() {
 		// Icon for Pawns
-		ImageIcon wPawnIcon = new ImageIcon(getClass().getClassLoader().getResource("images\\whitePawn.png"));
+		//ImageIcon wPawnIcon = new ImageIcon(getClass().getClassLoader().getResource("images\\whitePawn.png"));
+		ImageIcon wPawnIcon = new ImageIcon("src\\main\\resources\\images\\whitePawn.png");
 		Image img = wPawnIcon.getImage();
 		img = img.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		wPawnIcon.setImage(img);
-		ImageIcon bPawnIcon = new ImageIcon(getClass().getClassLoader().getResource("images\\blackPawn.png"));
+		ImageIcon bPawnIcon = new ImageIcon("src\\main\\resources\\images\\blackPawn.png");
 		Image img1 = bPawnIcon.getImage();
 		img1 = img1.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
 		bPawnIcon.setImage(img1);

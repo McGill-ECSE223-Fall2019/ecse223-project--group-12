@@ -171,7 +171,7 @@ public class MenuPanel extends JPanel {
 		}
 		
 		@SuppressWarnings("unchecked")
-		Iterator<File> it = FileUtils.iterateFiles(new File(getClass().getClassLoader().getResource("savedgames").getPath()), null, true);
+		Iterator<File> it = FileUtils.iterateFiles(new File("savedgames"), null, true);
 		while(it.hasNext()) {
 			String i = it.next().getName();
 			loadGameToggelList.addItem(i);
