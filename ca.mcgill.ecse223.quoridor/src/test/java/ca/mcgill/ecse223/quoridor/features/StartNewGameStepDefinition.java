@@ -6,6 +6,7 @@ import java.sql.Time;
 import java.util.List;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -33,6 +34,7 @@ import io.cucumber.java.en.When;
 public class StartNewGameStepDefinition {
 
 	private List<Player> players;
+
 	/**
 	 * @author Marton
 	 */
@@ -44,12 +46,11 @@ public class StartNewGameStepDefinition {
 
 	@When("A new game is being initialized")
 	public void a_new_game_is_being_initialized() {
-		
 		try {
 			QuoridorController.initializeGame();
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -57,9 +58,9 @@ public class StartNewGameStepDefinition {
 	public void white_player_chooses_a_username() {
 		try {
 			QuoridorController.setWhitePlayerInGame(getUser(0));
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -67,20 +68,19 @@ public class StartNewGameStepDefinition {
 	public void black_player_chooses_a_username() {
 		try {
 			QuoridorController.setBlackPlayerInGame(getUser(1));
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	@When("Total thinking time is set")
 	public void total_thinking_time_is_set() {
+		Time time = Time.valueOf("00:10:00");
 		try {
-			// choose whiteTime by default for scenario
-			QuoridorController.setTotalThinkingTime(getTotalTime());
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
+			QuoridorController.setTotalThinkingTime(time);
+		} catch (InvalidInputException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -91,10 +91,11 @@ public class StartNewGameStepDefinition {
 
 	@Given("The game is ready to start")
 	public void the_game_is_ready_to_start() {
-		if (players ==  null) {
+		// Avoid creating duplicate players, necessary since another scenario uses this
+		// clause with different background
+		if (players == null) {
 			players = TestUtil.createUsersAndPlayers("user1", "user2");
 		}
-		//players = TestUtil.createUsersAndPlayers("user1", "user2");
 		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, QuoridorApplication.getQuoridor());
 		game.setWhitePlayer(players.get(0));
 		game.setBlackPlayer(players.get(1));
@@ -104,9 +105,9 @@ public class StartNewGameStepDefinition {
 	public void i_start_the_clock() {
 		try {
 			QuoridorController.startClock();
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -126,7 +127,7 @@ public class StartNewGameStepDefinition {
 		assertEquals(getBoard().getTile(36), getWhitePositionTile());
 		assertEquals(getBoard().getTile(44), getBlackPositionTile());
 	}
-	
+
 	/**
 	 * Reset variables
 	 * 
@@ -142,18 +143,12 @@ public class StartNewGameStepDefinition {
 		return QuoridorApplication.getQuoridor().getCurrentGame();
 	}
 
-	private Time getTotalTime() {
-		return players.get(0).getRemainingTime();
-
-	}
-
 	private User getUser(int i) {
 		return QuoridorApplication.getQuoridor().getUser(i);
 	}
 
 	private Board getBoard() {
 		return QuoridorApplication.getQuoridor().getBoard();
-
 	}
 
 	private Tile getWhitePositionTile() {

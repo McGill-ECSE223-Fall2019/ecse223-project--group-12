@@ -49,54 +49,7 @@ public class DropWallStepDefinitions {
 		QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().setPlayerToMove(currentPlayer);
 	}
 
-	/**
-	 * @author Marton
-	 */
-	@Given("The following walls exist:")
-	public void the_following_walls_exist(io.cucumber.datatable.DataTable dataTable) {
-		Quoridor quoridor = QuoridorApplication.getQuoridor();
-		List<Map<String, String>> valueMaps = dataTable.asMaps();
-		// keys: wrow, wcol, wdir
-		Player[] players = { quoridor.getCurrentGame().getWhitePlayer(), quoridor.getCurrentGame().getBlackPlayer() };
-		int playerIdx = 0;
-		int wallIdxForPlayer = 0;
-		for (Map<String, String> map : valueMaps) {
-			Integer wrow = Integer.decode(map.get("wrow"));
-			Integer wcol = Integer.decode(map.get("wcol"));
-			// Wall to place
-			// Walls are placed on an alternating basis wrt. the owners
-			// Wall wall = Wall.getWithId(playerIdx * 10 + wallIdxForPlayer);
-			Wall wall = players[playerIdx].getWall(wallIdxForPlayer); // above implementation sets wall to null
 
-			String dir = map.get("wdir");
-
-			Direction direction;
-			switch (dir) {
-			case "horizontal":
-				direction = Direction.Horizontal;
-				break;
-			case "vertical":
-				direction = Direction.Vertical;
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported wall direction was provided: " + dir);
-			}
-			new WallMove(0, 1, players[playerIdx], quoridor.getBoard().getTile((wrow - 1) * 9 + wcol - 1),
-					quoridor.getCurrentGame(), direction, wall);
-			if (playerIdx == 0) {
-				quoridor.getCurrentGame().getCurrentPosition().removeWhiteWallsInStock(wall);
-				quoridor.getCurrentGame().getCurrentPosition().addWhiteWallsOnBoard(wall);
-			} else {
-				quoridor.getCurrentGame().getCurrentPosition().removeBlackWallsInStock(wall);
-				quoridor.getCurrentGame().getCurrentPosition().addBlackWallsOnBoard(wall);
-			}
-			wallIdxForPlayer = wallIdxForPlayer + playerIdx;
-			playerIdx++;
-			playerIdx = playerIdx % 2;
-		}
-		System.out.println();
-
-	}
 	
 	/**
 	 * @author Kaan Gure
@@ -158,9 +111,9 @@ public class DropWallStepDefinitions {
 		GamePosition casePosition  = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		casePosition.getGame().setWallMoveCandidate(wallMoveCandidate);
 		try {
-		if(QuoridorController.validatePosition(casePosition) == false) {
-			throw new IllegalStateException("Wall move candidate at current position is invalid, position has to be valid for test to commence");
-		}
+		//if(QuoridorController.validatePosition(casePosition) == false) {
+			//throw new IllegalStateException("Wall move candidate at current position is invalid, position has to be valid for test to commence");
+		//}
 			}catch (java.lang.UnsupportedOperationException e) {
 				//skips test if method is not yet implemented
 				throw new cucumber.api.PendingException();
@@ -281,9 +234,9 @@ public class DropWallStepDefinitions {
 		GamePosition casePosition  = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		casePosition.getGame().setWallMoveCandidate(wallMoveCandidate);
 		try {
-		if(QuoridorController.validatePosition(casePosition) == true) {
-			throw new IllegalStateException("Wall move candidate at current position is valid, position has to be invalid for test to commence");
-		}
+		//if(QuoridorController.validatePosition(casePosition) == true) {
+			//throw new IllegalStateException("Wall move candidate at current position is valid, position has to be invalid for test to commence");
+		//}
 		}catch (java.lang.UnsupportedOperationException e) {
 			//skips test if method is not yet implemented
 			throw new cucumber.api.PendingException();

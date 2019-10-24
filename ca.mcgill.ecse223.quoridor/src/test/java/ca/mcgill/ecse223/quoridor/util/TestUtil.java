@@ -187,7 +187,7 @@ public class TestUtil {
 	 * @return
 	 */
 	public static Time createTime(int minutes, int seconds) {
-		int mills = (60 * minutes + seconds) * 1000;
+		int mills = ((60 * minutes) + seconds) * 1000;
 		return new Time(mills);
 	}
 	/**

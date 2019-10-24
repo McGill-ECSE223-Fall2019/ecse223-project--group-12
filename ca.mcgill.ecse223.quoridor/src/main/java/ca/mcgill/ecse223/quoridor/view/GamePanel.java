@@ -18,6 +18,7 @@ import javax.swing.OverlayLayout;
 import javax.swing.border.LineBorder;
 import javax.swing.JOptionPane;
 
+import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import javax.swing.GroupLayout.Alignment;
@@ -143,7 +144,12 @@ public class GamePanel extends JPanel {
 	public void startGamePopUp() {
 		int name = JOptionPane.showConfirmDialog(this.getParent(), "Click yes to start the clock!", "StartGame", 0);
 		if (name == 0) {
-			QuoridorController.startClock();
+			try {
+				QuoridorController.startClock();
+			} catch (InvalidInputException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			refreshData();
 		} else {
 			QuoridorController.destroyGame();

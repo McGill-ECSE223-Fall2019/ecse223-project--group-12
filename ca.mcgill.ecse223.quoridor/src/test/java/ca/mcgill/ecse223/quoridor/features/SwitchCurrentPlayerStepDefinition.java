@@ -3,6 +3,7 @@ package ca.mcgill.ecse223.quoridor.features;
 import static org.junit.Assert.*;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
@@ -22,7 +23,7 @@ public class SwitchCurrentPlayerStepDefinition {
 	public void the_clock_of_is_running(String color) {
 		try {
 			QuoridorController.startClock();
-		}catch (java.lang.UnsupportedOperationException e) {
+		}catch (InvalidInputException e) {
 			// Skip test if method not implemented
 			throw new cucumber.api.PendingException();
 		}

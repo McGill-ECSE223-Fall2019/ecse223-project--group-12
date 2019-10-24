@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNull;
 
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
@@ -75,9 +76,7 @@ public class ProvideSelectUserNameStepDefinitions {
 			} else {
 				throw new java.lang.IllegalArgumentException("player color was not properly set");
 			}
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
+		} catch ( InvalidInputException e) {
 		}
 	}
 
@@ -97,26 +96,20 @@ public class ProvideSelectUserNameStepDefinitions {
 	public void the_player_provides_new_user_name(String name) {
 		try {
 			if (nextPlayerIsWhite && nextPlayeColorWasSet) {
-
 				QuoridorController.setNewUserAsWhite(name);
-				;
-
 			} else if (!nextPlayerIsWhite && nextPlayeColorWasSet) {
-
 				QuoridorController.setNewUserAsBlack(name);
 			} else {
 				throw new java.lang.IllegalArgumentException("player color was not properly set");
 			}
-		} catch (java.lang.UnsupportedOperationException e) {
+		} catch (InvalidInputException e) {
 			error = e.getMessage();
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
 		}
 	}
 
 	@Then("The player shall be warned that {string} already exists")
 	public void the_player_shall_be_warned_that_already_exists(String name) {
-		assertEquals(error, "The username " + name + " already exists");
+		assertEquals("The username " + name + " already exists" , error);
 	}
 
 	@Then("Next player to set user name shall be {string}")
@@ -130,10 +123,10 @@ public class ProvideSelectUserNameStepDefinitions {
 		 */
 		switch (color) {
 		case "white":
-			assertEquals("user1", getCurrentGame().getWhitePlayer().getUser().getName());
+			assertNull(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer());
 			break;
 		case "black":
-			assertEquals("user2", getCurrentGame().getBlackPlayer().getUser().getName());
+			assertNull(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer());
 			break;
 		default:
 			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);

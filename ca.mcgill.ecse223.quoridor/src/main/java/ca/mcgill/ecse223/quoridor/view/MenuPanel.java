@@ -202,10 +202,30 @@ public class MenuPanel extends JPanel {
 			startGameErrorLabel.setText("Could not parse selections");
 		}
 		if (w != null && b != null && time != null) {
-			QuoridorController.initializeGame();
-			QuoridorController.setWhitePlayerInGame(w);
-			QuoridorController.setBlackPlayerInGame(b);
-			QuoridorController.setTotalThinkingTime(time);
+			try {
+				QuoridorController.initializeGame();
+			} catch (InvalidInputException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				QuoridorController.setWhitePlayerInGame(w);
+			} catch (InvalidInputException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				QuoridorController.setBlackPlayerInGame(b);
+			} catch (InvalidInputException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				QuoridorController.setTotalThinkingTime(time);
+			} catch (InvalidInputException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			changeToGamePanel();
 		} else {
 			startGameErrorLabel.setText("Please select names and time");
