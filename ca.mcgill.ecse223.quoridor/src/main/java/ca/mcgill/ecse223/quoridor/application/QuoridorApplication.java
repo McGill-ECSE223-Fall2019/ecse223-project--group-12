@@ -11,8 +11,7 @@ public class QuoridorApplication {
 		// start UI
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new QuoridorFrame().setVisible(true);
-                
+                new QuoridorFrame().setVisible(true);          
             }
         });
 	}

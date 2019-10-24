@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
@@ -150,6 +151,13 @@ public class MenuPanel extends JPanel {
 				stertGameButtonActionPerformed(evt);
 			}
 		});
+		
+		loadGameButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				loadGameButtonActionPerformed(evt);
+			}
+		});
+		
 
 	}
 
@@ -163,7 +171,7 @@ public class MenuPanel extends JPanel {
 		}
 		
 		@SuppressWarnings("unchecked")
-		Iterator<File> it = FileUtils.iterateFiles(new File(getClass().getClassLoader().getResource("savedgames").getPath()), null, true);
+		Iterator<File> it = FileUtils.iterateFiles(new File("savedgames"), null, true);
 		while(it.hasNext()) {
 			String i = it.next().getName();
 			loadGameToggelList.addItem(i);
@@ -176,7 +184,6 @@ public class MenuPanel extends JPanel {
 		userNameTextField.setText("");
 		addUserErrorMessage.setText("");
 		startGameErrorLabel.setText("");
-
 	}
 
 	private void addUserButtonActionPerformed(ActionEvent evt) {
@@ -231,6 +238,11 @@ public class MenuPanel extends JPanel {
 			startGameErrorLabel.setText("Please select names and time");
 		}
 	}
+	
+	private void loadGameButtonActionPerformed(ActionEvent evt) {
+		// TODO check if the position is valid
+		JOptionPane.showMessageDialog(this.getParent(), "Sorry file is not valid");
+	}
 
 	private void changeToGamePanel() {
 		CardLayout cardLayout = (CardLayout) this.getParent().getLayout();
@@ -254,17 +266,19 @@ public class MenuPanel extends JPanel {
 		interfaceLayout.setHorizontalGroup(interfaceLayout.createParallelGroup()
 				.addGroup(interfaceLayout.createSequentialGroup().addContainerGap()
 						.addGroup(interfaceLayout.createParallelGroup()
-								.addGroup(interfaceLayout.createParallelGroup().addComponent(userNameLabel)
+								.addGroup(interfaceLayout.createParallelGroup()
+										.addComponent(userNameLabel)
 										.addComponent(addUserButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
 												Short.MAX_VALUE)
 										.addComponent(userNameTextField))
-								.addComponent(addUserErrorMessage))
+								)
 						.addGap(31)
 						.addGroup(interfaceLayout.createParallelGroup().addGroup(interfaceLayout.createSequentialGroup()
 								.addGroup(interfaceLayout.createParallelGroup(Alignment.LEADING, false)
 										.addGroup(interfaceLayout.createSequentialGroup()
 												.addGroup(interfaceLayout.createParallelGroup()
-														.addComponent(whiteToggleLable).addComponent(whiteToggleList))
+														.addComponent(whiteToggleLable)
+														.addComponent(whiteToggleList))
 												.addPreferredGap(ComponentPlacement.RELATED)
 												.addGroup(interfaceLayout.createParallelGroup()
 														.addComponent(blackToggleList).addComponent(blackToggleLable))
@@ -276,7 +290,8 @@ public class MenuPanel extends JPanel {
 												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 								.addGap(34)
 								.addGroup(interfaceLayout.createParallelGroup()
-										.addGroup(interfaceLayout.createSequentialGroup().addComponent(loadGameLabel)
+										.addGroup(interfaceLayout.createSequentialGroup()
+												.addComponent(loadGameLabel)
 												.addContainerGap())
 										.addGroup(interfaceLayout.createSequentialGroup()
 												.addGroup(interfaceLayout.createParallelGroup()
@@ -285,7 +300,7 @@ public class MenuPanel extends JPanel {
 																Short.MAX_VALUE)
 														.addComponent(loadGameToggelList))
 												.addContainerGap())))
-								.addComponent(startGameErrorLabel))));
+								.addComponent(startGameErrorLabel))).addGap(10).addComponent(addUserErrorMessage));
 		interfaceLayout.setVerticalGroup(interfaceLayout.createParallelGroup().addGroup(interfaceLayout
 				.createSequentialGroup()
 				.addGroup(interfaceLayout
@@ -308,5 +323,6 @@ public class MenuPanel extends JPanel {
 				.addGroup(interfaceLayout.createParallelGroup(Alignment.BASELINE).addComponent(startGameErrorLabel)
 						.addComponent(addUserErrorMessage))));
 		interfacePanel.setLayout(interfaceLayout);
+		interfaceLayout.setAutoCreateContainerGaps(true);
 	}
 }
