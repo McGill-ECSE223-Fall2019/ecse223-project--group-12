@@ -8,6 +8,8 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
@@ -21,6 +23,9 @@ import javax.swing.JOptionPane;
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
+import ca.mcgill.ecse223.quoridor.to.PlayerStatsTO;
+import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
+
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JSeparator;
@@ -49,10 +54,15 @@ public class GamePanel extends JPanel {
 	private JSeparator middleSeparator;
 	private JSeparator lowerSeparator;
 	private JLabel invalidMoveLabel;
+	private final Color wallColor = Color.RED;
+	private final Color wallCandidateColor = Color.YELLOW;
+	private final Color invisibleWallColor = Color.BLUE;
+	private final Color whitePawnColor = Color.WHITE;
+	private final Color blackPawnColor = Color.BLACK;
 
 	public GamePanel() {
 		initComponents();
-		refreshData();
+		// refreshData();
 	}
 
 	private void initComponents() {
@@ -127,27 +137,61 @@ public class GamePanel extends JPanel {
 				grabWallButtonActionPerformed(evt);
 			}
 		});
-		
+
 		confirmMoveButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				confirmMoveButtonActionPerformed(evt);
 			}
 		});
+		rightButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				rightButtonButtonActionPerformed(evt);
+			}
+
+		});
+		leftButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				leftButtonButtonActionPerformed(evt);
+			}
+
+		});
+		upButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				upButtonButtonActionPerformed(evt);
+			}
+
+		});
+		downButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				downButtonButtonActionPerformed(evt);
+			}
+
+		});
+		rotateWallButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				rotateWallButtonButtonActionPerformed(evt);
+			}		
+		});
+
 
 		// Just run a few methods to test the board
-		showPawn(1, 5, Color.black, true); // black pawn at E1
-		showPawn(9, 5, Color.white, true); // white pawn at E9
-		drawWall(1, 4, Direction.Vertical); // wall at D1V
-		drawWall(3, 5, Direction.Vertical); // wall at E3V
-		drawWall(1, 1, Direction.Horizontal); // wall at A1H
-		drawWall(5, 5, Direction.Horizontal); // wall at E5H
-		drawWall(5, 7, Direction.Horizontal); // wall at G5H
-
+		showPawn(1, 5, blackPawnColor, true); // black pawn at E1
+		showPawn(9, 5, whitePawnColor, true); // white pawn at E9
+		// wallRefresh();
 	}
 
 	public void refreshData() {
-		playerLabel.setText("Player: "+QuoridorController.getCurrentPlayer());
+		PlayerStatsTO playerStats = QuoridorController.getPlayerStats();
+		wallRefresh();
+		if (playerStats != null) {
+			playerLabel.setText("Player: " + playerStats.getName());
+			remainingTime.setText("Remaining time: " + playerStats.getRemaningTime().toString());
+			movemode.setText("Move mode: " + playerStats.getMoveMode());
+			remainingWalls.setText("Remaining walls: " + playerStats.getRemainingWalls());
+
+		}
 		invalidMoveLabel.setText("");
+
 	}
 
 	public void startGamePopUp() {
@@ -155,6 +199,7 @@ public class GamePanel extends JPanel {
 		if (name == 0) {
 			try {
 				QuoridorController.startClock();
+				refreshData();
 			} catch (InvalidInputException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -165,7 +210,7 @@ public class GamePanel extends JPanel {
 			returnToMenu();
 		}
 	}
-	
+
 	private void returnToMenu() {
 		CardLayout cardLayout = (CardLayout) this.getParent().getLayout();
 		cardLayout.show(this.getParent(), "Menu Panel");
@@ -174,7 +219,8 @@ public class GamePanel extends JPanel {
 	private void saveExitToMenuButtonActionPerformed(ActionEvent evt) {
 		int name = JOptionPane.showConfirmDialog(this.getParent(), "Would you like to save your game before exiting?");
 		if (name == 0) {
-			String fileName = JOptionPane.showInputDialog(this.getParent(), "Enter the name of the file", "Save Game", 1);
+			String fileName = JOptionPane.showInputDialog(this.getParent(), "Enter the name of the file", "Save Game",
+					1);
 			if (fileName != null) {
 				// TODO Save the game before destroying it
 			}
@@ -184,14 +230,105 @@ public class GamePanel extends JPanel {
 			QuoridorController.destroyGame();
 			returnToMenu();
 		} else if (name == 3) {
-			//just stay in the game maybe refresh?
+			// just stay in the game maybe refresh?
+		}
+	}
+	private void rotateWallButtonButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.rotateWall();
+		refreshData();
+		refreshWallMoveCandidate();
+		
+	}
+
+	private void upButtonButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.moveWall("up");
+		refreshData();
+		refreshWallMoveCandidate();
+	}
+
+	private void leftButtonButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.moveWall("left");
+		refreshData();
+		refreshWallMoveCandidate();
+	}
+
+	private void downButtonButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.moveWall("down");
+		refreshData();
+		refreshWallMoveCandidate();
+	}
+	private void rightButtonButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.moveWall("right");
+		refreshData();
+		refreshWallMoveCandidate();
+	}
+
+	private JButton[] getWall(int row, int col, Direction dir) {
+		JButton wallA = null;
+		JButton wallB = null;
+		JButton wallC = null;
+		if (row > 0 && row < 9 && col > 0 && col < 9) {
+			int index = 0;
+			if (dir.equals(Direction.Vertical)) {
+				col = 2 * col;
+				row = 2 * row - 1;
+				index = BOARD_SIZE * col + row;
+				wallA = (JButton) gameBoardPanel.getComponent(index);
+				wallB = (JButton) gameBoardPanel.getComponent(index + 1);
+				wallC = (JButton) gameBoardPanel.getComponent(index + 2);
+			} else {
+				col = 2 * col - 1;
+				row = 2 * row;
+				index = BOARD_SIZE * col + row;
+				wallA = (JButton) gameBoardPanel.getComponent(index);
+				wallB = (JButton) gameBoardPanel.getComponent(index + BOARD_SIZE);
+				wallC = (JButton) gameBoardPanel.getComponent(index + 2 * BOARD_SIZE);
+			}
+		}
+		JButton[] wall = { wallA, wallB, wallC };
+		return wall;
+
+	}
+
+	private void refreshWallMoveCandidate() {
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				JButton[] wall = getWall(i, j, Direction.Horizontal);
+				if (wall[0] != null && (wall[0].getBackground() == wallCandidateColor ||wall[1].getBackground() == wallCandidateColor ||wall[2].getBackground() == wallCandidateColor )) {
+					wall[0].setBackground(invisibleWallColor);
+					wall[1].setBackground(invisibleWallColor);
+					wall[2].setBackground(invisibleWallColor);
+				}
+				wall = getWall(i, j, Direction.Vertical);
+				if (wall[0] != null && (wall[0].getBackground() == wallCandidateColor ||wall[1].getBackground() == wallCandidateColor ||wall[2].getBackground() == wallCandidateColor )) {
+					wall[0].setBackground(invisibleWallColor);
+					wall[1].setBackground(invisibleWallColor);
+					wall[2].setBackground(invisibleWallColor);
+				}
+			}
+		}
+		wallRefresh();
+		WallMoveTO wallMoveTO = QuoridorController.getWallMoveCandidate();
+		if (wallMoveTO != null) {
+			JButton[] wallGraphic = getWall(wallMoveTO.getRow(), wallMoveTO.getColumn(), wallMoveTO.getDirection());
+			drawWall(wallGraphic, wallCandidateColor);
 		}
 	}
 
+
+
 	private void grabWallButtonActionPerformed(ActionEvent evt) {
+		if (grabWallButton.getText().equals("Grab Wall")) {
+			grabWallButton.setText("Drop Wall");
+			QuoridorController.grabWall();
+		} else {
+			grabWallButton.setText("Grab Wall");
+			QuoridorController.dropWall();
+		}
 		refreshData();
+		refreshWallMoveCandidate();
 	}
-	
+
 	private void confirmMoveButtonActionPerformed(ActionEvent evt) {
 		invalidMoveLabel.setText("Invalid move, try again!");
 	}
@@ -212,7 +349,7 @@ public class GamePanel extends JPanel {
 		col = 2 * col - 1;
 		int index = col * BOARD_SIZE + row;
 		JButton tile = (JButton) gameBoardPanel.getComponent(index);
-		if (c.equals(Color.white)) {
+		if (c.equals(whitePawnColor)) {
 			tile.getComponent(0).setVisible(visible);
 		} else {
 			tile.getComponent(1).setVisible(visible);
@@ -229,31 +366,21 @@ public class GamePanel extends JPanel {
 	 * @param dir
 	 *            the direction of the wall
 	 */
-	private void drawWall(int row, int col, Direction dir) {
+	private void drawWall(JButton[] wall, Color color) {
 		// Walls are made of three sections (two tile lengths and the slot between them)
-		JButton wallA = null;
-		JButton wallB = null;
-		JButton wallC = null;
-		int index = 0;
-		if (dir.equals(Direction.Vertical)) {
-			col = 2 * col;
-			row = 2 * row - 1;
-			index = BOARD_SIZE * col + row;
-			wallA = (JButton) gameBoardPanel.getComponent(index);
-			wallB = (JButton) gameBoardPanel.getComponent(index + 1);
-			wallC = (JButton) gameBoardPanel.getComponent(index + 2);
-		} else {
-			col = 2 * col - 1;
-			row = 2 * row;
-			index = BOARD_SIZE * col + row;
-			wallA = (JButton) gameBoardPanel.getComponent(index);
-			wallB = (JButton) gameBoardPanel.getComponent(index + BOARD_SIZE);
-			wallC = (JButton) gameBoardPanel.getComponent(index + 2 * BOARD_SIZE);
+		if (wall[0] != null) {
+			wall[0].setBackground(color);
+			wall[1].setBackground(color);
+			wall[2].setBackground(color);
 		}
+	}
 
-		wallA.setBackground(Color.red);
-		wallB.setBackground(Color.red);
-		wallC.setBackground(Color.red);
+	private void wallRefresh() {
+		List<WallMoveTO> wallMoveTOs = QuoridorController.getWallMoves();
+		for (WallMoveTO wallMoveTO : wallMoveTOs) {
+			JButton[] wallGraphic = getWall(wallMoveTO.getRow(), wallMoveTO.getColumn(), wallMoveTO.getDirection());
+			drawWall(wallGraphic, wallColor);
+		}
 	}
 
 	/**
@@ -262,7 +389,8 @@ public class GamePanel extends JPanel {
 	 */
 	private void creatBoardPane() {
 		// Icon for Pawns
-		//ImageIcon wPawnIcon = new ImageIcon(getClass().getClassLoader().getResource("images\\whitePawn.png"));
+		// ImageIcon wPawnIcon = new
+		// ImageIcon(getClass().getClassLoader().getResource("images\\whitePawn.png"));
 		ImageIcon wPawnIcon = new ImageIcon("src\\main\\resources\\images\\whitePawn.png");
 		Image img = wPawnIcon.getImage();
 		img = img.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
@@ -287,7 +415,7 @@ public class GamePanel extends JPanel {
 				square.setBackground(Color.LIGHT_GRAY);
 				// Check if the square is a slot or a tile
 				if (j % 2 == 0 || i % 2 == 0) {
-					square.setBackground(Color.blue);
+					square.setBackground(invisibleWallColor);
 					square.setBorder(null);
 					c.insets = new Insets(0, 0, 0, 0);
 					c.weightx = 0.0;
@@ -343,57 +471,50 @@ public class GamePanel extends JPanel {
 	 * Creates The contorll ui with all necessary buttons
 	 */
 	private void createControlUI() {
-		
+
 		controlUIPanel.setLayout(new GroupLayout(controlUIPanel));
 		GroupLayout controlUILayout = (GroupLayout) controlUIPanel.getLayout();
-		controlUILayout.setHorizontalGroup(
-			controlUILayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, controlUILayout.createSequentialGroup()
-					.addGroup(controlUILayout.createParallelGroup(Alignment.TRAILING)
-						.addGroup(controlUILayout.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lowerSeparator, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
-						.addGroup(controlUILayout.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(middleSeparator, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING, controlUILayout.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(upperSeparator, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING, controlUILayout.createParallelGroup(Alignment.TRAILING, false)
-							.addComponent(grabWallButton, Alignment.LEADING)
-							.addComponent(rotateWallButton, Alignment.LEADING)
-							.addComponent(confirmMoveButton, Alignment.LEADING)
-							.addComponent(saveExitToMenuButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-							.addComponent(dashboardPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addComponent(arrowPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING, controlUILayout.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(invalidMoveLabel)))
-					.addContainerGap())
-		);
-		controlUILayout.setVerticalGroup(
-			controlUILayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(controlUILayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(dashboardPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(upperSeparator, GroupLayout.PREFERRED_SIZE, 2, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(grabWallButton)
-					.addComponent(rotateWallButton)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(middleSeparator, GroupLayout.PREFERRED_SIZE, 2, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(arrowPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lowerSeparator, GroupLayout.PREFERRED_SIZE, 2, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(confirmMoveButton)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(invalidMoveLabel)
-					.addPreferredGap(ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
-					.addComponent(saveExitToMenuButton))
-		);
+		controlUILayout.setHorizontalGroup(controlUILayout.createParallelGroup(Alignment.LEADING).addGroup(
+				Alignment.TRAILING,
+				controlUILayout.createSequentialGroup().addGroup(controlUILayout.createParallelGroup(Alignment.TRAILING)
+						.addGroup(controlUILayout.createSequentialGroup().addContainerGap().addComponent(lowerSeparator,
+								GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+						.addGroup(controlUILayout.createSequentialGroup().addContainerGap()
+								.addComponent(middleSeparator, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING,
+								controlUILayout.createSequentialGroup().addContainerGap().addComponent(upperSeparator,
+										GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING,
+								controlUILayout.createParallelGroup(Alignment.TRAILING, false)
+										.addComponent(grabWallButton, Alignment.LEADING)
+										.addComponent(rotateWallButton, Alignment.LEADING)
+										.addComponent(confirmMoveButton, Alignment.LEADING)
+										.addComponent(saveExitToMenuButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+										.addComponent(dashboardPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
+												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(arrowPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
+												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING, controlUILayout.createSequentialGroup().addContainerGap()
+								.addComponent(invalidMoveLabel)))
+						.addContainerGap()));
+		controlUILayout.setVerticalGroup(controlUILayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(controlUILayout.createSequentialGroup().addContainerGap()
+						.addComponent(dashboardPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(upperSeparator, GroupLayout.PREFERRED_SIZE, 2, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(grabWallButton)
+						.addComponent(rotateWallButton).addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(middleSeparator, GroupLayout.PREFERRED_SIZE, 2, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(arrowPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(lowerSeparator, GroupLayout.PREFERRED_SIZE, 2, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(confirmMoveButton)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(invalidMoveLabel)
+						.addPreferredGap(ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
+						.addComponent(saveExitToMenuButton)));
 		controlUILayout.setAutoCreateGaps(true);
 		controlUILayout.setAutoCreateContainerGaps(true);
 	}

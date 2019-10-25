@@ -345,9 +345,9 @@ public class Game
       WallMove existingWallMoveCandidate = wallMoveCandidate;
       wallMoveCandidate = null;
       
-      if (existingWallMoveCandidate != null && existingWallMoveCandidate.getCGame() != null)
+      if (existingWallMoveCandidate != null && existingWallMoveCandidate.getCandidateGame() != null)
       {
-        existingWallMoveCandidate.setCGame(null);
+        existingWallMoveCandidate.setCandidateGame(null);
       }
       wasSet = true;
       return wasSet;
@@ -356,15 +356,15 @@ public class Game
     WallMove currentWallMoveCandidate = getWallMoveCandidate();
     if (currentWallMoveCandidate != null && !currentWallMoveCandidate.equals(aNewWallMoveCandidate))
     {
-      currentWallMoveCandidate.setCGame(null);
+      currentWallMoveCandidate.setCandidateGame(null);
     }
 
     wallMoveCandidate = aNewWallMoveCandidate;
-    Game existingCGame = aNewWallMoveCandidate.getCGame();
+    Game existingCandidateGame = aNewWallMoveCandidate.getCandidateGame();
 
-    if (!equals(existingCGame))
+    if (!equals(existingCandidateGame))
     {
-      aNewWallMoveCandidate.setCGame(this);
+      aNewWallMoveCandidate.setCandidateGame(this);
     }
     wasSet = true;
     return wasSet;
@@ -486,7 +486,7 @@ public class Game
     if (existingWallMoveCandidate != null)
     {
       existingWallMoveCandidate.delete();
-      existingWallMoveCandidate.setCGame(null);
+      existingWallMoveCandidate.setCandidateGame(null);
     }
     Player existingWhitePlayer = whitePlayer;
     whitePlayer = null;

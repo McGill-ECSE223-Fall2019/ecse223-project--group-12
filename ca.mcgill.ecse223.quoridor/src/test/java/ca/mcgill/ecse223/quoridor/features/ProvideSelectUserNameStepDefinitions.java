@@ -38,7 +38,7 @@ public class ProvideSelectUserNameStepDefinitions {
 	@Given("A new game is initializing")
 	public void a_new_game_is_initializing() {
 		TestUtil.initQuoridorAndBoard();
-		TestUtil.createUsersAndPlayers("user1", "user2");
+		//TestUtil.createUsersAndPlayers("user1", "user2");
 		new Game(GameStatus.Initializing, MoveMode.PlayerMove, QuoridorApplication.getQuoridor());
 	}
 

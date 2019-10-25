@@ -1,0 +1,18 @@
+namespace ca.mcgill.ecse223.quoridor.to;
+
+class UserTO {
+	name;
+}
+class WallMoveTO{
+	depend ca.mcgill.ecse223.quoridor.model.Direction;
+	Integer row;
+	Integer column;
+	Direction direction;
+}
+
+class PlayerStatsTO{
+	name;
+	Time remaningTime;
+	int remainingWalls;
+	moveMode;
+}

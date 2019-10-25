@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.to;
 
-// line 102 "../../../../../QuoridorGame.ump"
+// line 3 "../../../../../QuoridorTO.ump"
 public class UserTO
 {
 

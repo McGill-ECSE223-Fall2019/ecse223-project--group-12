@@ -18,7 +18,9 @@ import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
+import ca.mcgill.ecse223.quoridor.to.PlayerStatsTO;
 import ca.mcgill.ecse223.quoridor.to.UserTO;
+import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
 public class QuoridorController {
 
@@ -44,6 +46,7 @@ public class QuoridorController {
 			throw new InvalidInputException("A game is already running");
 		}
 	}
+
 	/**
 	 * 
 	 */
@@ -95,6 +98,7 @@ public class QuoridorController {
 			throw new InvalidInputException("Total time has to be more than 0 seconds");
 		}
 	}
+
 	/**
 	 * 
 	 * @param minutes
@@ -164,6 +168,7 @@ public class QuoridorController {
 
 		return tileExists && currentPositionIsValid;
 	}
+
 	/**
 	 * 
 	 * @return
@@ -242,17 +247,23 @@ public class QuoridorController {
 	 * @author Remi Carriere
 	 * @param user
 	 *            The selected user
-	 * @throws InvalidInputException 
+	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setWhitePlayerInGame(User user) throws InvalidInputException {
 		if (user != null) {
-		Player player = new Player(null, user, 1, Direction.Vertical);
-		QuoridorApplication.getQuoridor().getCurrentGame().setWhitePlayer(player);
+			Player player = new Player(null, user, 1, Direction.Vertical);
+			if (player.getWalls().isEmpty()) {
+				for (int j = 0; j < 10; j++) {
+					new Wall(j, player);
+				}
+			}
+			QuoridorApplication.getQuoridor().getCurrentGame().setWhitePlayer(player);
 		} else {
 			throw new InvalidInputException("cannot set null user as player");
 		}
 	}
+
 	/**
 	 * 
 	 * @param userName
@@ -270,17 +281,23 @@ public class QuoridorController {
 	 * @author Remi Carriere
 	 * @param user
 	 *            The selected user
-	 * @throws InvalidInputException 
+	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setBlackPlayerInGame(User user) throws InvalidInputException {
 		if (user != null) {
 			Player player = new Player(null, user, 9, Direction.Vertical);
+			if (player.getWalls().isEmpty()) {
+				for (int j = 0; j < 10; j++) {
+					new Wall(j + 10, player);
+				}
+			}
 			QuoridorApplication.getQuoridor().getCurrentGame().setBlackPlayer(player);
 		} else {
 			throw new InvalidInputException("cannot set null user as player");
 		}
 	}
+
 	/**
 	 * 
 	 * @param userName
@@ -323,6 +340,32 @@ public class QuoridorController {
 	 * Query Methods
 	 */
 
+	public static PlayerStatsTO getPlayerStats() {
+		String name;
+		Time remainingTime;
+		int remainingWalls;
+		String moveMode;
+
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (game != null && game.getGameStatus() == GameStatus.Running) {
+			Player p = game.getCurrentPosition().getPlayerToMove();
+
+			name = p.getUser().getName();
+			if (p.hasGameAsBlack()) {
+				name = "Black - " + name;
+				remainingWalls = game.getCurrentPosition().getBlackWallsInStock().size();
+			} else {
+				name = "White - " + name;
+				remainingWalls = game.getCurrentPosition().getWhiteWallsInStock().size();
+			}
+			remainingTime = p.getRemainingTime();
+			moveMode = game.getMoveMode().toString();
+			return new PlayerStatsTO(name, remainingTime, remainingWalls, moveMode);
+		}
+		return null;
+
+	}
+
 	/**
 	 * Gets a list of all Users of the Quoridor Application so that players can
 	 * select user name
@@ -339,6 +382,34 @@ public class QuoridorController {
 		}
 		return users;
 	}
+
+	public static List<WallMoveTO> getWallMoves() {
+		List<WallMoveTO> wallMoveTOs = new ArrayList<WallMoveTO>();
+
+		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		// Create a list of all walls on the board
+		List<Wall> boardWalls = new ArrayList<Wall>();
+		List<Wall> whitewalls = gp.getWhiteWallsOnBoard();
+		List<Wall> blackwalls = gp.getBlackWallsOnBoard();
+		boardWalls.addAll(blackwalls);
+		boardWalls.addAll(whitewalls);
+		for (Wall wall : boardWalls) {
+			WallMove wm = wall.getMove();
+			WallMoveTO wmto = new WallMoveTO(wm.getTargetTile().getRow(), wm.getTargetTile().getColumn(),
+					wm.getWallDirection());
+			wallMoveTOs.add(wmto);
+		}
+		return wallMoveTOs;
+	}
+
+	public static WallMoveTO getWallMoveCandidate() {
+		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
+		if (wm != null) {
+			return new WallMoveTO(wm.getTargetTile().getRow(), wm.getTargetTile().getColumn(), wm.getWallDirection());
+		}
+		return null;
+	}
+
 	/**
 	 * 
 	 * @return
@@ -396,6 +467,26 @@ public class QuoridorController {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Gets the Tile at the specified coordinates
+	 * 
+	 * @author Remi Carriere
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	private static Tile getTile(int row, int col) {
+		Iterator<Tile> itr = QuoridorApplication.getQuoridor().getBoard().getTiles().iterator();
+		while (itr.hasNext()) {
+			Tile t = itr.next();
+			if (t.getRow() == row && t.getColumn() == col) {
+				return t;
+			}
+		}
+		throw new java.lang.IllegalArgumentException("tile does not exist:  row=" + row + " col=" + col);
+
 	}
 
 	// ------------------------
@@ -470,12 +561,15 @@ public class QuoridorController {
 
 		GamePosition gamePosition = new GamePosition(0, player1Position, player2Position, w, game);
 		// Add the walls as in stock for the players
-		for (int j = 0; j < 10; j++) {
-			Wall wall = Wall.getWithId(j);
+		Player white = game.getWhitePlayer();
+		Player black = game.getBlackPlayer();
+		List<Wall> whiteWalls = white.getWalls();
+		List<Wall> blackWalls = black.getWalls();
+
+		for (Wall wall : whiteWalls) {
 			gamePosition.addWhiteWallsInStock(wall);
 		}
-		for (int j = 0; j < 10; j++) {
-			Wall wall = Wall.getWithId(j + 10);
+		for (Wall wall : blackWalls) {
 			gamePosition.addBlackWallsInStock(wall);
 		}
 		game.setCurrentPosition(gamePosition);
@@ -514,7 +608,15 @@ public class QuoridorController {
 	 */
 
 	public static void grabWall() throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+		Player p = g.getWhitePlayer();
+		GamePosition gp = g.getCurrentPosition();
+		Wall w = gp.getWhiteWallsInStock(0);
+		Tile tile = getTile(8, 5); // initial position of white
+		WallMove wm = new WallMove(0, 0, p, tile, g, Direction.Vertical, w);
+		g.setWallMoveCandidate(wm);
+		g.setMoveMode(MoveMode.WallMove);
+		// throw new java.lang.UnsupportedOperationException();
 	}
 
 	/**
@@ -525,8 +627,17 @@ public class QuoridorController {
 	 */
 
 	public static void dropWall() throws java.lang.UnsupportedOperationException {
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = g.getCurrentPosition();
+		WallMove wallMove = g.getWallMoveCandidate();
+		Wall wall = wallMove.getWallPlaced();
+		Player p = g.getWhitePlayer();
+		gp.removeWhiteWallsInStock(wall);
+		gp.addWhiteWallsOnBoard(wall);
+		g.setWallMoveCandidate(null);
+		g.setMoveMode(MoveMode.PlayerMove);
 		// full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
+		// throw new java.lang.UnsupportedOperationException();
 	}
 
 	/*
@@ -652,7 +763,13 @@ public class QuoridorController {
 	 * @author Zechen Ren Gherkin feature: RotateWall.feature
 	 */
 	public static void rotateWall() throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
+		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
+		if (wm != null && wm.getWallDirection() == Direction.Vertical) {
+			wm.setWallDirection(Direction.Horizontal);
+		} else if (wm != null && wm.getWallDirection() == Direction.Horizontal) {
+			wm.setWallDirection(Direction.Vertical);
+		} 
+		QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
 	}
 
 	/**
@@ -660,7 +777,34 @@ public class QuoridorController {
 	 */
 
 	public static void moveWall(String side) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
+		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
+		if (wm != null) {
+			if (side.equals("right")) {
+				int row = wm.getTargetTile().getRow();
+				int col = wm.getTargetTile().getColumn() + 1;
+				if (col < 9)
+					wm.setTargetTile(getTile(row, col));
+				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+			} else if (side.equals("left")) {
+				int row = wm.getTargetTile().getRow();
+				int col = wm.getTargetTile().getColumn() - 1;
+				if (col > 0)
+					wm.setTargetTile(getTile(row, col));
+				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+			}else if (side.equals("up")) {
+				int row = wm.getTargetTile().getRow() -1;
+				int col = wm.getTargetTile().getColumn();
+				if (row > 0)
+					wm.setTargetTile(getTile(row, col));
+				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+			}else if (side.equals("down")) {
+				int row = wm.getTargetTile().getRow()+1;
+				int col = wm.getTargetTile().getColumn();
+				if (row < 9)
+					wm.setTargetTile(getTile(row, col));
+				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+			}
+		}
 	}
 
 }

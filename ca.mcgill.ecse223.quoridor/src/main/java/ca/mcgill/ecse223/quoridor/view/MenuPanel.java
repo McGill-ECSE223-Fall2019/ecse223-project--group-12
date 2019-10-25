@@ -151,13 +151,12 @@ public class MenuPanel extends JPanel {
 				stertGameButtonActionPerformed(evt);
 			}
 		});
-		
+
 		loadGameButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				loadGameButtonActionPerformed(evt);
 			}
 		});
-		
 
 	}
 
@@ -169,10 +168,10 @@ public class MenuPanel extends JPanel {
 			whiteToggleList.addItem(user.getName());
 			blackToggleList.addItem(user.getName());
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		Iterator<File> it = FileUtils.iterateFiles(new File("savedgames"), null, true);
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			String i = it.next().getName();
 			loadGameToggelList.addItem(i);
 		}
@@ -204,30 +203,15 @@ public class MenuPanel extends JPanel {
 			b = blackToggleList.getSelectedItem().toString();
 			int min = Integer.parseInt(thinkingTimeTextField.getText().substring(0, 2));
 			int sec = Integer.parseInt(thinkingTimeTextField.getText().substring(5, 7));
-			time = new Time((60 * min + sec) * 1000);
+			time = Time.valueOf("00:"+min+":"+sec);
 		} catch (Exception e) {
 			startGameErrorLabel.setText("Could not parse selections");
 		}
 		if (w != null && b != null && time != null) {
 			try {
 				QuoridorController.initializeGame();
-			} catch (InvalidInputException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
 				QuoridorController.setWhitePlayerInGame(w);
-			} catch (InvalidInputException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
 				QuoridorController.setBlackPlayerInGame(b);
-			} catch (InvalidInputException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			try {
 				QuoridorController.setTotalThinkingTime(time);
 			} catch (InvalidInputException e) {
 				// TODO Auto-generated catch block
@@ -237,8 +221,9 @@ public class MenuPanel extends JPanel {
 		} else {
 			startGameErrorLabel.setText("Please select names and time");
 		}
+		//changeToGamePanel();
 	}
-	
+
 	private void loadGameButtonActionPerformed(ActionEvent evt) {
 		// TODO check if the position is valid
 		JOptionPane.showMessageDialog(this.getParent(), "Sorry file is not valid");
@@ -266,19 +251,16 @@ public class MenuPanel extends JPanel {
 		interfaceLayout.setHorizontalGroup(interfaceLayout.createParallelGroup()
 				.addGroup(interfaceLayout.createSequentialGroup().addContainerGap()
 						.addGroup(interfaceLayout.createParallelGroup()
-								.addGroup(interfaceLayout.createParallelGroup()
-										.addComponent(userNameLabel)
+								.addGroup(interfaceLayout.createParallelGroup().addComponent(userNameLabel)
 										.addComponent(addUserButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
 												Short.MAX_VALUE)
-										.addComponent(userNameTextField))
-								)
+										.addComponent(userNameTextField)))
 						.addGap(31)
 						.addGroup(interfaceLayout.createParallelGroup().addGroup(interfaceLayout.createSequentialGroup()
 								.addGroup(interfaceLayout.createParallelGroup(Alignment.LEADING, false)
 										.addGroup(interfaceLayout.createSequentialGroup()
 												.addGroup(interfaceLayout.createParallelGroup()
-														.addComponent(whiteToggleLable)
-														.addComponent(whiteToggleList))
+														.addComponent(whiteToggleLable).addComponent(whiteToggleList))
 												.addPreferredGap(ComponentPlacement.RELATED)
 												.addGroup(interfaceLayout.createParallelGroup()
 														.addComponent(blackToggleList).addComponent(blackToggleLable))
@@ -290,8 +272,7 @@ public class MenuPanel extends JPanel {
 												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 								.addGap(34)
 								.addGroup(interfaceLayout.createParallelGroup()
-										.addGroup(interfaceLayout.createSequentialGroup()
-												.addComponent(loadGameLabel)
+										.addGroup(interfaceLayout.createSequentialGroup().addComponent(loadGameLabel)
 												.addContainerGap())
 										.addGroup(interfaceLayout.createSequentialGroup()
 												.addGroup(interfaceLayout.createParallelGroup()
@@ -300,7 +281,8 @@ public class MenuPanel extends JPanel {
 																Short.MAX_VALUE)
 														.addComponent(loadGameToggelList))
 												.addContainerGap())))
-								.addComponent(startGameErrorLabel))).addGap(10).addComponent(addUserErrorMessage));
+								.addComponent(startGameErrorLabel)))
+				.addGap(10).addComponent(addUserErrorMessage));
 		interfaceLayout.setVerticalGroup(interfaceLayout.createParallelGroup().addGroup(interfaceLayout
 				.createSequentialGroup()
 				.addGroup(interfaceLayout

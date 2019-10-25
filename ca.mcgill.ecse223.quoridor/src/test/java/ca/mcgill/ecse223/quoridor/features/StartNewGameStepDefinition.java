@@ -42,7 +42,7 @@ public class StartNewGameStepDefinition {
 	@Given("^The game is not running$")
 	public void the_game_is_not_running() {
 		TestUtil.initQuoridorAndBoard();
-		players = TestUtil.createUsersAndPlayers("user1", "user2");
+		// players = TestUtil.createUsersAndPlayers("user1", "user2");
 	}
 
 	@When("A new game is being initialized")
@@ -58,7 +58,8 @@ public class StartNewGameStepDefinition {
 	@When("White player chooses a username")
 	public void white_player_chooses_a_username() {
 		try {
-			QuoridorController.setWhitePlayerInGame(getUser(0));
+			QuoridorController.setNewUserAsWhite("User1");
+			;
 		} catch (InvalidInputException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -68,7 +69,7 @@ public class StartNewGameStepDefinition {
 	@When("Black player chooses a username")
 	public void black_player_chooses_a_username() {
 		try {
-			QuoridorController.setBlackPlayerInGame(getUser(1));
+			QuoridorController.setNewUserAsBlack("user2");
 		} catch (InvalidInputException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -92,11 +93,7 @@ public class StartNewGameStepDefinition {
 
 	@Given("The game is ready to start")
 	public void the_game_is_ready_to_start() {
-		// Avoid creating duplicate players, necessary since another scenario uses this
-		// clause with different background
-		if (players == null) {
-			players = TestUtil.createUsersAndPlayers("user1", "user2");
-		}
+		players = TestUtil.createUsersAndPlayers("user1", "user2");
 		Game game = new Game(GameStatus.ReadyToStart, MoveMode.PlayerMove, QuoridorApplication.getQuoridor());
 		game.setWhitePlayer(players.get(0));
 		game.setBlackPlayer(players.get(1));

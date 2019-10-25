@@ -29,6 +29,7 @@ public class TestUtil {
 
 	/**
 	 * Create a new board with 81 Tiles
+	 * 
 	 * @author Marton
 	 */
 	public static void initQuoridorAndBoard() {
@@ -44,7 +45,9 @@ public class TestUtil {
 	}
 
 	/**
-	 * Creates Users and associates them with black and white player with default thinking time
+	 * Creates Users and associates them with black and white player with default
+	 * thinking time
+	 * 
 	 * @author Marton
 	 * @param userName1
 	 * @param userName2
@@ -60,17 +63,12 @@ public class TestUtil {
 
 		// Players are assumed to start on opposite sides and need to make progress
 		// horizontally to get to the other side
-		//@formatter:off
+		// @formatter:off
 		/*
-		 *  __________
-		 * |          |
-		 * |          |
-		 * |x->    <-x|
-		 * |          |
-		 * |__________|
+		 * __________ | | | | |x-> <-x| | | |__________|
 		 * 
 		 */
-		//@formatter:on
+		// @formatter:on
 		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
 		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
 
@@ -78,21 +76,26 @@ public class TestUtil {
 
 		// Create all walls. Walls with lower ID belong to player1,
 		// while the second half belongs to player 2
-		for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < 10; j++) {
-				new Wall(i * 10 + j, players[i]);
-			}
+		for (int j = 0; j < 10; j++) {
+			new Wall(j, players[0]);
 		}
 		
+		for (int j = 0; j < 10; j++) {
+			new Wall(j+10, players[1]);
+		}
+		
+
 		ArrayList<Player> playersList = new ArrayList<Player>();
 		playersList.add(player1);
 		playersList.add(player2);
-		
+
 		return playersList;
 	}
 
 	/**
-	 * Starts a new Game with Running Game status. initializes board with pawns and walls
+	 * Starts a new Game with Running Game status. initializes board with pawns and
+	 * walls
+	 * 
 	 * @author Marton
 	 * @param players
 	 */
@@ -103,31 +106,37 @@ public class TestUtil {
 		// positions
 		Tile player1StartPos = quoridor.getBoard().getTile(36);
 		Tile player2StartPos = quoridor.getBoard().getTile(44);
-		
+
 		Game game = new Game(GameStatus.Running, MoveMode.PlayerMove, quoridor);
 		game.setWhitePlayer(players.get(0));
 		game.setBlackPlayer(players.get(1));
 
-		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(), player1StartPos);
-		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(), player2StartPos);
+		PlayerPosition player1Position = new PlayerPosition(quoridor.getCurrentGame().getWhitePlayer(),
+				player1StartPos);
+		PlayerPosition player2Position = new PlayerPosition(quoridor.getCurrentGame().getBlackPlayer(),
+				player2StartPos);
 
 		GamePosition gamePosition = new GamePosition(0, player1Position, player2Position, players.get(0), game);
 
 		// Add the walls as in stock for the players
-		for (int j = 0; j < 10; j++) {
-			Wall wall = Wall.getWithId(j);
+		Player white = game.getWhitePlayer();
+		Player black = game.getBlackPlayer();
+		List<Wall> whiteWalls = white.getWalls();
+		List<Wall> blackWalls = black.getWalls();
+
+		for (Wall wall : whiteWalls) {
 			gamePosition.addWhiteWallsInStock(wall);
 		}
-		for (int j = 0; j < 10; j++) {
-			Wall wall = Wall.getWithId(j + 10);
+		for (Wall wall : blackWalls) {
 			gamePosition.addBlackWallsInStock(wall);
 		}
 
 		game.setCurrentPosition(gamePosition);
 	}
-	
+
 	/**
 	 * Gets the Tile at the specified coordinates
+	 * 
 	 * @author Remi Carriere
 	 * @param row
 	 * @param col
@@ -141,11 +150,13 @@ public class TestUtil {
 				return t;
 			}
 		}
-		throw new java.lang.IllegalArgumentException("tile does not exist:  row=" + row + " col=" +col);
+		throw new java.lang.IllegalArgumentException("tile does not exist:  row=" + row + " col=" + col);
 
 	}
+
 	/**
 	 * Returns Direction Object based on string input
+	 * 
 	 * @author Remi Carriere
 	 * @param dir
 	 * @return
@@ -160,9 +171,10 @@ public class TestUtil {
 			throw new java.lang.IllegalArgumentException("Invalid direction: " + dir);
 		}
 	}
-	
+
 	/**
 	 * Gets a user of quoridor by username
+	 * 
 	 * @author Remi Carriere
 	 * @param name
 	 * @return
@@ -176,11 +188,13 @@ public class TestUtil {
 			}
 		}
 		return null;
-		//throw new java.lang.IllegalArgumentException("Username does not exist: " + name);
+		// throw new java.lang.IllegalArgumentException("Username does not exist: " +
+		// name);
 	}
 
 	/**
 	 * Creates a time object from int values
+	 * 
 	 * @author Remi Carriere
 	 * @param minutes
 	 * @param seconds
@@ -190,13 +204,14 @@ public class TestUtil {
 		int mills = ((60 * minutes) + seconds) * 1000;
 		return new Time(mills);
 	}
+
 	/**
 	 * @author Remi Carriere
 	 * @param color
 	 * @return
 	 */
 	public static Player getPlayerByColor(String color) {
-		switch(color) {
+		switch (color) {
 		case "white":
 			return QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
 		case "black":
@@ -204,15 +219,15 @@ public class TestUtil {
 		default:
 			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);
 		}
-		}
-	
+	}
+
 	/**
 	 * @author Remi Carriere
 	 * @param color
 	 * @return
 	 */
 	public static PlayerPosition getPlayerPositionByColor(String color) {
-		switch(color) {
+		switch (color) {
 		case "white":
 			return QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
 		case "black":
@@ -221,6 +236,7 @@ public class TestUtil {
 			throw new java.lang.IllegalArgumentException("Invalid Color: " + color);
 		}
 	}
+
 	/**
 	 * @author Remi Carriere
 	 */
@@ -229,20 +245,21 @@ public class TestUtil {
 		Player currentPlayer = getCurrentPlayer();
 		Wall wall = null;
 		if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
-			List<Wall> walls = gamePosition.getWhiteWallsInStock();	
-			for (int i = 0 ;  i< walls.size(); i++) {
+			List<Wall> walls = gamePosition.getWhiteWallsInStock();
+			for (int i = 0; i < walls.size(); i++) {
 				wall = walls.get(i);
 				gamePosition.removeWhiteWallsInStock(wall);
 			}
 		} else if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
-			List<Wall> walls = gamePosition.getBlackWallsInStock();	
-			for (int i = 0 ;  i< walls.size(); i++) {
+			List<Wall> walls = gamePosition.getBlackWallsInStock();
+			for (int i = 0; i < walls.size(); i++) {
 				wall = walls.get(i);
 				gamePosition.removeBlackWallsInStock(wall);
 			}
 
 		}
 	}
+
 	/**
 	 * @author Kaan Gure
 	 * @return
@@ -261,6 +278,7 @@ public class TestUtil {
 		}
 		return currentPlayer;
 	}
+
 	/**
 	 * @author Remi Carriere
 	 * @return
@@ -268,7 +286,7 @@ public class TestUtil {
 	public static Wall getAWallInStockForCurrenPlayer() {
 		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Player currentPlayer = getCurrentPlayer();
-		
+
 		if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
 			List<Wall> walls = gamePosition.getWhiteWallsInStock();
 			if (!walls.isEmpty()) {
@@ -279,7 +297,7 @@ public class TestUtil {
 			if (!walls.isEmpty()) {
 				return walls.get(1);
 			}
-		} 
+		}
 		return null;
 	}
 }

@@ -16,7 +16,7 @@ public class WallMove extends Move
 
   //WallMove Associations
   private Wall wallPlaced;
-  private Game cGame;
+  private Game candidateGame;
 
   //------------------------
   // CONSTRUCTOR
@@ -55,14 +55,14 @@ public class WallMove extends Move
     return wallPlaced;
   }
   /* Code from template association_GetOne */
-  public Game getCGame()
+  public Game getCandidateGame()
   {
-    return cGame;
+    return candidateGame;
   }
 
-  public boolean hasCGame()
+  public boolean hasCandidateGame()
   {
-    boolean has = cGame != null;
+    boolean has = candidateGame != null;
     return has;
   }
   /* Code from template association_SetOneToOptionalOne */
@@ -94,34 +94,34 @@ public class WallMove extends Move
     return wasSet;
   }
   /* Code from template association_SetOptionalOneToOptionalOne */
-  public boolean setCGame(Game aNewCGame)
+  public boolean setCandidateGame(Game aNewCandidateGame)
   {
     boolean wasSet = false;
-    if (aNewCGame == null)
+    if (aNewCandidateGame == null)
     {
-      Game existingCGame = cGame;
-      cGame = null;
+      Game existingCandidateGame = candidateGame;
+      candidateGame = null;
       
-      if (existingCGame != null && existingCGame.getWallMoveCandidate() != null)
+      if (existingCandidateGame != null && existingCandidateGame.getWallMoveCandidate() != null)
       {
-        existingCGame.setWallMoveCandidate(null);
+        existingCandidateGame.setWallMoveCandidate(null);
       }
       wasSet = true;
       return wasSet;
     }
 
-    Game currentCGame = getCGame();
-    if (currentCGame != null && !currentCGame.equals(aNewCGame))
+    Game currentCandidateGame = getCandidateGame();
+    if (currentCandidateGame != null && !currentCandidateGame.equals(aNewCandidateGame))
     {
-      currentCGame.setWallMoveCandidate(null);
+      currentCandidateGame.setWallMoveCandidate(null);
     }
 
-    cGame = aNewCGame;
-    WallMove existingWallMoveCandidate = aNewCGame.getWallMoveCandidate();
+    candidateGame = aNewCandidateGame;
+    WallMove existingWallMoveCandidate = aNewCandidateGame.getWallMoveCandidate();
 
     if (!equals(existingWallMoveCandidate))
     {
-      aNewCGame.setWallMoveCandidate(this);
+      aNewCandidateGame.setWallMoveCandidate(this);
     }
     wasSet = true;
     return wasSet;
@@ -135,9 +135,9 @@ public class WallMove extends Move
     {
       existingWallPlaced.setMove(null);
     }
-    if (cGame != null)
+    if (candidateGame != null)
     {
-      cGame.setWallMoveCandidate(null);
+      candidateGame.setWallMoveCandidate(null);
     }
     super.delete();
   }
@@ -148,6 +148,6 @@ public class WallMove extends Move
     return super.toString() + "["+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "wallDirection" + "=" + (getWallDirection() != null ? !getWallDirection().equals(this)  ? getWallDirection().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "wallPlaced = "+(getWallPlaced()!=null?Integer.toHexString(System.identityHashCode(getWallPlaced())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "cGame = "+(getCGame()!=null?Integer.toHexString(System.identityHashCode(getCGame())):"null");
+            "  " + "candidateGame = "+(getCandidateGame()!=null?Integer.toHexString(System.identityHashCode(getCandidateGame())):"null");
   }
 }
