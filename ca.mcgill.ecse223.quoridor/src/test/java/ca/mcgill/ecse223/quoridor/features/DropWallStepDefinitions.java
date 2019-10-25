@@ -111,9 +111,10 @@ public class DropWallStepDefinitions {
 		GamePosition casePosition  = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		casePosition.getGame().setWallMoveCandidate(wallMoveCandidate);
 		try {
-		//if(QuoridorController.validatePosition(casePosition) == false) {
-			//throw new IllegalStateException("Wall move candidate at current position is invalid, position has to be valid for test to commence");
-		//}
+			if (QuoridorController.validatePosition(casePosition) == false) {
+				throw new IllegalStateException(
+						"Wall move candidate at current position is invalid, position has to be valid for test to commence");
+			}
 			}catch (java.lang.UnsupportedOperationException e) {
 				//skips test if method is not yet implemented
 				throw new cucumber.api.PendingException();
@@ -234,9 +235,9 @@ public class DropWallStepDefinitions {
 		GamePosition casePosition  = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		casePosition.getGame().setWallMoveCandidate(wallMoveCandidate);
 		try {
-		//if(QuoridorController.validatePosition(casePosition) == true) {
-			//throw new IllegalStateException("Wall move candidate at current position is valid, position has to be invalid for test to commence");
-		//}
+		if(QuoridorController.validatePosition(casePosition) == true) {
+			throw new IllegalStateException("Wall move candidate at current position is valid, position has to be invalid for test to commence");
+		}
 		}catch (java.lang.UnsupportedOperationException e) {
 			//skips test if method is not yet implemented
 			throw new cucumber.api.PendingException();

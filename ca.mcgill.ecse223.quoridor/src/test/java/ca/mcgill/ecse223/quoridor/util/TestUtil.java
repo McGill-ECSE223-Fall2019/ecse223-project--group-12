@@ -132,6 +132,7 @@ public class TestUtil {
 		}
 
 		game.setCurrentPosition(gamePosition);
+		gamePosition.getBlackPosition().getTile();
 	}
 
 	/**

@@ -11,10 +11,15 @@ import java.util.Map;
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
+import ca.mcgill.ecse223.quoridor.model.Game;
+import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
+import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
+import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
+import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -30,21 +35,21 @@ import io.cucumber.java.en.When;
  *
  */
 public class ValidatePositionStepDefinition {
-	private Integer col = null;
-	private Integer row = null;
-	private String direction;
+	private GamePosition gamePositionToCheck;
 	private Boolean isValidPosition = null; // set to null so "expected false" does not pass if method is not called
 
 	@Given("A game position is supplied with pawn coordinate {int}:{int}")
 	public void a_game_position_is_supplied_with_pawn_coordinate(Integer row, Integer col) {
-		this.col = col;
-		this.row = row;
-		this.direction = null;
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
+		Tile tile = TestUtil.getTile(row, col);
+		PlayerPosition playerPos = new PlayerPosition(p, tile);
+		gamePositionToCheck = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		gamePositionToCheck.setWhitePosition(playerPos);
 	}
 
 	@When("Validation of the position is initiated")
 	public void validation_of_the_position_is_initiated() {
-		isValidPosition = QuoridorController.validatePosition(col, row, direction);
+		isValidPosition = QuoridorController.validatePosition(gamePositionToCheck);
 	}
 
 	@Then("The position shall be {string}")
@@ -55,9 +60,14 @@ public class ValidatePositionStepDefinition {
 
 	@Given("A game position is supplied with wall coordinate {int}:{int}-{string}")
 	public void a_game_position_is_supplied_with_wall_coordinate(Integer row, Integer col, String dir) {
-		this.col = col;
-		this.row = row;
-		this.direction = dir;
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
+		Game g =  QuoridorApplication.getQuoridor().getCurrentGame();
+		Tile tile = TestUtil.getTile(row, col);
+		Direction direction = TestUtil.getDirection(dir);
+		gamePositionToCheck = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		Wall wall = gamePositionToCheck.getWhiteWallsInStock().get(0);
+		new WallMove(row, col, p, tile, g, direction, wall);
+		gamePositionToCheck.addWhiteWallsOnBoard(wall);
 	}
 
 	@Then("The position shall be valid")
@@ -125,9 +135,7 @@ public class ValidatePositionStepDefinition {
 	@After
 	public void reset() {
 		isValidPosition = null;
-		row = null;
-		col = null;
-		direction = null;
+		gamePositionToCheck = null;
 	}
 
 }

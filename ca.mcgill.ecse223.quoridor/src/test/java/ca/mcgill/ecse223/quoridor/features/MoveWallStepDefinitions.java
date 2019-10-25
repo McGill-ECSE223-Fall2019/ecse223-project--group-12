@@ -158,7 +158,7 @@ public class MoveWallStepDefinitions {
 	@Then("I shall be notified that my move is illegal")
 	public void i_shall_be_notified_that_my_move_is_illegal() {
 		GamePosition currentPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
-		//assertTrue (QuoridorController.validatePosition(currentPosition));
+		assertTrue (QuoridorController.validatePosition(currentPosition));
 		throw new cucumber.api.PendingException();
 	
 	}
