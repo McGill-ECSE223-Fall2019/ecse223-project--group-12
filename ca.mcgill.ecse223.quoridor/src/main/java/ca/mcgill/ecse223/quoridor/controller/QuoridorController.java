@@ -588,21 +588,24 @@ public class QuoridorController {
 		GamePosition gamePos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		
 		//make string for white player's pawn and wall positions
-		Tile whitePlayerTile = gamePos.getWhitePosition().getTile();
-		String whitePos = "W: "+whitePlayerTile.getColumn()+whitePlayerTile.getRow();
-		WallMove wallMove = null;
 		char column;
+		
+		Tile whitePlayerTile = gamePos.getWhitePosition().getTile();
+		column = (char) (whitePlayerTile.getColumn()+96);
+		String whitePos = "W: "+column+whitePlayerTile.getRow();
+		WallMove wallMove = null;
 		for (int i=0; i<gamePos.getWhiteWallsOnBoard().size(); i++) {
 			wallMove = gamePos.getWhiteWallsOnBoard(i).getMove();
-			column = (char) (wallMove.getTargetTile().getColumn()+97);
+			column = (char) (wallMove.getTargetTile().getColumn()+96);
 			whitePos+= " "+column+wallMove.getTargetTile().getRow()+wallMove.getWallDirection().toString().charAt(0);
 		}
 		//make string for black player's pawn and wall positions
 		Tile blackPlayerTile = gamePos.getBlackPosition().getTile();
-		String blackPos = "B: "+blackPlayerTile.getColumn()+blackPlayerTile.getRow();
+		column = (char) (blackPlayerTile.getColumn()+96);
+		String blackPos = "B: "+column+blackPlayerTile.getRow();
 		for (int i=0; i<gamePos.getBlackWallsOnBoard().size(); i++) {
 			wallMove = gamePos.getBlackWallsOnBoard(i).getMove();
-			column = (char) (wallMove.getTargetTile().getColumn()+97);
+			column = (char) (wallMove.getTargetTile().getColumn()+96);
 			blackPos+= " "+column+wallMove.getTargetTile().getRow()+wallMove.getWallDirection().toString().charAt(0);
 		}
 		
@@ -662,6 +665,7 @@ public class QuoridorController {
 				}
 			}
 		}
+
 		// update to use getTile() and set to tiles E1 and E9
 
 		Tile player1StartPos = getTile(9, 5);
