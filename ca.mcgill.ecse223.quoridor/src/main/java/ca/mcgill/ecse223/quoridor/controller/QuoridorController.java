@@ -1,5 +1,8 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,6 +31,8 @@ import ca.mcgill.ecse223.quoridor.to.UserTO;
 import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
 public class QuoridorController {
+	
+	public static final String SAVED_GAMES_FOLDER = "savedgames/";
 
 	public QuoridorController() {
 
@@ -574,12 +579,53 @@ public class QuoridorController {
 	 * 
 	 * @author Francis Comeau Gherkin feature: SavePosition.feature
 	 * @param gamePosiion
-	 *            to save and fullPath of where to save it
+	 *            to save and fileName of what to save it as
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void savePosition(GamePosition gamePosition, String fullPath)
+	public static void savePosition(String fileName)
 			throws java.lang.UnsupportedOperationException {
+		GamePosition gamePos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		
+		//make string for white player's pawn and wall positions
+		Tile whitePlayerTile = gamePos.getWhitePosition().getTile();
+		String whitePos = "W: "+whitePlayerTile.getColumn()+whitePlayerTile.getRow();
+		WallMove wallMove = null;
+		char column;
+		for (int i=0; i<gamePos.getWhiteWallsOnBoard().size(); i++) {
+			wallMove = gamePos.getWhiteWallsOnBoard(i).getMove();
+			column = (char) (wallMove.getTargetTile().getColumn()+97);
+			whitePos+= " "+column+wallMove.getTargetTile().getRow()+wallMove.getWallDirection().toString().charAt(0);
+		}
+		//make string for black player's pawn and wall positions
+		Tile blackPlayerTile = gamePos.getBlackPosition().getTile();
+		String blackPos = "B: "+blackPlayerTile.getColumn()+blackPlayerTile.getRow();
+		for (int i=0; i<gamePos.getBlackWallsOnBoard().size(); i++) {
+			wallMove = gamePos.getBlackWallsOnBoard(i).getMove();
+			column = (char) (wallMove.getTargetTile().getColumn()+97);
+			blackPos+= " "+column+wallMove.getTargetTile().getRow()+wallMove.getWallDirection().toString().charAt(0);
+		}
+		
+		//save whitePos and blackPos to file
+		PrintWriter pw;
+		String fullPath = SAVED_GAMES_FOLDER+fileName;
+		try {
+			pw = new PrintWriter(fullPath, "UTF-8");
+			if (gamePos.getPlayerToMove().equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+				pw.println(whitePos);
+				pw.print(blackPos);
+			} else if (gamePos.getPlayerToMove().equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+				pw.println(blackPos);
+				pw.print(whitePos);
+			}
+			pw.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		throw new java.lang.UnsupportedOperationException();
 	}
 

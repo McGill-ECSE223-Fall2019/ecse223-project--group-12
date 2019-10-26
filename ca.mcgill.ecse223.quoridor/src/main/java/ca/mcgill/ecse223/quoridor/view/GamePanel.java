@@ -259,7 +259,7 @@ public class GamePanel extends JPanel {
 			String fileName = JOptionPane.showInputDialog(this.getParent(), "Enter the name of the file", "Save Game",
 					1);
 			if (fileName != null) {
-				// TODO Save the game before destroying it
+				QuoridorController.savePosition(fileName);
 			}
 			QuoridorController.destroyGame();
 			returnToMenu();
