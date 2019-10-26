@@ -37,9 +37,8 @@ public class SavePositionStepDefinitions {
 
 	@When("The user initiates to save the game with name {string}")
 	public void the_user_initiates_to_save_the_game_with_name(String fileName) {
-		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		try {
-			QuoridorController.savePosition(gamePosition ,fileName);
+			QuoridorController.savePosition(fileName);
 		} catch (java.lang.UnsupportedOperationException e) {
 			// Skip test if method not implemented
 			throw new cucumber.api.PendingException();
