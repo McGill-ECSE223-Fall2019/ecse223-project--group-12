@@ -626,7 +626,7 @@ public class QuoridorController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		throw new java.lang.UnsupportedOperationException();
+		//throw new java.lang.UnsupportedOperationException();
 	}
 
 	/**
