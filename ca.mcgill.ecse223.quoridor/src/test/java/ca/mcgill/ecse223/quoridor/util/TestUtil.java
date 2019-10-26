@@ -69,8 +69,8 @@ public class TestUtil {
 		 * 
 		 */
 		// @formatter:on
-		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Horizontal);
-		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Horizontal);
+		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Vertical);
+		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Vertical);
 
 		Player[] players = { player1, player2 };
 
@@ -104,8 +104,8 @@ public class TestUtil {
 		// There are total 36 tiles in the first four rows and
 		// indexing starts from 0 -> tiles with indices 36 and 36+8=44 are the starting
 		// positions
-		Tile player1StartPos = quoridor.getBoard().getTile(36);
-		Tile player2StartPos = quoridor.getBoard().getTile(44);
+		Tile player1StartPos = getTile(9,5);
+		Tile player2StartPos = getTile(1,5);
 
 		Game game = new Game(GameStatus.Running, MoveMode.PlayerMove, quoridor);
 		game.setWhitePlayer(players.get(0));

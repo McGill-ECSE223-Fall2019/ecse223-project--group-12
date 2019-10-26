@@ -4,7 +4,7 @@
 package ca.mcgill.ecse223.quoridor.to;
 import java.sql.Time;
 
-// line 13 "../../../../../QuoridorTO.ump"
+// line 20 "../../../../../QuoridorTO.ump"
 public class PlayerStatsTO
 {
 

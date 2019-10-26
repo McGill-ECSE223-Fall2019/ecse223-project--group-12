@@ -39,15 +39,15 @@ public class InitializeBoardStepDefinitions {
 
 	@Then("White's pawn shall be in its initial position")
 	public void white_s_pawn_shall_be_in_its_initial_position() {
-		assertEquals(5, quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow());
-		assertEquals(1, quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn());
+		assertEquals(9, quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow());
+		assertEquals(5, quoridor.getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn());
 	}
 
 	@Then("Black's pawn shall be in its initial position")
 	public void black_s_pawn_shall_be_in_its_initial_position() {
 
-		assertEquals(5, quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow());
-		assertEquals(9, quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn());
+		assertEquals(1, quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow());
+		assertEquals(5, quoridor.getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn());
 	}
 
 	@Then("All of White's walls shall be in stock")

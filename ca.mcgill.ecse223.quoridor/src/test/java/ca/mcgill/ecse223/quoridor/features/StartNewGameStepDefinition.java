@@ -122,8 +122,8 @@ public class StartNewGameStepDefinition {
 		assertEquals(10, getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size());
 		assertEquals(10, getCurrentGame().getCurrentPosition().getBlackWallsInStock().size());
 		// check pawn is in starting positions
-		assertEquals(getBoard().getTile(36), getWhitePositionTile());
-		assertEquals(getBoard().getTile(44), getBlackPositionTile());
+		assertEquals(TestUtil.getTile(9, 5), getWhitePositionTile());
+		assertEquals(TestUtil.getTile(1, 5), getBlackPositionTile());
 	}
 
 	/**

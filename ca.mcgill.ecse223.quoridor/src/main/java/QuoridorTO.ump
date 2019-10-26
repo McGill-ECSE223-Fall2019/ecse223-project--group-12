@@ -10,6 +10,13 @@ class WallMoveTO{
 	Direction direction;
 }
 
+class PlayerPositionTO{
+	enum PlayerColor {White, Black};
+	Integer row;
+	Integer column;
+	PlayerColor playerColor;
+}
+
 class PlayerStatsTO{
 	name;
 	Time remaningTime;
