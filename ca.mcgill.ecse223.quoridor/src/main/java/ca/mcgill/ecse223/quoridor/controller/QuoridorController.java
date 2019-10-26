@@ -1,5 +1,8 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -532,6 +535,43 @@ public class QuoridorController {
 	 */
 	public static void savePosition(GamePosition gamePosition, String fullPath)
 			throws java.lang.UnsupportedOperationException {
+		GamePosition gamePos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		
+		//make string for white player's pawn and wall positions
+		Tile whitePlayerTile = gamePos.getWhitePosition().getTile();
+		String whitePos = "W: "+whitePlayerTile.getColumn()+whitePlayerTile.getRow();
+		WallMove wallMove = null;
+		for (int i=0; i<gamePos.getWhiteWallsOnBoard().size(); i++) {
+			wallMove = gamePos.getWhiteWallsOnBoard(i).getMove();
+			whitePos+= " "+wallMove.getTargetTile().getColumn()+wallMove.getTargetTile().getRow()+wallMove.getWallDirection().toString();
+		}
+		//make string for black player's pawn and wall positions
+		Tile blackPlayerTile = gamePos.getBlackPosition().getTile();
+		String blackPos = "B: "+blackPlayerTile.getColumn()+blackPlayerTile.getRow();
+		for (int i=0; i<gamePos.getBlackWallsOnBoard().size(); i++) {
+			wallMove = gamePos.getBlackWallsOnBoard(i).getMove();
+			blackPos+= " "+wallMove.getTargetTile().getColumn()+wallMove.getTargetTile().getRow()+wallMove.getWallDirection().toString();
+		}
+		
+		//save whitePos and blackPos to file
+		PrintWriter pw;
+		try {
+			pw = new PrintWriter(fullPath, "UTF-8");
+			if (gamePos.getPlayerToMove().equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
+				pw.println(whitePos);
+				pw.println(blackPos);
+			} else if (gamePos.getPlayerToMove().equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+				pw.println(blackPos);
+				pw.println(whitePos);
+			}
+			pw.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		throw new java.lang.UnsupportedOperationException();
 	}
 
