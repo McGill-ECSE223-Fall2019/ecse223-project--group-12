@@ -3,13 +3,13 @@ package ca.mcgill.ecse223.quoridor.view;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.GroupLayout;
@@ -84,7 +84,7 @@ public class GamePanel extends JPanel {
 		grabWallButton = new JButton("Grab Wall");
 		System.out.println("hii5555i");
 		rotateWallButton = new JButton("Rotate Wall");
-		confirmMoveButton = new JButton("Confirm Move");
+		confirmMoveButton = new JButton("Switch Player");
 		upButton = new JButton("↑");
 		leftButton = new JButton("←");
 		downButton = new JButton("↓");
@@ -94,10 +94,14 @@ public class GamePanel extends JPanel {
 		middleSeparator = new JSeparator();
 		lowerSeparator = new JSeparator();
 		// Labels
-		remainingWalls = new JLabel("Remaining Walls: ");
-		movemode = new JLabel("MoveMode: ");
+		remainingWalls = new JLabel("Walls instock: ");
+		movemode = new JLabel("Mode: ");
 		playerLabel = new JLabel("Player: ");
-		remainingTime = new JLabel("Remaining TIme: ");
+		remainingTime = new JLabel("TIme left: ");
+		playerLabel.setFont(new Font(null, Font.BOLD, 16));
+		remainingTime.setFont(new Font(null, Font.BOLD, 14));
+		movemode.setFont(new Font(null, Font.BOLD, 14));
+		remainingWalls.setFont(new Font(null, Font.BOLD, 14));
 		invalidMoveLabel = new JLabel();
 		invalidMoveLabel.setForeground(Color.RED);
 
@@ -188,30 +192,82 @@ public class GamePanel extends JPanel {
 		});
 	}
 
+	// ------------------------
+	// Refresh Methods
+	// ------------------------
+
 	public void refreshData() {
 		PlayerStatsTO playerStats = QuoridorController.getPlayerStats();
-		wallRefresh();
+		refreshWalls();
+		refreshWallMoveCandidate();
 		refreshPlayePositions();
 		if (playerStats != null) {
 			playerLabel.setText("Player: " + playerStats.getName());
-			remainingTime.setText("Remaining time: " + playerStats.getRemaningTime().toString());
-			movemode.setText("Move mode: " + playerStats.getMoveMode());
-			remainingWalls.setText("Remaining walls: " + playerStats.getRemainingWalls());
+			remainingTime.setText("Time left: " + playerStats.getRemaningTime().toString());
+			movemode.setText("Move mode: " + playerStats.getMoveMode().split("Move")[0]);
+			remainingWalls.setText("Walls instock: " + playerStats.getRemainingWalls());
 
 		}
 		invalidMoveLabel.setText("");
 
 	}
 
-	public void refreshTime() {
+	private void refreshTime() {
 		PlayerStatsTO playerStats = QuoridorController.getPlayerStats();
 		if (playerStats != null) {
-			remainingTime.setText("Remaining time: " + playerStats.getRemaningTime().toString());
+			remainingTime.setText("Time left: " + playerStats.getRemaningTime().toString());
 		}
 	}
 
-	public void clearGame() {
-		playerLabel.setText("Player");
+	private void refreshWalls() {
+		List<WallMoveTO> wallMoveTOs = QuoridorController.getWallMoves();
+		for (WallMoveTO wallMoveTO : wallMoveTOs) {
+			JButton[] wallGraphic = getWall(wallMoveTO.getRow(), wallMoveTO.getColumn(), wallMoveTO.getDirection());
+			drawWall(wallGraphic, wallColor);
+		}
+	}
+
+	private void refreshWallMoveCandidate() {
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				JButton[] wall = getWall(i, j, Direction.Horizontal);
+				if (wall[0] != null && (wall[0].getBackground() == wallCandidateColor
+						|| wall[1].getBackground() == wallCandidateColor
+						|| wall[2].getBackground() == wallCandidateColor)) {
+					wall[0].setBackground(invisibleWallColor);
+					wall[1].setBackground(invisibleWallColor);
+					wall[2].setBackground(invisibleWallColor);
+				}
+				wall = getWall(i, j, Direction.Vertical);
+				if (wall[0] != null && (wall[0].getBackground() == wallCandidateColor
+						|| wall[1].getBackground() == wallCandidateColor
+						|| wall[2].getBackground() == wallCandidateColor)) {
+					wall[0].setBackground(invisibleWallColor);
+					wall[1].setBackground(invisibleWallColor);
+					wall[2].setBackground(invisibleWallColor);
+				}
+			}
+		}
+		refreshWalls();
+		WallMoveTO wallMoveTO = QuoridorController.getWallMoveCandidate();
+		if (wallMoveTO != null) {
+			JButton[] wallGraphic = getWall(wallMoveTO.getRow(), wallMoveTO.getColumn(), wallMoveTO.getDirection());
+			drawWall(wallGraphic, wallCandidateColor);
+		}
+	}
+
+	private void refreshPlayePositions() {
+		List<PlayerPositionTO> playerPositions = QuoridorController.getPlayerPositions();
+		for (PlayerPositionTO p : playerPositions) {
+			int row = p.getRow();
+			int col = p.getColumn();
+			PlayerColor color = p.getPlayerColor();
+			showPawn(row, col, color, true);
+		}
+	}
+
+	private void clearGame() {
+		playerLabel.setText("Player: ");
 		remainingTime.setText("Remaining time: ");
 		movemode.setText("Move mode: ");
 		remainingWalls.setText("Remaining walls: ");
@@ -228,6 +284,13 @@ public class GamePanel extends JPanel {
 		}
 	}
 
+	// ------------------------
+	// Action Methods
+	// ------------------------
+	/**
+	 * Starts a popup, only to be called when a game is ready to start, from the
+	 * menu panel
+	 */
 	public void startGamePopUp() {
 		clearGame();
 		int name = JOptionPane.showConfirmDialog(this.getParent(), "Click yes to start the clock!", "StartGame", 0);
@@ -248,18 +311,28 @@ public class GamePanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Exits the Game Panel and goes to the main menu
+	 */
 	private void returnToMenu() {
 		CardLayout cardLayout = (CardLayout) this.getParent().getLayout();
 		cardLayout.show(this.getParent(), "Menu Panel");
+		MenuPanel a = (MenuPanel) this.getParent().getComponent(0);
+		a.refreshData();
 	}
 
+	/**
+	 * Prompts a user to save the game etc.
+	 * 
+	 * @param evt
+	 */
 	private void saveExitToMenuButtonActionPerformed(ActionEvent evt) {
 		int name = JOptionPane.showConfirmDialog(this.getParent(), "Would you like to save your game before exiting?");
 		if (name == 0) {
 			String fileName = JOptionPane.showInputDialog(this.getParent(), "Enter the name of the file", "Save Game",
 					1);
 			if (fileName != null) {
-				QuoridorController.savePosition(fileName+".dat");
+				QuoridorController.savePosition(fileName + ".dat");
 			}
 			QuoridorController.destroyGame();
 			returnToMenu();
@@ -274,34 +347,64 @@ public class GamePanel extends JPanel {
 	private void rotateWallButtonButtonActionPerformed(ActionEvent evt) {
 		QuoridorController.rotateWall();
 		refreshData();
-		refreshWallMoveCandidate();
-
 	}
 
 	private void upButtonButtonActionPerformed(ActionEvent evt) {
 		QuoridorController.moveWall("up");
 		refreshData();
-		refreshWallMoveCandidate();
 	}
 
 	private void leftButtonButtonActionPerformed(ActionEvent evt) {
 		QuoridorController.moveWall("left");
 		refreshData();
-		refreshWallMoveCandidate();
 	}
 
 	private void downButtonButtonActionPerformed(ActionEvent evt) {
 		QuoridorController.moveWall("down");
 		refreshData();
-		refreshWallMoveCandidate();
 	}
 
 	private void rightButtonButtonActionPerformed(ActionEvent evt) {
 		QuoridorController.moveWall("right");
 		refreshData();
-		refreshWallMoveCandidate();
 	}
 
+	private void grabWallButtonActionPerformed(ActionEvent evt) {
+		if (grabWallButton.getText().equals("Grab Wall")) {
+			grabWallButton.setText("Drop Wall");
+			confirmMoveButton.setEnabled(false);
+			QuoridorController.grabWall();
+			refreshData();
+		} else if (grabWallButton.getText().equals("Drop Wall")) {
+			if (QuoridorController.validatePosition()) {
+				grabWallButton.setText("Grab Wall");
+				confirmMoveButton.setEnabled(true);
+				QuoridorController.dropWall();
+				refreshData();
+			} else {
+				refreshData();
+				invalidMoveLabel.setText("Invalid move, try again!");
+			}
+		}
+
+	}
+
+	private void confirmMoveButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.makeMove();
+		refreshData();
+	}
+
+	// ------------------------
+	// UI Utility Methods
+	// ------------------------
+	/**
+	 * Returns an array of JButtons representing the wall at <row> <col> dir<>
+	 * 
+	 * @param row
+	 * @param col
+	 * @param dir
+	 * @return
+	 */
 	private JButton[] getWall(int row, int col, Direction dir) {
 		JButton wallA = null;
 		JButton wallB = null;
@@ -329,66 +432,6 @@ public class GamePanel extends JPanel {
 
 	}
 
-	private void refreshWallMoveCandidate() {
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
-				JButton[] wall = getWall(i, j, Direction.Horizontal);
-				if (wall[0] != null && (wall[0].getBackground() == wallCandidateColor
-						|| wall[1].getBackground() == wallCandidateColor
-						|| wall[2].getBackground() == wallCandidateColor)) {
-					wall[0].setBackground(invisibleWallColor);
-					wall[1].setBackground(invisibleWallColor);
-					wall[2].setBackground(invisibleWallColor);
-				}
-				wall = getWall(i, j, Direction.Vertical);
-				if (wall[0] != null && (wall[0].getBackground() == wallCandidateColor
-						|| wall[1].getBackground() == wallCandidateColor
-						|| wall[2].getBackground() == wallCandidateColor)) {
-					wall[0].setBackground(invisibleWallColor);
-					wall[1].setBackground(invisibleWallColor);
-					wall[2].setBackground(invisibleWallColor);
-				}
-			}
-		}
-		wallRefresh();
-		WallMoveTO wallMoveTO = QuoridorController.getWallMoveCandidate();
-		if (wallMoveTO != null) {
-			JButton[] wallGraphic = getWall(wallMoveTO.getRow(), wallMoveTO.getColumn(), wallMoveTO.getDirection());
-			drawWall(wallGraphic, wallCandidateColor);
-		}
-	}
-
-	private void refreshPlayePositions() {
-		List<PlayerPositionTO> playerPositions = QuoridorController.getPlayerPositions();
-		for (PlayerPositionTO p : playerPositions) {
-			int row = p.getRow();
-			int col = p.getColumn();
-			PlayerColor color = p.getPlayerColor();
-			showPawn(row, col, color, true);
-		}
-	}
-
-	private void grabWallButtonActionPerformed(ActionEvent evt) {
-		if (grabWallButton.getText().equals("Grab Wall")) {
-			grabWallButton.setText("Drop Wall");
-			confirmMoveButton.setEnabled(false);
-			QuoridorController.grabWall();
-		} else if (grabWallButton.getText().equals("Drop Wall")) {
-			grabWallButton.setText("Grab Wall");
-			confirmMoveButton.setEnabled(true);
-			QuoridorController.dropWall();
-			System.out.println("hiii");
-		}
-		refreshData();
-		refreshWallMoveCandidate();
-	}
-
-	private void confirmMoveButtonActionPerformed(ActionEvent evt) {
-		QuoridorController.makeMove();
-		invalidMoveLabel.setText("Invalid move, try again!");
-		refreshData();
-	}
-
 	/**
 	 * Show or hide pawn at certain tile
 	 * 
@@ -413,14 +456,12 @@ public class GamePanel extends JPanel {
 	}
 
 	/**
-	 * Draw a wall at specific tile
+	 * Draw a wall in a selection of colors
 	 * 
-	 * @param row
-	 *            1 to 8
-	 * @param col
-	 *            1 to 8 (A to H in specification)
-	 * @param dir
-	 *            the direction of the wall
+	 * @param wall
+	 *            an array of JButtons representing a wall (see getWall())
+	 * @param color
+	 * 
 	 */
 	private void drawWall(JButton[] wall, Color color) {
 		// Walls are made of three sections (two tile lengths and the slot between them)
@@ -431,13 +472,9 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-	private void wallRefresh() {
-		List<WallMoveTO> wallMoveTOs = QuoridorController.getWallMoves();
-		for (WallMoveTO wallMoveTO : wallMoveTOs) {
-			JButton[] wallGraphic = getWall(wallMoveTO.getRow(), wallMoveTO.getColumn(), wallMoveTO.getDirection());
-			drawWall(wallGraphic, wallColor);
-		}
-	}
+	// ------------------------
+	// UI Swing Components
+	// ------------------------
 
 	/**
 	 * Creates a 9x9 board of tiles with slots between tiles. Adds invisible pawn of
@@ -546,7 +583,7 @@ public class GamePanel extends JPanel {
 										.addComponent(saveExitToMenuButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
 										.addComponent(dashboardPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
 												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addComponent(arrowPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
+										.addComponent(arrowPanel, Alignment.CENTER, GroupLayout.DEFAULT_SIZE,
 												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 						.addGroup(Alignment.LEADING,
 								controlUILayout.createSequentialGroup().addComponent(invalidMoveLabel)))));
@@ -614,12 +651,12 @@ public class GamePanel extends JPanel {
 				.addGroup(dashBoardLayout.createSequentialGroup()
 						// .addContainerGap()
 						.addGroup(dashBoardLayout.createParallelGroup(Alignment.LEADING).addComponent(playerLabel)
-								.addComponent(remainingTime).addComponent(remainingWalls).addComponent(movemode))));
+								.addComponent(remainingTime).addComponent(movemode).addComponent(remainingWalls))));
 		dashBoardLayout.setVerticalGroup(dashBoardLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(dashBoardLayout.createSequentialGroup().addContainerGap().addComponent(playerLabel)
 						.addPreferredGap(ComponentPlacement.RELATED).addComponent(remainingTime)
-						.addPreferredGap(ComponentPlacement.RELATED).addComponent(remainingWalls)
-						.addPreferredGap(ComponentPlacement.RELATED).addComponent(movemode)));
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(movemode)
+						.addPreferredGap(ComponentPlacement.RELATED).addComponent(remainingWalls)));
 		dashboardPanel.setLayout(dashBoardLayout);
 	}
 }

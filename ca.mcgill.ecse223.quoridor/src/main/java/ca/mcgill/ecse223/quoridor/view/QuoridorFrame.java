@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.view;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,6 +29,7 @@ public class QuoridorFrame extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Quridor Application");
+		this.setMinimumSize(new Dimension(900,680));
 		pack();
 	}
 	

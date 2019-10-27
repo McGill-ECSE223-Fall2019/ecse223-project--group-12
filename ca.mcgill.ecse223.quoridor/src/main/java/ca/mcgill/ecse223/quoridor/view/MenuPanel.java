@@ -160,7 +160,7 @@ public class MenuPanel extends JPanel {
 
 	}
 
-	private void refreshData() {
+	public void refreshData() {
 		whiteToggleList.removeAllItems();
 		blackToggleList.removeAllItems();
 		loadGameToggelList.removeAllItems();

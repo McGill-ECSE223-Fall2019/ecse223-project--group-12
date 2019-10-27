@@ -31,7 +31,7 @@ import ca.mcgill.ecse223.quoridor.to.UserTO;
 import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
 public class QuoridorController {
-	
+
 	public static final String SAVED_GAMES_FOLDER = "savedgames/";
 
 	public QuoridorController() {
@@ -583,41 +583,43 @@ public class QuoridorController {
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void savePosition(String fileName)
-			throws java.lang.UnsupportedOperationException {
+	public static void savePosition(String fileName) throws java.lang.UnsupportedOperationException {
 		GamePosition gamePos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
-		
-		//make string for white player's pawn and wall positions
+
+		// make string for white player's pawn and wall positions
 		char column;
-		
+
 		Tile whitePlayerTile = gamePos.getWhitePosition().getTile();
-		column = (char) (whitePlayerTile.getColumn()+96);
-		String whitePos = "W: "+column+whitePlayerTile.getRow();
+		column = (char) (whitePlayerTile.getColumn() + 96);
+		String whitePos = "W: " + column + whitePlayerTile.getRow();
 		WallMove wallMove = null;
-		for (int i=0; i<gamePos.getWhiteWallsOnBoard().size(); i++) {
+		for (int i = 0; i < gamePos.getWhiteWallsOnBoard().size(); i++) {
 			wallMove = gamePos.getWhiteWallsOnBoard(i).getMove();
-			column = (char) (wallMove.getTargetTile().getColumn()+96);
-			whitePos+= " "+column+wallMove.getTargetTile().getRow()+wallMove.getWallDirection().toString().charAt(0);
+			column = (char) (wallMove.getTargetTile().getColumn() + 96);
+			whitePos += " " + column + wallMove.getTargetTile().getRow()
+					+ wallMove.getWallDirection().toString().charAt(0);
 		}
-		//make string for black player's pawn and wall positions
+		// make string for black player's pawn and wall positions
 		Tile blackPlayerTile = gamePos.getBlackPosition().getTile();
-		column = (char) (blackPlayerTile.getColumn()+96);
-		String blackPos = "B: "+column+blackPlayerTile.getRow();
-		for (int i=0; i<gamePos.getBlackWallsOnBoard().size(); i++) {
+		column = (char) (blackPlayerTile.getColumn() + 96);
+		String blackPos = "B: " + column + blackPlayerTile.getRow();
+		for (int i = 0; i < gamePos.getBlackWallsOnBoard().size(); i++) {
 			wallMove = gamePos.getBlackWallsOnBoard(i).getMove();
-			column = (char) (wallMove.getTargetTile().getColumn()+96);
-			blackPos+= " "+column+wallMove.getTargetTile().getRow()+wallMove.getWallDirection().toString().charAt(0);
+			column = (char) (wallMove.getTargetTile().getColumn() + 96);
+			blackPos += " " + column + wallMove.getTargetTile().getRow()
+					+ wallMove.getWallDirection().toString().charAt(0);
 		}
-		
-		//save whitePos and blackPos to file
+
+		// save whitePos and blackPos to file
 		PrintWriter pw;
-		String fullPath = SAVED_GAMES_FOLDER+fileName;
+		String fullPath = SAVED_GAMES_FOLDER + fileName;
 		try {
 			pw = new PrintWriter(fullPath, "UTF-8");
 			if (gamePos.getPlayerToMove().equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
 				pw.println(whitePos);
 				pw.print(blackPos);
-			} else if (gamePos.getPlayerToMove().equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
+			} else if (gamePos.getPlayerToMove()
+					.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
 				pw.println(blackPos);
 				pw.print(whitePos);
 			}
@@ -629,7 +631,7 @@ public class QuoridorController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//throw new java.lang.UnsupportedOperationException();
+		// throw new java.lang.UnsupportedOperationException();
 	}
 
 	/**
@@ -785,16 +787,10 @@ public class QuoridorController {
 				gp.removeBlackWallsInStock(wall);
 				gp.addBlackWallsOnBoard(wall);
 			}
-
 			g.setWallMoveCandidate(null);
 			g.setMoveMode(MoveMode.PlayerMove);
 			makeMove();
-		} else {
-			wallMove.delete();
 		}
-
-		g.setWallMoveCandidate(null);
-		g.setMoveMode(MoveMode.PlayerMove);
 
 	}
 
