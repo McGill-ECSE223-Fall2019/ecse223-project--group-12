@@ -76,8 +76,7 @@ public class QuoridorController {
 	 * Creates a new user
 	 * 
 	 * @author Remi Carriere
-	 * @param name
-	 *            The name of the user
+	 * @param name The name of the user
 	 * @throws java.lang.UnsupportedOperationException
 	 * @throws ca.mcgill.ecse223.quoridor.controller.InvalidInputException
 	 */
@@ -96,8 +95,7 @@ public class QuoridorController {
 	 * Sets the remainingTime of each player to totalTime
 	 * 
 	 * @author Remi Carriere
-	 * @param totalTime
-	 *            The desired thinking time
+	 * @param totalTime The desired thinking time
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -162,11 +160,14 @@ public class QuoridorController {
 		if (game != null && game.getGameStatus() == GameStatus.Running) {
 			Player p = game.getCurrentPosition().getPlayerToMove();
 			Time time = p.getRemainingTime();
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(time);
-			cal.add(Calendar.SECOND, -1);
-			Time newTime = new Time(cal.getTimeInMillis());
-			p.setRemainingTime(newTime);
+			Time minTime = Time.valueOf("00:00:00");
+			if (!minTime.equals(time)) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(time);
+				cal.add(Calendar.SECOND, -1);
+				Time newTime = new Time(cal.getTimeInMillis());
+				p.setRemainingTime(newTime);
+			}
 		}
 	}
 
@@ -175,8 +176,7 @@ public class QuoridorController {
 	 * current position
 	 * 
 	 * @author Remi Carriere
-	 * @param gamePosition
-	 *            The game position to verify
+	 * @param gamePosition The game position to verify
 	 * @return
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -298,8 +298,7 @@ public class QuoridorController {
 	 * Sets the given user as the white player
 	 * 
 	 * @author Remi Carriere
-	 * @param user
-	 *            The selected user
+	 * @param user The selected user
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -332,8 +331,7 @@ public class QuoridorController {
 	 * Sets the given user as the black player
 	 * 
 	 * @author Remi Carriere
-	 * @param user
-	 *            The selected user
+	 * @param user The selected user
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -365,8 +363,7 @@ public class QuoridorController {
 	 * Creates new user, and sets the user as the white player
 	 * 
 	 * @author Remi Carriere
-	 * @param name
-	 *            Name of the user
+	 * @param name Name of the user
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -379,8 +376,7 @@ public class QuoridorController {
 	 * Creates new user, and sets the user as the black player
 	 * 
 	 * @author Remi Carriere
-	 * @param name
-	 *            Name of the user
+	 * @param name Name of the user
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -565,8 +561,7 @@ public class QuoridorController {
 	 * Loads a previously saved game position into the current game position
 	 * 
 	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
-	 * @param fullPath
-	 *            of the saved file
+	 * @param fullPath of the saved file
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -578,8 +573,7 @@ public class QuoridorController {
 	 * Saves the current game position into a file
 	 * 
 	 * @author Francis Comeau Gherkin feature: SavePosition.feature
-	 * @param gamePosiion
-	 *            to save and fileName of what to save it as
+	 * @param gamePosiion to save and fileName of what to save it as
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -940,6 +934,9 @@ public class QuoridorController {
 				int col = wm.getTargetTile().getColumn() + 1;
 				if (col < 9)
 					wm.setTargetTile(getTile(row, col));
+//				else {
+//					throw new 
+//				}
 				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
 			} else if (side.equals("left")) {
 				int row = wm.getTargetTile().getRow();

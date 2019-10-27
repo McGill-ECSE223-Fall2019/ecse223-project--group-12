@@ -58,6 +58,7 @@ public class DropWallStepDefinitions {
 	@And("I do not have a wall in my hand")
 	public void i_do_not_have_a_wall_in_my_hand() { //GUI related feature
 		try {
+			
 	if(QuoridorController.hasWallInHand() == true) {
 		QuoridorController.clearWallInHand();
 	}
