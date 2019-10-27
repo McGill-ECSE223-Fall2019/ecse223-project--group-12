@@ -85,10 +85,10 @@ public class GamePanel extends JPanel {
 		System.out.println("hii5555i");
 		rotateWallButton = new JButton("Rotate Wall");
 		confirmMoveButton = new JButton("Switch Player");
-		upButton = new JButton("↑");
-		leftButton = new JButton("←");
-		downButton = new JButton("↓");
-		rightButton = new JButton("→");
+		upButton = new JButton("â†‘");
+		leftButton = new JButton("â†�");
+		downButton = new JButton("â†“");
+		rightButton = new JButton("â†’");
 		// Separators
 		upperSeparator = new JSeparator();
 		middleSeparator = new JSeparator();
@@ -470,6 +470,40 @@ public class GamePanel extends JPanel {
 			wall[1].setBackground(color);
 			wall[2].setBackground(color);
 		}
+	}
+	
+	// ------------------------
+	// Public Methods for Testing
+	// ------------------------
+	
+	/**
+	 * checks if the player has been notified of an invalid drop wall move
+	 * 
+	 */
+
+	public boolean notifiedInvalidDrop(){
+		boolean notified = false;
+		if (invalidMoveLabel.getText() == "Invalid move, try again!") {
+			notified = true;
+		} return notified;
+	}
+	
+	/**
+	 * checks if the current player has a wall in hand
+	 * 
+	 */
+	
+	public boolean hasWallInHand() {
+		boolean inHand = false;
+		for (int i = 1; i < 9; i++) {
+			for (int j = 1; j < 9; j++) {
+				JButton[] wall1 = getWall(i, j, Direction.Vertical);
+				JButton[] wall2 = getWall(i, j, Direction.Horizontal);
+				if(wall1[1].getBackground() == wallCandidateColor || wall2[1].getBackground() == wallCandidateColor) {
+					inHand = true;
+				}
+			}
+		} return inHand;
 	}
 
 	// ------------------------

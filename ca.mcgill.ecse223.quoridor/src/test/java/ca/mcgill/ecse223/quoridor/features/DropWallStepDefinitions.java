@@ -1,6 +1,8 @@
 package ca.mcgill.ecse223.quoridor.features;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import ca.mcgill.ecse223.quoridor.view.GamePanel;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,7 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
+import ca.mcgill.ecse223.quoridor.view.QuoridorFrame;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -58,7 +61,9 @@ public class DropWallStepDefinitions {
 	@And("I do not have a wall in my hand")
 	public void i_do_not_have_a_wall_in_my_hand() { //GUI related feature
 		try {
-	if(QuoridorController.hasWallInHand() == true) {
+			GamePanel gPanel = new GamePanel();
+			gPanel.refreshData();
+	if(gPanel.hasWallInHand() == true) {
 		QuoridorController.clearWallInHand();
 	}
 	}catch (java.lang.UnsupportedOperationException e) {
@@ -80,7 +85,9 @@ public class DropWallStepDefinitions {
 			wall = new Wall(21, currentPlayer);
 		}
 		try {
-		if(QuoridorController.hasWallInHand() == false) { //GUI related
+			GamePanel gPanel = new GamePanel();
+			gPanel.refreshData();
+		if(gPanel.hasWallInHand() == false) { //GUI related
 			QuoridorController.setWallInHand(wall);
 		}
 		else return;
@@ -178,7 +185,9 @@ public class DropWallStepDefinitions {
 	@Then("I shall not have a wall in my hand")
 	public void i_shall_not_have_a_wall_in_my_hand() {
 		try {
-		assertEquals(false, QuoridorController.hasWallInHand()); //GUI related
+			GamePanel gPanel = new GamePanel();
+			gPanel.refreshData();
+		assertEquals(false, gPanel.hasWallInHand()); //GUI related
 	}catch (java.lang.UnsupportedOperationException e) {
 		//skips test if method is not yet implemented
 		throw new cucumber.api.PendingException();
@@ -252,7 +261,9 @@ public class DropWallStepDefinitions {
 	public void i_shall_be_notified_that_my_wall_move_is_invalid() {
 		boolean hasNotified;
 		try {
-		hasNotified = QuoridorController.notifyInvalidMove();
+		GamePanel gPanel = new GamePanel();
+		gPanel.refreshData();
+		hasNotified = gPanel.notifiedInvalidDrop();
 		assertEquals(true, hasNotified);
 		}catch (java.lang.UnsupportedOperationException e) {
 			//skips test if method is not yet implemented
@@ -268,7 +279,9 @@ public class DropWallStepDefinitions {
 	public void i_shall_have_a_wall_in_my_hand_over_the_board() { //GUI related
 		boolean hasWallInHand;
 		try {
-		hasWallInHand = QuoridorController.hasWallInHand();
+			GamePanel gPanel = new GamePanel();
+			gPanel.refreshData();
+		hasWallInHand = gPanel.hasWallInHand();
 		assertEquals(true, hasWallInHand);
 		}catch (java.lang.UnsupportedOperationException e) {
 			//skips test if method is not yet implemented

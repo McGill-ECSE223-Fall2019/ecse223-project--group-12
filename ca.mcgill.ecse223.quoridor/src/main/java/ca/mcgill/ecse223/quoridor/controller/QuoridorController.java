@@ -809,8 +809,17 @@ public class QuoridorController {
 	 */
 
 	public static int getRemainingWallsInStock() throws java.lang.UnsupportedOperationException {
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = g.getCurrentPosition();
+		Player p =gp.getPlayerToMove();
+		int numberWalls = 0;
+		if(p.hasGameAsWhite()) {
+			numberWalls = gp.getWhiteWallsInStock().size();
+		} else if(p.hasGameAsBlack()) {
+			numberWalls = gp.getBlackWallsInStock().size();
+		}
+		return numberWalls;
 		// full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
 	}
 
 	/**
@@ -822,6 +831,7 @@ public class QuoridorController {
 	 */
 
 	public static boolean isCurrentWallMoveValid() throws java.lang.UnsupportedOperationException {
+		
 		// full implementation of GUI needed for implementation
 		throw new java.lang.UnsupportedOperationException();
 	}
