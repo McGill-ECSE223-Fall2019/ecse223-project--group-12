@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Time;
 import java.util.List;
 
 import javax.swing.GroupLayout;
@@ -206,7 +207,6 @@ public class GamePanel extends JPanel {
 			remainingTime.setText("Time left: " + playerStats.getRemaningTime().toString());
 			movemode.setText("Move mode: " + playerStats.getMoveMode().split("Move")[0]);
 			remainingWalls.setText("Walls instock: " + playerStats.getRemainingWalls());
-
 		}
 		invalidMoveLabel.setText("");
 
@@ -216,6 +216,11 @@ public class GamePanel extends JPanel {
 		PlayerStatsTO playerStats = QuoridorController.getPlayerStats();
 		if (playerStats != null) {
 			remainingTime.setText("Time left: " + playerStats.getRemaningTime().toString());
+			if(playerStats.getRemaningTime().before(Time.valueOf("00:00:30"))) {
+				remainingTime.setForeground(Color.RED);
+			} else {
+				remainingTime.setForeground(Color.BLACK);
+			}
 		}
 	}
 
@@ -276,6 +281,7 @@ public class GamePanel extends JPanel {
 			for (int j = 1; j < 10; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
 				JButton[] wall2 = getWall(i, j, Direction.Horizontal);
+				//wall1[0].getBackground() == candidateWallColor;
 				drawWall(wall1, invisibleWallColor);
 				drawWall(wall2, invisibleWallColor);
 				showPawn(i, j, blackPawnColor, false);
@@ -405,7 +411,7 @@ public class GamePanel extends JPanel {
 	 * @param dir
 	 * @return
 	 */
-	private JButton[] getWall(int row, int col, Direction dir) {
+	public JButton[] getWall(int row, int col, Direction dir) {
 		JButton wallA = null;
 		JButton wallB = null;
 		JButton wallC = null;

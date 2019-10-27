@@ -61,9 +61,14 @@ public class DropWallStepDefinitions {
 	@And("I do not have a wall in my hand")
 	public void i_do_not_have_a_wall_in_my_hand() { //GUI related feature
 		try {
+<<<<<<< HEAD
 			GamePanel gPanel = new GamePanel();
 			gPanel.refreshData();
 	if(gPanel.hasWallInHand() == true) {
+=======
+			
+	if(QuoridorController.hasWallInHand() == true) {
+>>>>>>> branch 'Del3Development' of https://github.com/McGill-ECSE223-Fall2019/ecse223-project--group-12.git
 		QuoridorController.clearWallInHand();
 	}
 	}catch (java.lang.UnsupportedOperationException e) {
