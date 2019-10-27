@@ -30,9 +30,8 @@ public class SavePositionStepDefinitions {
 
 	@Given("No file {string} exists in the filesystem")
 	public void no_file_exists_in_the_filesystem(String fileName) {
-		File file = new File(fileName); 
+		File file = new File("savedgames\\"+fileName); 
         file.delete();
-	    throw new cucumber.api.PendingException();
 	}
 
 	@When("The user initiates to save the game with name {string}")
@@ -40,17 +39,15 @@ public class SavePositionStepDefinitions {
 		try {
 			QuoridorController.savePosition(fileName);
 		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
+			
 		}
 
 	}
 
 	@Then("A file with {string} shall be created in the filesystem")
 	public void a_file_with_shall_be_created_in_the_filesystem(String fileName) {
-		boolean fileExists = new File(fileName).exists();
+		boolean fileExists = new File("savedgames\\"+fileName).exists();
 		assertTrue(fileExists);
-	    throw new cucumber.api.PendingException();
 	}
 
 	@Given("File {string} exists in the filesystem")
@@ -62,7 +59,6 @@ public class SavePositionStepDefinitions {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    throw new cucumber.api.PendingException();
 	}
 
 	@When("The user confirms to overwrite existing file")
@@ -81,7 +77,6 @@ public class SavePositionStepDefinitions {
 	    Timestamp lastModified = new Timestamp(file.lastModified());
 	    Timestamp now = new Timestamp(System.currentTimeMillis());
 	    assertEquals(lastModified.compareTo(now), 0, 0);
-	    throw new cucumber.api.PendingException();
 	}
 
 	@When("The user cancels to overwrite existing file")
@@ -100,6 +95,5 @@ public class SavePositionStepDefinitions {
 	    Timestamp now = new Timestamp(System.currentTimeMillis());
 	    Timestamp lastModified = new Timestamp(file.lastModified());
 	    assertNotEquals(lastModified.compareTo(now), 0, 0);
-	    throw new cucumber.api.PendingException();
 	}
 }
