@@ -520,17 +520,6 @@ public class GamePanel extends JPanel {
 	 * each color to each tile. (Use showPawn() to change visibility of pawns)
 	 */
 	private void creatBoardPane() {
-		// Icon for Pawns
-		// ImageIcon wPawnIcon = new
-		// ImageIcon(getClass().getClassLoader().getResource("images\\whitePawn.png"));
-		ImageIcon wPawnIcon = new ImageIcon("src\\main\\resources\\images\\whitePawn.png");
-		Image img = wPawnIcon.getImage();
-		img = img.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-		wPawnIcon.setImage(img);
-		ImageIcon bPawnIcon = new ImageIcon("src\\main\\resources\\images\\blackPawn.png");
-		Image img1 = bPawnIcon.getImage();
-		img1 = img1.getScaledInstance(40, 40, java.awt.Image.SCALE_SMOOTH);
-		bPawnIcon.setImage(img1);
 		// create board
 		for (int i = 0; i < BOARD_SIZE; i++) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
@@ -565,26 +554,19 @@ public class GamePanel extends JPanel {
 					}
 				} else {
 					// Add white and black invisible pawns to each tile,
-					JButton whitePawn = new JButton();
-					whitePawn.setIcon(wPawnIcon);
+					WhiteCircle whitePawn = new WhiteCircle();
 					square.setLayout(new OverlayLayout(square));
 					whitePawn.setVisible(false);
 					whitePawn.setAlignmentX(CENTER_ALIGNMENT);
 					whitePawn.setAlignmentY(CENTER_ALIGNMENT);
-					whitePawn.setBorder(null);
-					whitePawn.setOpaque(false);
-					whitePawn.setBackground(Color.LIGHT_GRAY);
+					whitePawn.setOpaque(true);
 					square.add(whitePawn);
 
-					JButton blackPawn = new JButton();
-					blackPawn.setIcon(bPawnIcon);
-					//square.setLayout(new OverlayLayout(square));
+					BlackCircle blackPawn = new BlackCircle();
 					blackPawn.setVisible(false);
 					blackPawn.setAlignmentX(CENTER_ALIGNMENT);
 					blackPawn.setAlignmentY(CENTER_ALIGNMENT);
-					blackPawn.setBorder(null);
-					blackPawn.setOpaque(false);
-					blackPawn.setBackground(Color.LIGHT_GRAY);
+					//blackPawn.setOpaque(true);
 					square.add(blackPawn);
 				}
 				// Make the outline of the board black
