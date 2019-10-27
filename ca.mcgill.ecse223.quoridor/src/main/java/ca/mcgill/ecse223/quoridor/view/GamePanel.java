@@ -305,7 +305,6 @@ public class GamePanel extends JPanel {
 				QuoridorController.startClock();
 				refreshData();
 				timer.start();
-
 			} catch (InvalidInputException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -579,7 +578,7 @@ public class GamePanel extends JPanel {
 
 					JButton blackPawn = new JButton();
 					blackPawn.setIcon(bPawnIcon);
-					square.setLayout(new OverlayLayout(square));
+					//square.setLayout(new OverlayLayout(square));
 					blackPawn.setVisible(false);
 					blackPawn.setAlignmentX(CENTER_ALIGNMENT);
 					blackPawn.setAlignmentY(CENTER_ALIGNMENT);

@@ -89,7 +89,7 @@ public class MenuPanel extends JPanel {
 		setThinkingTimeLable.setText("Total Thinking TIme");
 		// Title
 		titleLabel = new JLabel("Quoridor");
-		titleLabel.setFont(new Font("Arial Narrow", Font.PLAIN, 44));
+		titleLabel.setFont(new Font(null, Font.BOLD, 44));
 		// Add user
 		userNameTextField = new JTextField();
 		userNameLabel = new JLabel();
