@@ -45,7 +45,8 @@ public class QuoridorFrame extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Quridor Application");
-		this.setMinimumSize(new Dimension(900, 680));
+		//this.setMinimumSize(new Dimension(900, 680));
+		this.setMinimumSize(new Dimension(900, 650));
 		pack();
 	}
 

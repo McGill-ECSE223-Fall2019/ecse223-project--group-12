@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +13,6 @@ import java.sql.Time;
 import java.util.List;
 
 import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -61,9 +59,12 @@ public class GamePanel extends JPanel {
 	private JLabel invalidMoveLabel;
 	private final Color wallColor = Color.RED;
 	private final Color wallCandidateColor = Color.YELLOW;
-	private final Color invisibleWallColor = Color.BLUE;
+	private final Color invisibleWallColor = new Color(210, 166, 121);
 	private final PlayerColor whitePawnColor = PlayerColor.White;
 	private final PlayerColor blackPawnColor = PlayerColor.Black;
+	private final Color tileColor = new Color(153,102,0);
+	private final Color boardBackGroundColor = new Color(191, 128, 64);
+	private final Color boardBorderColor = new Color(134, 89, 45);
 	private Timer timer;
 
 	public GamePanel() {
@@ -78,6 +79,8 @@ public class GamePanel extends JPanel {
 		// Panels
 		controlUIPanel = new JPanel();
 		gameBoardPanel = new JPanel(new GridBagLayout());
+		gameBoardPanel.setBackground(boardBackGroundColor);
+		gameBoardPanel.setOpaque(true);
 		dashboardPanel = new JPanel();
 		arrowPanel = new JPanel();
 		// Buttons
@@ -86,10 +89,10 @@ public class GamePanel extends JPanel {
 		System.out.println("hii5555i");
 		rotateWallButton = new JButton("Rotate Wall");
 		confirmMoveButton = new JButton("Switch Player");
-		upButton = new JButton("â†‘");
-		leftButton = new JButton("â†�");
-		downButton = new JButton("â†“");
-		rightButton = new JButton("â†’");
+		upButton = new JButton("↑");
+		leftButton = new JButton("←");
+		downButton = new JButton("↓");
+		rightButton = new JButton("→");
 		// Separators
 		upperSeparator = new JSeparator();
 		middleSeparator = new JSeparator();
@@ -198,16 +201,19 @@ public class GamePanel extends JPanel {
 	// ------------------------
 
 	public void refreshData() {
+
 		PlayerStatsTO playerStats = QuoridorController.getPlayerStats();
-		refreshWalls();
-		refreshWallMoveCandidate();
-		refreshPlayePositions();
 		if (playerStats != null) {
 			playerLabel.setText("Player: " + playerStats.getName());
 			remainingTime.setText("Time left: " + playerStats.getRemaningTime().toString());
 			movemode.setText("Move mode: " + playerStats.getMoveMode().split("Move")[0]);
 			remainingWalls.setText("Walls instock: " + playerStats.getRemainingWalls());
 		}
+
+		refreshWalls();
+		refreshWallMoveCandidate();
+		refreshPlayePositions();
+
 		invalidMoveLabel.setText("");
 
 	}
@@ -216,9 +222,14 @@ public class GamePanel extends JPanel {
 		PlayerStatsTO playerStats = QuoridorController.getPlayerStats();
 		if (playerStats != null) {
 			remainingTime.setText("Time left: " + playerStats.getRemaningTime().toString());
-			if(playerStats.getRemaningTime().before(Time.valueOf("00:00:30"))) {
+			if (playerStats.getRemaningTime().before(Time.valueOf("00:00:30"))) {
 				remainingTime.setForeground(Color.RED);
+				setEnabledMoves(true);
+				if (playerStats.getRemaningTime().equals(Time.valueOf("00:00:00"))) {
+					setEnabledMoves(false);
+				}
 			} else {
+				setEnabledMoves(true);
 				remainingTime.setForeground(Color.BLACK);
 			}
 		}
@@ -281,7 +292,7 @@ public class GamePanel extends JPanel {
 			for (int j = 1; j < 10; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
 				JButton[] wall2 = getWall(i, j, Direction.Horizontal);
-				//wall1[0].getBackground() == candidateWallColor;
+				// wall1[0].getBackground() == candidateWallColor;
 				drawWall(wall1, invisibleWallColor);
 				drawWall(wall2, invisibleWallColor);
 				showPawn(i, j, blackPawnColor, false);
@@ -449,6 +460,15 @@ public class GamePanel extends JPanel {
 
 	}
 
+	private void setEnabledMoves(boolean enabled) {
+		grabWallButton.setEnabled(enabled);
+		rotateWallButton.setEnabled(enabled);
+		upButton.setEnabled(enabled);
+		downButton.setEnabled(enabled);
+		leftButton.setEnabled(enabled);
+		rightButton.setEnabled(enabled);
+	}
+
 	/**
 	 * Show or hide pawn at certain tile
 	 * 
@@ -467,8 +487,10 @@ public class GamePanel extends JPanel {
 		JButton tile = (JButton) gameBoardPanel.getComponent(index);
 		if (c.equals(whitePawnColor)) {
 			tile.getComponent(0).setVisible(visible);
+			tile.repaint();
 		} else {
 			tile.getComponent(1).setVisible(visible);
+			tile.repaint();
 		}
 	}
 
@@ -488,39 +510,41 @@ public class GamePanel extends JPanel {
 			wall[2].setBackground(color);
 		}
 	}
-	
+
 	// ------------------------
 	// Public Methods for Testing
 	// ------------------------
-	
+
 	/**
 	 * checks if the player has been notified of an invalid drop wall move
 	 * 
 	 */
 
-	public boolean notifiedInvalidDrop(){
+	public boolean notifiedInvalidDrop() {
 		boolean notified = false;
 		if (invalidMoveLabel.getText() == "Invalid move, try again!") {
 			notified = true;
-		} return notified;
+		}
+		return notified;
 	}
-	
+
 	/**
 	 * checks if the current player has a wall in hand
 	 * 
 	 */
-	
+
 	public boolean hasWallInHand() {
 		boolean inHand = false;
 		for (int i = 1; i < 9; i++) {
 			for (int j = 1; j < 9; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
 				JButton[] wall2 = getWall(i, j, Direction.Horizontal);
-				if(wall1[1].getBackground() == wallCandidateColor || wall2[1].getBackground() == wallCandidateColor) {
+				if (wall1[1].getBackground() == wallCandidateColor || wall2[1].getBackground() == wallCandidateColor) {
 					inHand = true;
 				}
 			}
-		} return inHand;
+		}
+		return inHand;
 	}
 
 	// ------------------------
@@ -535,61 +559,61 @@ public class GamePanel extends JPanel {
 		// create board
 		for (int i = 0; i < BOARD_SIZE; i++) {
 			for (int j = 0; j < BOARD_SIZE; j++) {
-				GridBagConstraints c = new GridBagConstraints();
+				GridBagConstraints gbcBoard = new GridBagConstraints();
 				JButton square = new JButton();
 				square.setOpaque(true);
 				square.setBorder(new LineBorder(Color.BLACK));
-				c.gridx = i;
-				c.gridy = j;
-				c.weightx = 1.0;
-				c.weighty = 1.0;
-				c.fill = GridBagConstraints.BOTH;
-				c.insets = new Insets(2, 2, 2, 2);
-				square.setBackground(Color.LIGHT_GRAY);
+				gbcBoard.gridx = i;
+				gbcBoard.gridy = j;
+				gbcBoard.weightx = 1.0;
+				gbcBoard.weighty = 1.0;
+				gbcBoard.fill = GridBagConstraints.BOTH;
+				gbcBoard.insets = new Insets(2, 2, 2, 2);
+				square.setBackground(tileColor);
 				// Check if the square is a slot or a tile
 				if (j % 2 == 0 || i % 2 == 0) {
 					square.setBackground(invisibleWallColor);
 					square.setBorder(null);
-					c.insets = new Insets(0, 0, 0, 0);
-					c.weightx = 0.0;
-					c.weighty = 0.0;
+					gbcBoard.insets = new Insets(0, 0, 0, 0);
+					gbcBoard.weightx = 0.0;
+					gbcBoard.weighty = 0.0;
 					// set minimum dimensions for vertical or horizontal slots
 					if (j % 2 == 0 && i % 2 == 0) {
 						square.setPreferredSize(new Dimension(10, 10));
-						c.fill = GridBagConstraints.NONE;
+						gbcBoard.fill = GridBagConstraints.NONE;
 					} else if (j % 2 == 0) {
 						square.setPreferredSize(new Dimension(0, 10));
-						c.fill = GridBagConstraints.HORIZONTAL;
+						gbcBoard.fill = GridBagConstraints.HORIZONTAL;
 					} else {
 						square.setPreferredSize(new Dimension(10, 0));
-						c.fill = GridBagConstraints.VERTICAL;
+						gbcBoard.fill = GridBagConstraints.VERTICAL;
 					}
 				} else {
 					// Add white and black invisible pawns to each tile,
 					WhiteCircle whitePawn = new WhiteCircle();
 					square.setLayout(new OverlayLayout(square));
 					whitePawn.setVisible(false);
+					whitePawn.getInsets(new Insets(6,6,6,6));
 					whitePawn.setAlignmentX(CENTER_ALIGNMENT);
 					whitePawn.setAlignmentY(CENTER_ALIGNMENT);
-					whitePawn.setOpaque(true);
 					square.add(whitePawn);
 
 					BlackCircle blackPawn = new BlackCircle();
 					blackPawn.setVisible(false);
+					blackPawn.getInsets(new Insets(6,6,6,6));
 					blackPawn.setAlignmentX(CENTER_ALIGNMENT);
 					blackPawn.setAlignmentY(CENTER_ALIGNMENT);
-					//blackPawn.setOpaque(true);
 					square.add(blackPawn);
 				}
 				// Make the outline of the board black
 				if (j == 0 || j == BOARD_SIZE - 1 || i == 0 || i == BOARD_SIZE - 1) {
-					square.setBackground(Color.BLACK);
+					square.setBackground(boardBorderColor);
 				}
-				gameBoardPanel.add(square, c);
+				gameBoardPanel.add(square, gbcBoard);
 			}
 		}
 		// Preferences
-		gameBoardPanel.setBorder(new LineBorder(Color.BLACK));
+		//gameBoardPanel.setBorder(new LineBorder(Color.BLACK));
 		gameBoardPanel.setPreferredSize(new Dimension(650, 600));
 	}
 
