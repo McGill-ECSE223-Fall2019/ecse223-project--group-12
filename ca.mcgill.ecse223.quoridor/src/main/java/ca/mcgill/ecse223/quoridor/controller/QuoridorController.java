@@ -32,7 +32,8 @@ import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
 public class QuoridorController {
 
-	public static final String SAVED_GAMES_FOLDER = "src\\test\\resources\\savedgames";
+	public static final String TEST_SAVED_GAMES_FOLDER = "src\\test\\resources\\savedgames\\";
+	public static final String SAVED_GAMES_FOLDER = "savedgames\\";
 
 	public QuoridorController() {
 
@@ -384,10 +385,11 @@ public class QuoridorController {
 		createUser(name);
 		setBlackPlayerInGame(name);
 	}
+
 	/**
 	 * 
 	 */
-	public static void removeCandidateWall(){
+	public static void removeCandidateWall() {
 		QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(null);
 	}
 	/*
@@ -582,7 +584,7 @@ public class QuoridorController {
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void savePosition(String fileName) throws java.lang.UnsupportedOperationException {
+	public static void savePosition(String fileName, boolean test) throws java.lang.UnsupportedOperationException {
 		GamePosition gamePos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 
 		// make string for white player's pawn and wall positions
@@ -612,6 +614,11 @@ public class QuoridorController {
 		// save whitePos and blackPos to file
 		PrintWriter pw;
 		String fullPath = SAVED_GAMES_FOLDER + fileName;
+		// Necessary since Travis CI expects resources created during tests to be in
+		// test folder
+		if (test) {
+			fullPath = TEST_SAVED_GAMES_FOLDER + fileName;
+		}
 		try {
 			pw = new PrintWriter(fullPath, "UTF-8");
 			if (gamePos.getPlayerToMove().equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
@@ -810,11 +817,11 @@ public class QuoridorController {
 	public static int getRemainingWallsInStock() throws java.lang.UnsupportedOperationException {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = g.getCurrentPosition();
-		Player p =gp.getPlayerToMove();
+		Player p = gp.getPlayerToMove();
 		int numberWalls = 0;
-		if(p.hasGameAsWhite()) {
+		if (p.hasGameAsWhite()) {
 			numberWalls = gp.getWhiteWallsInStock().size();
-		} else if(p.hasGameAsBlack()) {
+		} else if (p.hasGameAsBlack()) {
 			numberWalls = gp.getBlackWallsInStock().size();
 		}
 		return numberWalls;
@@ -830,7 +837,7 @@ public class QuoridorController {
 	 */
 
 	public static boolean isCurrentWallMoveValid() throws java.lang.UnsupportedOperationException {
-		
+
 		// full implementation of GUI needed for implementation
 		throw new java.lang.UnsupportedOperationException();
 	}
@@ -927,11 +934,9 @@ public class QuoridorController {
 	 */
 	public static void rotateWall() throws java.lang.UnsupportedOperationException {
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
-		if (wm != null 
-				&& wm.getWallDirection() == Direction.Vertical) {
+		if (wm != null && wm.getWallDirection() == Direction.Vertical) {
 			wm.setWallDirection(Direction.Horizontal);
-		} else if (wm != null 
-				&& wm.getWallDirection() == Direction.Horizontal) {
+		} else if (wm != null && wm.getWallDirection() == Direction.Horizontal) {
 			wm.setWallDirection(Direction.Vertical);
 		}
 		QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
@@ -944,53 +949,53 @@ public class QuoridorController {
 	public static boolean moveWall(String side) throws java.lang.UnsupportedOperationException {
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
 		if (wm != null) {
-			
-			switch(side) {
-			case "up": 
+
+			switch (side) {
+			case "up":
 				int urow = wm.getTargetTile().getRow() - 1;
 				int ucol = wm.getTargetTile().getColumn();
 				if (urow > 0) {
-				wm.setTargetTile(getTile(urow, ucol));
-				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-				return false;
-			}else {
-				return true;
-			}
-			
+					wm.setTargetTile(getTile(urow, ucol));
+					QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+					return false;
+				} else {
+					return true;
+				}
+
 			case "down":
 				int drow = wm.getTargetTile().getRow() + 1;
 				int dcol = wm.getTargetTile().getColumn();
 				if (drow < 9) {
 					wm.setTargetTile(getTile(drow, dcol));
-				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-				return false;
-			}else {
-				return true;
-			}
-				
+					QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+					return false;
+				} else {
+					return true;
+				}
+
 			case "left":
 				int lrow = wm.getTargetTile().getRow();
 				int lcol = wm.getTargetTile().getColumn() - 1;
 				if (lcol > 0) {
-				wm.setTargetTile(getTile(lrow, lcol));
-				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-				return false;
-			}else {
-				return true;
-			}
-				
+					wm.setTargetTile(getTile(lrow, lcol));
+					QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+					return false;
+				} else {
+					return true;
+				}
+
 			case "right":
 				int rrow = wm.getTargetTile().getRow();
 				int rcol = wm.getTargetTile().getColumn() + 1;
 				if (rcol < 9) {
 					wm.setTargetTile(getTile(rrow, rcol));
-				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-				return false;
-			}else {
-				return true;
-			}	
-		}	
-	}
+					QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+					return false;
+				} else {
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 }

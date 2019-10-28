@@ -86,7 +86,6 @@ public class GamePanel extends JPanel {
 		// Buttons
 		saveExitToMenuButton = new JButton("Save or Exit");
 		grabWallButton = new JButton("Grab Wall");
-		System.out.println("hii5555i");
 		rotateWallButton = new JButton("Rotate Wall");
 		confirmMoveButton = new JButton("Switch Player");
 		upButton = new JButton("↑");
@@ -355,7 +354,7 @@ public class GamePanel extends JPanel {
 			String fileName = JOptionPane.showInputDialog(this.getParent(), "Enter the name of the file", "Save Game",
 					1);
 			if (fileName != null) {
-				QuoridorController.savePosition(fileName + ".dat");
+				QuoridorController.savePosition(fileName + ".dat", false);
 			}
 			QuoridorController.destroyGame();
 			returnToMenu();

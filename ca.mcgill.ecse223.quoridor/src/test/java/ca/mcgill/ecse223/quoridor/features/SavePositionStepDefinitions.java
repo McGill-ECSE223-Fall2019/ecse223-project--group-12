@@ -30,14 +30,14 @@ public class SavePositionStepDefinitions {
 
 	@Given("No file {string} exists in the filesystem")
 	public void no_file_exists_in_the_filesystem(String fileName) {
-		File file = new File("src\\test\\resources\\savedgames" + fileName);
+		File file = new File("src\\test\\resources\\savedgames\\" + fileName);
 		file.delete();
 	}
 
 	@When("The user initiates to save the game with name {string}")
 	public void the_user_initiates_to_save_the_game_with_name(String fileName) {
 		try {
-			QuoridorController.savePosition(fileName);
+			QuoridorController.savePosition(fileName, true);
 		} catch (java.lang.UnsupportedOperationException e) {
 
 		}
@@ -46,7 +46,7 @@ public class SavePositionStepDefinitions {
 
 	@Then("A file with {string} shall be created in the filesystem")
 	public void a_file_with_shall_be_created_in_the_filesystem(String fileName) {
-		boolean fileExists = new File("src\\test\\resources\\savedgames" + fileName).exists();
+		boolean fileExists = new File("src\\test\\resources\\savedgames\\" + fileName).exists();
 		assertTrue(fileExists);
 	}
 
