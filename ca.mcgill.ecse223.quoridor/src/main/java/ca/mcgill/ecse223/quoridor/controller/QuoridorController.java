@@ -32,7 +32,7 @@ import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
 public class QuoridorController {
 
-	public static final String SAVED_GAMES_FOLDER = "savedgames/";
+	public static final String SAVED_GAMES_FOLDER = "src\\test\\resources\\savedgames";
 
 	public QuoridorController() {
 

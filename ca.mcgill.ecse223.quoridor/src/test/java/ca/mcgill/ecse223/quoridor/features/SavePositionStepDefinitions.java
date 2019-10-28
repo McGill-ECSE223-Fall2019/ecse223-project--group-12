@@ -30,8 +30,8 @@ public class SavePositionStepDefinitions {
 
 	@Given("No file {string} exists in the filesystem")
 	public void no_file_exists_in_the_filesystem(String fileName) {
-		File file = new File("savedgames\\"+fileName); 
-        file.delete();
+		File file = new File("src\\test\\resources\\savedgames" + fileName);
+		file.delete();
 	}
 
 	@When("The user initiates to save the game with name {string}")
@@ -39,14 +39,14 @@ public class SavePositionStepDefinitions {
 		try {
 			QuoridorController.savePosition(fileName);
 		} catch (java.lang.UnsupportedOperationException e) {
-			
+
 		}
 
 	}
 
 	@Then("A file with {string} shall be created in the filesystem")
 	public void a_file_with_shall_be_created_in_the_filesystem(String fileName) {
-		boolean fileExists = new File("savedgames\\"+fileName).exists();
+		boolean fileExists = new File("src\\test\\resources\\savedgames" + fileName).exists();
 		assertTrue(fileExists);
 	}
 
@@ -74,9 +74,9 @@ public class SavePositionStepDefinitions {
 	@Then("File with {string} shall be updated in the filesystem")
 	public void file_with_shall_be_updated_in_the_filesystem(String fileName) {
 		File file = new File(fileName);
-	    Timestamp lastModified = new Timestamp(file.lastModified());
-	    Timestamp now = new Timestamp(System.currentTimeMillis());
-	    assertEquals(lastModified.compareTo(now), 0, 0);
+		Timestamp lastModified = new Timestamp(file.lastModified());
+		Timestamp now = new Timestamp(System.currentTimeMillis());
+		assertEquals(lastModified.compareTo(now), 0, 0);
 	}
 
 	@When("The user cancels to overwrite existing file")
@@ -91,9 +91,9 @@ public class SavePositionStepDefinitions {
 
 	@Then("File {string} shall not be changed in the filesystem")
 	public void file_shall_not_be_changed_in_the_filesystem(String fileName) {
-	    File file = new File(fileName);
-	    Timestamp now = new Timestamp(System.currentTimeMillis());
-	    Timestamp lastModified = new Timestamp(file.lastModified());
-	    assertNotEquals(lastModified.compareTo(now), 0, 0);
+		File file = new File(fileName);
+		Timestamp now = new Timestamp(System.currentTimeMillis());
+		Timestamp lastModified = new Timestamp(file.lastModified());
+		assertNotEquals(lastModified.compareTo(now), 0, 0);
 	}
 }
