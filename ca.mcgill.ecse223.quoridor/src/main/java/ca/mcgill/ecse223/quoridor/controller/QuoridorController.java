@@ -384,7 +384,12 @@ public class QuoridorController {
 		createUser(name);
 		setBlackPlayerInGame(name);
 	}
-
+	/**
+	 * 
+	 */
+	public static void removeCandidateWall(){
+		QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(null);
+	}
 	/*
 	 * Query Methods
 	 */

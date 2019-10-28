@@ -227,6 +227,12 @@ public class GamePanel extends JPanel {
 				setEnabledMoves(true);
 				if (playerStats.getRemaningTime().equals(Time.valueOf("00:00:00"))) {
 					setEnabledMoves(false);
+					confirmMoveButton.setEnabled(true);
+					if(QuoridorController.getWallMoveCandidate() != null) {
+						grabWallButton.setText("Grab Wall");
+						QuoridorController.removeCandidateWall();
+						refreshData();
+					}
 				}
 			} else {
 				setEnabledMoves(true);
@@ -288,6 +294,7 @@ public class GamePanel extends JPanel {
 		movemode.setText("Move mode: ");
 		remainingWalls.setText("Remaining walls: ");
 		invalidMoveLabel.setText("");
+		grabWallButton.setText("Grab Wall");
 		for (int i = 1; i < 10; i++) {
 			for (int j = 1; j < 10; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
