@@ -947,12 +947,12 @@ public class QuoridorController {
 			
 			switch(side) {
 			case "up": 
-			int urow = wm.getTargetTile().getRow() - 1;
-			int ucol = wm.getTargetTile().getColumn();
-			if (urow > 0) {
+				int urow = wm.getTargetTile().getRow() - 1;
+				int ucol = wm.getTargetTile().getColumn();
+				if (urow > 0) {
 				wm.setTargetTile(getTile(urow, ucol));
-			QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-			return false;
+				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+				return false;
 			}else {
 				return true;
 			}
@@ -964,20 +964,21 @@ public class QuoridorController {
 					wm.setTargetTile(getTile(drow, dcol));
 				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
 				return false;
-			} else {
-				return true;
-			
-			}
-			case "left":
-			int lrow = wm.getTargetTile().getRow();
-			int lcol = wm.getTargetTile().getColumn() - 1;
-			if (lcol > 0) {
-				wm.setTargetTile(getTile(lrow, lcol));
-			QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-			return false;
 			}else {
-					return true;
+				return true;
 			}
+				
+			case "left":
+				int lrow = wm.getTargetTile().getRow();
+				int lcol = wm.getTargetTile().getColumn() - 1;
+				if (lcol > 0) {
+				wm.setTargetTile(getTile(lrow, lcol));
+				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
+				return false;
+			}else {
+				return true;
+			}
+				
 			case "right":
 				int rrow = wm.getTargetTile().getRow();
 				int rcol = wm.getTargetTile().getColumn() + 1;
@@ -985,57 +986,10 @@ public class QuoridorController {
 					wm.setTargetTile(getTile(rrow, rcol));
 				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
 				return false;
-				}
-				else {
-							return true;
+			}else {
+				return true;
 			}	
-			}	
-			
-			
-//			if (side.equals("right")) {
-//				int row = wm.getTargetTile().getRow();
-//				int col = wm.getTargetTile().getColumn() + 1;
-//				if (col < 9) {
-//					wm.setTargetTile(getTile(row, col));
-//				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-//				return false;
-//				}
-//				else {
-//							return true;
-//			}
-//			} else if (side.equals("left")) {
-//				int row = wm.getTargetTile().getRow();
-//				int col = wm.getTargetTile().getColumn() - 1;
-//				if (col > 0) {
-//					wm.setTargetTile(getTile(row, col));
-//				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-//				return false;
-//			}
-//				else {
-//					return true;
-//	}
-//
-//			} else if (side.equals("up")) {
-//				int row = wm.getTargetTile().getRow() - 1;
-//				int col = wm.getTargetTile().getColumn();
-//				if (row > 0) {
-//					wm.setTargetTile(getTile(row, col));
-//				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-//				return false;
-//				}else {
-//					return true;
-//				}
-//			} else if (side.equals("down")) {
-//				int row = wm.getTargetTile().getRow() + 1;
-//				int col = wm.getTargetTile().getColumn();
-//				if (row < 9) {
-//					wm.setTargetTile(getTile(row, col));
-//				QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-//				return false;
-//			} else {
-//				return true;
-//			}
-//		}
+		}	
 	}
 		return false;
 	}
