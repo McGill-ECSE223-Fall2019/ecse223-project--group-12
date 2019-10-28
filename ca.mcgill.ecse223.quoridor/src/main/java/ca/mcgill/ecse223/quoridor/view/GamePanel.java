@@ -349,19 +349,26 @@ public class GamePanel extends JPanel {
 	 * @param evt
 	 */
 	private void saveExitToMenuButtonActionPerformed(ActionEvent evt) {
-		int name = JOptionPane.showConfirmDialog(this.getParent(), "Would you like to save your game before exiting?");
-		if (name == 0) {
+		int saveGameOption = JOptionPane.showConfirmDialog(this.getParent(), "Would you like to save your game before exiting?");
+		if (saveGameOption == 0) {
 			String fileName = JOptionPane.showInputDialog(this.getParent(), "Enter the name of the file", "Save Game",
 					1);
 			if (fileName != null) {
 				QuoridorController.savePosition(fileName + ".dat", false);
+				//if the file already exists ask to overwrite
+				 int overWriteOption = JOptionPane.showConfirmDialog(this.getParent(), "are you sure you want to overwrite?");
+				 if (overWriteOption == 0) {
+					 //overwrite
+				 } else {
+					 //dont overwrite
+				 }
 			}
 			QuoridorController.destroyGame();
 			returnToMenu();
-		} else if (name == 1) {
+		} else if (saveGameOption == 1) {
 			QuoridorController.destroyGame();
 			returnToMenu();
-		} else if (name == 3) {
+		} else if (saveGameOption == 3) {
 			// just stay in the game maybe refresh?
 		}
 	}
