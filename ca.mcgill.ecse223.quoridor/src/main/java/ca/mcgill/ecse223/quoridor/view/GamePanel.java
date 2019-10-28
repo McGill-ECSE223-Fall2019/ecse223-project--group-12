@@ -355,23 +355,35 @@ public class GamePanel extends JPanel {
 	}
 
 	private void upButtonButtonActionPerformed(ActionEvent evt) {
-		QuoridorController.moveWall("up");
+		boolean boundary  = QuoridorController.moveWall("up");
 		refreshData();
+		if (boundary) {
+			invalidMoveLabel.setText("Reaching Top boundary!");
+	}
 	}
 
 	private void leftButtonButtonActionPerformed(ActionEvent evt) {
-		QuoridorController.moveWall("left");
+		boolean boundary  = QuoridorController.moveWall("left");
 		refreshData();
+		if (boundary) {
+			invalidMoveLabel.setText("Reaching Left boundary!");
+	}
 	}
 
 	private void downButtonButtonActionPerformed(ActionEvent evt) {
-		QuoridorController.moveWall("down");
+		boolean boundary  = QuoridorController.moveWall("down");
 		refreshData();
+		if (boundary) {
+			invalidMoveLabel.setText("Reaching Bottom boundary!");
+	}
 	}
 
 	private void rightButtonButtonActionPerformed(ActionEvent evt) {
-		QuoridorController.moveWall("right");
+		boolean boundary  = QuoridorController.moveWall("right");
 		refreshData();
+		if (boundary) {
+			invalidMoveLabel.setText("Reaching Right boundary!");
+	}
 	}
 
 	private void grabWallButtonActionPerformed(ActionEvent evt) {
