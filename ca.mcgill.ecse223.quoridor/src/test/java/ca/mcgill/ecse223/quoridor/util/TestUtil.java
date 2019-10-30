@@ -59,8 +59,6 @@ public class TestUtil {
 		User user1 = quoridor.addUser(userName1);
 		User user2 = quoridor.addUser(userName2);
 
-		int thinkingTime = 180;
-
 		// Players are assumed to start on opposite sides and need to make progress
 		// horizontally to get to the other side
 		// @formatter:off
@@ -69,8 +67,8 @@ public class TestUtil {
 		 * 
 		 */
 		// @formatter:on
-		Player player1 = new Player(new Time(thinkingTime), user1, 9, Direction.Vertical);
-		Player player2 = new Player(new Time(thinkingTime), user2, 1, Direction.Vertical);
+		Player player1 = new Player(Time.valueOf("00:00:30"), user1, 9, Direction.Vertical);
+		Player player2 = new Player(Time.valueOf("00:00:30"), user2, 1, Direction.Vertical);
 
 		Player[] players = { player1, player2 };
 

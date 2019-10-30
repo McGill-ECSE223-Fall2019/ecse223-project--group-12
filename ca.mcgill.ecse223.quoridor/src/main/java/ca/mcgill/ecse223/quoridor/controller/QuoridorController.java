@@ -139,20 +139,21 @@ public class QuoridorController {
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void startClock() throws InvalidInputException {
+	public static void startClock() {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		if (game.getGameStatus() == GameStatus.ReadyToStart) {
-			// TODO check if the board has already been initiated
-			initBoard();
 			game.setGameStatus(GameStatus.Running);
+			if (game.getCurrentPosition() == null) {
+				initBoard();
+			}
+
 			timerTask = new TimerTask() {
 				public void run() {
 					refreshPlayerTIme();
 				}
 			};
 			timer.scheduleAtFixedRate(timerTask, 0, 1000);
-		} else {
-			throw new InvalidInputException("Game must be ready to start before starting the clock");
+
 		}
 	}
 
@@ -657,8 +658,9 @@ public class QuoridorController {
 
 	/**
 	 * @author Weige qian Gherkin feature:InitializeBoard.feature
+	 * @throws InvalidInputException
 	 */
-	public static void initBoard() throws java.lang.UnsupportedOperationException {
+	public static void initBoard() {
 		// TODO: This method was only partially implemented to test the GUI
 		Board board;
 		Player w = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
@@ -697,6 +699,9 @@ public class QuoridorController {
 			gamePosition.addBlackWallsInStock(wall);
 		}
 		game.setCurrentPosition(gamePosition);
+		if (game.getGameStatus() == GameStatus.ReadyToStart) {
+			startClock();
+		}
 	}
 
 	/**

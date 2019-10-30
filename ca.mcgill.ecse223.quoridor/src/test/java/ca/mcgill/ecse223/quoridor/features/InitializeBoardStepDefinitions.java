@@ -3,7 +3,10 @@ package ca.mcgill.ecse223.quoridor.features;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Time;
+
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import io.cucumber.java.en.Then;
@@ -23,12 +26,7 @@ public class InitializeBoardStepDefinitions {
 
 	@When("The initialization of the board is initiated")
 	public void the_initialization_of_the_board_is_initiated() {
-		try {
 			QuoridorController.initBoard();
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
-		}
 	}
 
 	@Then("It shall be white player to move")
@@ -62,11 +60,19 @@ public class InitializeBoardStepDefinitions {
 
 	@Then("White's clock shall be counting down")
 	public void white_s_clock_shall_be_counting_down() {
+		// get the current remaining time
+		Time initialTime = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getRemainingTime();
+		// Wait 1 second
 		try {
-			assertTrue(QuoridorController.ifClockCount());
-		} catch (java.lang.UnsupportedOperationException e) {
-			throw new cucumber.api.PendingException();
+			Thread.sleep(1001);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+		// get the remaining time again
+		Time after = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getRemainingTime();
+		// Check if time is counting down (00:30:00 is after 00:29:59)
+		boolean countingDown = initialTime.after(after);
+		assertTrue(countingDown);
 	}
 
 	@Then("It shall be shown that this is White's turn")

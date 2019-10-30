@@ -62,7 +62,7 @@ public class GamePanel extends JPanel {
 	private final Color invisibleWallColor = new Color(210, 166, 121);
 	private final PlayerColor whitePawnColor = PlayerColor.White;
 	private final PlayerColor blackPawnColor = PlayerColor.Black;
-	private final Color tileColor = new Color(153,102,0);
+	private final Color tileColor = new Color(153, 102, 0);
 	private final Color boardBackGroundColor = new Color(191, 128, 64);
 	private final Color boardBorderColor = new Color(134, 89, 45);
 	private Timer timer;
@@ -227,7 +227,7 @@ public class GamePanel extends JPanel {
 				if (playerStats.getRemaningTime().equals(Time.valueOf("00:00:00"))) {
 					setEnabledMoves(false);
 					confirmMoveButton.setEnabled(true);
-					if(QuoridorController.getWallMoveCandidate() != null) {
+					if (QuoridorController.getWallMoveCandidate() != null) {
 						grabWallButton.setText("Grab Wall");
 						QuoridorController.removeCandidateWall();
 						refreshData();
@@ -318,14 +318,9 @@ public class GamePanel extends JPanel {
 		clearGame();
 		int name = JOptionPane.showConfirmDialog(this.getParent(), "Click yes to start the clock!", "StartGame", 0);
 		if (name == 0) {
-			try {
-				QuoridorController.startClock();
-				refreshData();
-				timer.start();
-			} catch (InvalidInputException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			QuoridorController.startClock();
+			refreshData();
+			timer.start();
 			refreshData();
 		} else {
 			QuoridorController.destroyGame();
@@ -349,19 +344,23 @@ public class GamePanel extends JPanel {
 	 * @param evt
 	 */
 	private void saveExitToMenuButtonActionPerformed(ActionEvent evt) {
-		int saveGameOption = JOptionPane.showConfirmDialog(this.getParent(), "Would you like to save your game before exiting?");
+		int saveGameOption = JOptionPane.showConfirmDialog(this.getParent(),
+				"Would you like to save your game before exiting?");
 		if (saveGameOption == 0) {
 			String fileName = JOptionPane.showInputDialog(this.getParent(), "Enter the name of the file", "Save Game",
 					1);
 			if (fileName != null) {
 				QuoridorController.savePosition(fileName + ".dat", false);
-				//if the file already exists ask to overwrite
-				 int overWriteOption = JOptionPane.showConfirmDialog(this.getParent(), "are you sure you want to overwrite?");
-				 if (overWriteOption == 0) {
-					 //overwrite
-				 } else {
-					 //dont overwrite
-				 }
+				if (true // the file already exists, ask to overwrite
+				) {
+					int overWriteOption = JOptionPane.showConfirmDialog(this.getParent(),
+							"are you sure you want to overwrite?");
+					if (overWriteOption == 0) {
+						// overwrite
+					} else {
+						// dont overwrite
+					}
+				}
 			}
 			QuoridorController.destroyGame();
 			returnToMenu();
@@ -379,35 +378,35 @@ public class GamePanel extends JPanel {
 	}
 
 	private void upButtonButtonActionPerformed(ActionEvent evt) {
-		boolean boundary  = QuoridorController.moveWall("up");
+		boolean boundary = QuoridorController.moveWall("up");
 		refreshData();
 		if (boundary) {
 			invalidMoveLabel.setText("Reaching Top boundary!");
-	}
+		}
 	}
 
 	private void leftButtonButtonActionPerformed(ActionEvent evt) {
-		boolean boundary  = QuoridorController.moveWall("left");
+		boolean boundary = QuoridorController.moveWall("left");
 		refreshData();
 		if (boundary) {
 			invalidMoveLabel.setText("Reaching Left boundary!");
-	}
+		}
 	}
 
 	private void downButtonButtonActionPerformed(ActionEvent evt) {
-		boolean boundary  = QuoridorController.moveWall("down");
+		boolean boundary = QuoridorController.moveWall("down");
 		refreshData();
 		if (boundary) {
 			invalidMoveLabel.setText("Reaching Bottom boundary!");
-	}
+		}
 	}
 
 	private void rightButtonButtonActionPerformed(ActionEvent evt) {
-		boolean boundary  = QuoridorController.moveWall("right");
+		boolean boundary = QuoridorController.moveWall("right");
 		refreshData();
 		if (boundary) {
 			invalidMoveLabel.setText("Reaching Right boundary!");
-	}
+		}
 	}
 
 	private void grabWallButtonActionPerformed(ActionEvent evt) {
@@ -485,12 +484,9 @@ public class GamePanel extends JPanel {
 	/**
 	 * Show or hide pawn at certain tile
 	 * 
-	 * @param row
-	 *            rows 1 to 9
-	 * @param col
-	 *            cols 1 to 9 (A to I in specification)
-	 * @param c
-	 *            the color of the pawn to show
+	 * @param row     rows 1 to 9
+	 * @param col     cols 1 to 9 (A to I in specification)
+	 * @param c       the color of the pawn to show
 	 * @param visible
 	 */
 	private void showPawn(int row, int col, PlayerColor c, boolean visible) {
@@ -510,8 +506,7 @@ public class GamePanel extends JPanel {
 	/**
 	 * Draw a wall in a selection of colors
 	 * 
-	 * @param wall
-	 *            an array of JButtons representing a wall (see getWall())
+	 * @param wall  an array of JButtons representing a wall (see getWall())
 	 * @param color
 	 * 
 	 */
@@ -606,14 +601,14 @@ public class GamePanel extends JPanel {
 					WhiteCircle whitePawn = new WhiteCircle();
 					square.setLayout(new OverlayLayout(square));
 					whitePawn.setVisible(false);
-					whitePawn.getInsets(new Insets(6,6,6,6));
+					whitePawn.getInsets(new Insets(6, 6, 6, 6));
 					whitePawn.setAlignmentX(CENTER_ALIGNMENT);
 					whitePawn.setAlignmentY(CENTER_ALIGNMENT);
 					square.add(whitePawn);
 
 					BlackCircle blackPawn = new BlackCircle();
 					blackPawn.setVisible(false);
-					blackPawn.getInsets(new Insets(6,6,6,6));
+					blackPawn.getInsets(new Insets(6, 6, 6, 6));
 					blackPawn.setAlignmentX(CENTER_ALIGNMENT);
 					blackPawn.setAlignmentY(CENTER_ALIGNMENT);
 					square.add(blackPawn);
@@ -626,7 +621,7 @@ public class GamePanel extends JPanel {
 			}
 		}
 		// Preferences
-		//gameBoardPanel.setBorder(new LineBorder(Color.BLACK));
+		// gameBoardPanel.setBorder(new LineBorder(Color.BLACK));
 		gameBoardPanel.setPreferredSize(new Dimension(650, 600));
 	}
 

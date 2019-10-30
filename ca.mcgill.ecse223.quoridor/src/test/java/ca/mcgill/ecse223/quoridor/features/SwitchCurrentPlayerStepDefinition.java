@@ -21,12 +21,8 @@ public class SwitchCurrentPlayerStepDefinition {
 	private Quoridor quoridor = QuoridorApplication.getQuoridor();
 	@Given("The clock of {string} is running")
 	public void the_clock_of_is_running(String color) {
-		try {
 			QuoridorController.startClock();
-		}catch (InvalidInputException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
-		}
+		
 	}
 
 	@Given("The clock of {string} is stopped")
