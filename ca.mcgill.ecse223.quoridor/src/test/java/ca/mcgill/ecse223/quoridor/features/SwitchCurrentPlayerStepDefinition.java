@@ -19,6 +19,13 @@ import io.cucumber.java.en.When;
 
 public class SwitchCurrentPlayerStepDefinition {
 	private Quoridor quoridor = QuoridorApplication.getQuoridor();
+	
+	@Given("The player to move is {string}")
+	public void the_player_to_move_is(String color) {
+	    // Write code here that turns the phrase above into concrete actions
+	    throw new cucumber.api.PendingException();
+	}
+	
 	@Given("The clock of {string} is running")
 	public void the_clock_of_is_running(String color) {
 			QuoridorController.startClock();
