@@ -585,6 +585,11 @@ public class QuoridorController {
 			e1.printStackTrace();
 		}
 		
+		//validate text file
+		if (!validateTextFile(SAVED_GAMES_FOLDER + fileName)) {
+			return false;
+		}
+		
 		//extract text line for each player
 		File file = new File(SAVED_GAMES_FOLDER + fileName); 
 		String firstPlayerLine = new String();
@@ -611,10 +616,6 @@ public class QuoridorController {
 		whitePlayer = myGame.getWhitePlayer();
 		blackPlayer = myGame.getBlackPlayer();
 		
-		if (firstPlayerLine.length()<5 || secondPlayerLine.length()<5) {
-			return false;
-		}
-		
 		if (firstPlayerLine.charAt(0)=='W') {
 			whitePlayerLine = firstPlayerLine;
 			blackPlayerLine = secondPlayerLine;
@@ -629,12 +630,12 @@ public class QuoridorController {
 		PlayerPosition whitePos, blackPos;
 		Tile whiteTile, blackTile;
 		
-		whiteCol = ((int) whitePlayerLine.charAt(3))-96;
+		whiteCol = whitePlayerLine.charAt(3)-96;
 		whiteRow = whitePlayerLine.charAt(4);
 		whiteTile = QuoridorApplication.getQuoridor().getBoard().getTile(whiteRow*9+whiteCol);
 		whitePos = new PlayerPosition(whitePlayer, whiteTile);
 		
-		blackCol = ((int) blackPlayerLine.charAt(3))-96;
+		blackCol = blackPlayerLine.charAt(3)-96;
 		blackRow = blackPlayerLine.charAt(4);
 		blackTile = QuoridorApplication.getQuoridor().getBoard().getTile(blackRow*9+blackCol);
 		blackPos = new PlayerPosition(blackPlayer, blackTile);
@@ -650,6 +651,8 @@ public class QuoridorController {
 		GamePosition loadedPos = new GamePosition(id, whitePos, blackPos, playerToMove
 , QuoridorApplication.getQuoridor().getCurrentGame());
 		
+		//TODO read wall positions from text data
+		
 		//validate and set position into model
 		if (validatePosition(loadedPos)) {
 			myGame.setCurrentPosition(loadedPos);
@@ -657,7 +660,81 @@ public class QuoridorController {
 		} else {
 			return false;
 		}
-		//throw new java.lang.UnsupportedOperationException();
+	}
+	
+	private static boolean validateTextFile(String path) {
+		File file = new File(path); 
+		String firstPlayerLine = new String();
+		String secondPlayerLine = new String();
+		String thirdLine = new String();
+		BufferedReader br;
+		try {
+			br = new BufferedReader(new FileReader(file));
+			try {
+				firstPlayerLine = br.readLine();
+				secondPlayerLine = br.readLine();
+				thirdLine = br.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		//check if file contains exactly 2 lines
+		if (firstPlayerLine == null || secondPlayerLine == null || thirdLine != null) {
+			return false;
+		}
+		
+		//check if file contains white player and black player
+		if (firstPlayerLine.charAt(0) == 'W') {
+			if (secondPlayerLine.charAt(0) != 'B') {
+				return false;
+			}
+		} else if (firstPlayerLine.charAt(0) == 'B') {
+			if (secondPlayerLine.charAt(0) != 'W') {
+				return false;
+			}
+		} else {
+			return false;
+		}
+		
+		//check if each line is correct format
+		if (!validateTextLine(firstPlayerLine) || !validateTextLine(firstPlayerLine)) {
+			return false;
+		}
+		
+		
+		return true;
+	}
+	
+	private static boolean validateTextLine(String line) {
+		int l = line.length();
+		if (l<5) {
+			return false;
+		}
+		
+		if (l>5) {
+			if (l%5!=0) {
+				return false;
+			}
+			
+			String regPattern = "^";
+			for (int i=0; i<((l/5)-1); i++) {
+				regPattern+= ", [a-i][1-9](v|h)";
+			}
+			regPattern+="$";
+						
+			String subString = line.substring(5);
+			
+			if (!subString.matches(regPattern)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

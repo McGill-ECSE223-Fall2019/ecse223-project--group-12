@@ -226,7 +226,10 @@ public class MenuPanel extends JPanel {
 
 	private void loadGameButtonActionPerformed(ActionEvent evt) {
 		// TODO check if the position is valid
-		JOptionPane.showMessageDialog(this.getParent(), "Sorry file is not valid");
+		String fileName = loadGameToggelList.getSelectedItem().toString();
+		if (!QuoridorController.loadPosition(fileName)) {
+			JOptionPane.showMessageDialog(this.getParent(), "Sorry file is not valid");
+		}
 	}
 
 	private void changeToGamePanel() {
