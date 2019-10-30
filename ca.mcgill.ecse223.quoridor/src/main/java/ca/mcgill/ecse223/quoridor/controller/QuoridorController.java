@@ -1,6 +1,10 @@
 package ca.mcgill.ecse223.quoridor.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.Time;
@@ -573,8 +577,87 @@ public class QuoridorController {
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static boolean loadPosition(String fullPath) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
+	public static boolean loadPosition(String fileName) throws java.lang.UnsupportedOperationException {
+		try {
+			initializeGame();
+		} catch (InvalidInputException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		//extract text line for each player
+		File file = new File(SAVED_GAMES_FOLDER + fileName); 
+		String firstPlayerLine = new String();
+		String secondPlayerLine = new String();
+		BufferedReader br;
+		try {
+			br = new BufferedReader(new FileReader(file));
+			try {
+				firstPlayerLine = br.readLine();
+				secondPlayerLine = br.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//parse text data into objects and variables
+		String whitePlayerLine, blackPlayerLine;
+		Player whitePlayer, blackPlayer, playerToMove;
+		Game myGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		whitePlayer = myGame.getWhitePlayer();
+		blackPlayer = myGame.getBlackPlayer();
+		
+		if (firstPlayerLine.length()<5 || secondPlayerLine.length()<5) {
+			return false;
+		}
+		
+		if (firstPlayerLine.charAt(0)=='W') {
+			whitePlayerLine = firstPlayerLine;
+			blackPlayerLine = secondPlayerLine;
+			playerToMove = whitePlayer;
+		} else {
+			whitePlayerLine = secondPlayerLine;
+			blackPlayerLine = firstPlayerLine;
+			playerToMove = blackPlayer;
+		}
+		
+		int whiteCol, whiteRow, blackCol, blackRow;
+		PlayerPosition whitePos, blackPos;
+		Tile whiteTile, blackTile;
+		
+		whiteCol = ((int) whitePlayerLine.charAt(3))-96;
+		whiteRow = whitePlayerLine.charAt(4);
+		whiteTile = QuoridorApplication.getQuoridor().getBoard().getTile(whiteRow*9+whiteCol);
+		whitePos = new PlayerPosition(whitePlayer, whiteTile);
+		
+		blackCol = ((int) blackPlayerLine.charAt(3))-96;
+		blackRow = blackPlayerLine.charAt(4);
+		blackTile = QuoridorApplication.getQuoridor().getBoard().getTile(blackRow*9+blackCol);
+		blackPos = new PlayerPosition(blackPlayer, blackTile);
+
+		int id;
+		List<GamePosition> posList = QuoridorApplication.getQuoridor().getCurrentGame().getPositions();
+		if (posList.isEmpty()) {
+			id = 0;
+		} else {
+			id = posList.size();
+		}
+		
+		GamePosition loadedPos = new GamePosition(id, whitePos, blackPos, playerToMove
+, QuoridorApplication.getQuoridor().getCurrentGame());
+		
+		//validate and set position into model
+		if (validatePosition(loadedPos)) {
+			myGame.setCurrentPosition(loadedPos);
+			return true;
+		} else {
+			return false;
+		}
+		//throw new java.lang.UnsupportedOperationException();
 	}
 
 	/**
