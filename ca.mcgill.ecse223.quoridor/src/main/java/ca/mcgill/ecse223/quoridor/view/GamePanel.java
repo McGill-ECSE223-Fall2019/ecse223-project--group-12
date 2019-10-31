@@ -421,15 +421,16 @@ public class GamePanel extends JPanel {
 			}
 
 		} else if (grabWallButton.getText().equals("Drop Wall")) {
-			if (QuoridorController.validatePosition()) {
+			try {
+				QuoridorController.dropWall();
 				grabWallButton.setText("Grab Wall");
 				confirmMoveButton.setEnabled(true);
-				QuoridorController.dropWall();
 				refreshData();
-			} else {
+			} catch (InvalidInputException e) {
 				refreshData();
-				invalidMoveLabel.setText("Invalid move, try again!");
+				invalidMoveLabel.setText(e.getMessage());
 			}
+
 		}
 
 	}

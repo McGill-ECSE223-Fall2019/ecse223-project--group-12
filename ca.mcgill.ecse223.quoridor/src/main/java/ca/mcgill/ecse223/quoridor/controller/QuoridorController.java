@@ -947,9 +947,10 @@ public class QuoridorController {
 	 * 
 	 * @author Kaan Gure Gherkin Feature: DropWall.feature
 	 * @throws java.lang.UnsupportedOperationException
+	 * @throws InvalidInputException 
 	 */
 
-	public static void dropWall() throws java.lang.UnsupportedOperationException {
+	public static void dropWall() throws InvalidInputException {
 		// TODO: This method was only partially implemented to test the GUI
 
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
@@ -966,6 +967,8 @@ public class QuoridorController {
 			g.setWallMoveCandidate(null);
 			g.setMoveMode(MoveMode.PlayerMove);
 			makeMove();
+		} else  {
+			throw new InvalidInputException("Invalid move, try again!");
 		}
 
 	}
