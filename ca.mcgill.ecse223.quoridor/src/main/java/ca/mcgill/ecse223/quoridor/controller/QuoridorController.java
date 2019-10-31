@@ -439,7 +439,6 @@ public class QuoridorController {
 		playerPositions.add(white);
 		playerPositions.add(black);
 		return playerPositions;
-
 	}
 
 	/**
@@ -897,10 +896,6 @@ public class QuoridorController {
 		}
 		g.setCurrentPosition(gp);
 
-	}
-
-	public static boolean ifClockCount() throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
 	}
 
 	// ------------------------

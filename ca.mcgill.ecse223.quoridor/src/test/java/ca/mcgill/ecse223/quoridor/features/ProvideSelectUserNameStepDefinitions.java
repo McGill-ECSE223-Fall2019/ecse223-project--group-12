@@ -44,6 +44,7 @@ public class ProvideSelectUserNameStepDefinitions {
 
 	@Given("Next player to set user name is {string}")
 	public void next_player_to_set_user_name_is(String color) {
+		
 		switch (color) {
 		case "white":
 			nextPlayerIsWhite = true;

@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.quoridor.features;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Time;
@@ -26,7 +27,7 @@ public class InitializeBoardStepDefinitions {
 
 	@When("The initialization of the board is initiated")
 	public void the_initialization_of_the_board_is_initiated() {
-			QuoridorController.initBoard();
+		QuoridorController.initBoard();
 	}
 
 	@Then("It shall be white player to move")
@@ -69,10 +70,12 @@ public class InitializeBoardStepDefinitions {
 			e.printStackTrace();
 		}
 		// get the remaining time again
-		Time after = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getRemainingTime();
+		Time afterTime = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getRemainingTime();
 		// Check if time is counting down (00:30:00 is after 00:29:59)
-		boolean countingDown = initialTime.after(after);
+		boolean countingDown = initialTime.after(afterTime);
+		boolean notcountingDown = initialTime.equals(afterTime);
 		assertTrue(countingDown);
+		assertFalse(notcountingDown);
 	}
 
 	@Then("It shall be shown that this is White's turn")
