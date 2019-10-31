@@ -907,9 +907,10 @@ public class QuoridorController {
 	 * 
 	 * @author Kaan Gure Gherkin Feature: GrabWall.feature
 	 * @throws java.lang.UnsupportedOperationException
+	 * @throws InvalidInputException 
 	 */
 
-	public static void grabWall() throws java.lang.UnsupportedOperationException {
+	public static void grabWall() throws InvalidInputException {
 		// TODO: This method was only partially implemented to test the GUI
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 
@@ -919,10 +920,21 @@ public class QuoridorController {
 		Tile tile = getTile(1, 1); // just to avoid null pointers for now
 		if (p.hasGameAsWhite()) {
 			tile = getTile(8, 5);
+			// check if wall left in stock
+			if (gp.getWhiteWallsInStock().size() == 0) {
+				throw new InvalidInputException("Stock is Empty");
+			}
 			w = gp.getWhiteWallsInStock(0);
+		
+			gp.removeWhiteWallsInStock(w);
 		} else if (p.hasGameAsBlack()) {
 			tile = getTile(1, 5);
+			if (gp.getBlackWallsInStock().size() == 0) {
+				throw new InvalidInputException("Stock is Empty");
+			}
 			w = gp.getBlackWallsInStock(0);
+			
+			gp.removeBlackWallsInStock(w);
 		}
 		WallMove wm = new WallMove(0, 0, p, tile, g, Direction.Vertical, w);
 		g.setWallMoveCandidate(wm);
@@ -947,10 +959,8 @@ public class QuoridorController {
 		Player p = gp.getPlayerToMove();
 		if (validatePosition()) {
 			if (p.hasGameAsWhite()) {
-				gp.removeWhiteWallsInStock(wall);
 				gp.addWhiteWallsOnBoard(wall);
 			} else if (p.hasGameAsBlack()) {
-				gp.removeBlackWallsInStock(wall);
 				gp.addBlackWallsOnBoard(wall);
 			}
 			g.setWallMoveCandidate(null);
@@ -1016,19 +1026,6 @@ public class QuoridorController {
 	 */
 
 	public static boolean alertStockIsEmpty() throws java.lang.UnsupportedOperationException {
-		// full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
-	}
-
-	/**
-	 * Future GUI related method: Checks if there is wall in hand that is
-	 * represented in the GUI
-	 * 
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-
-	public static boolean hasWallInHand() throws java.lang.UnsupportedOperationException {
 		// full implementation of GUI needed for implementation
 		throw new java.lang.UnsupportedOperationException();
 	}

@@ -10,6 +10,7 @@ import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
+import ca.mcgill.ecse223.quoridor.view.GamePanel;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -82,6 +83,10 @@ public class InitializeBoardStepDefinitions {
 	public void it_shall_be_shown_that_this_is_White_s_turn() {
 		assertEquals(quoridor.getCurrentGame().getWhitePlayer(),
 				quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
+		GamePanel gamePanel = new GamePanel();
+		gamePanel.refreshData();
+		boolean b = gamePanel.getPlayerLabel().contains("White");
+		assertTrue(b);
 
 	}
 }

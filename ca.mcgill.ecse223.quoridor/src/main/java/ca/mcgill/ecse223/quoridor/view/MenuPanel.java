@@ -221,7 +221,6 @@ public class MenuPanel extends JPanel {
 		} else {
 			startGameErrorLabel.setText("Please select names and time");
 		}
-		//changeToGamePanel();
 	}
 
 	private void loadGameButtonActionPerformed(ActionEvent evt) {

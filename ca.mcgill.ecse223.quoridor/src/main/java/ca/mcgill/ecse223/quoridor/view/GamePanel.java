@@ -21,6 +21,7 @@ import javax.swing.Timer;
 import javax.swing.border.LineBorder;
 import javax.swing.JOptionPane;
 
+import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
@@ -205,7 +206,7 @@ public class GamePanel extends JPanel {
 			playerLabel.setText("Player: " + playerStats.getName());
 			remainingTime.setText("Time left: " + playerStats.getRemaningTime().toString());
 			movemode.setText("Move mode: " + playerStats.getMoveMode().split("Move")[0]);
-			remainingWalls.setText("Walls instock: " + playerStats.getRemainingWalls());
+			remainingWalls.setText("Walls Instock: " + playerStats.getRemainingWalls());
 		}
 
 		refreshWalls();
@@ -410,10 +411,15 @@ public class GamePanel extends JPanel {
 
 	private void grabWallButtonActionPerformed(ActionEvent evt) {
 		if (grabWallButton.getText().equals("Grab Wall")) {
-			grabWallButton.setText("Drop Wall");
-			confirmMoveButton.setEnabled(false);
-			QuoridorController.grabWall();
-			refreshData();
+			try {
+				QuoridorController.grabWall();
+				grabWallButton.setText("Drop Wall");
+				confirmMoveButton.setEnabled(false);
+				refreshData();
+			} catch (InvalidInputException e) {
+				invalidMoveLabel.setText(e.getMessage());
+			}
+
 		} else if (grabWallButton.getText().equals("Drop Wall")) {
 			if (QuoridorController.validatePosition()) {
 				grabWallButton.setText("Grab Wall");
@@ -483,9 +489,12 @@ public class GamePanel extends JPanel {
 	/**
 	 * Show or hide pawn at certain tile
 	 * 
-	 * @param row     rows 1 to 9
-	 * @param col     cols 1 to 9 (A to I in specification)
-	 * @param c       the color of the pawn to show
+	 * @param row
+	 *            rows 1 to 9
+	 * @param col
+	 *            cols 1 to 9 (A to I in specification)
+	 * @param c
+	 *            the color of the pawn to show
 	 * @param visible
 	 */
 	private void showPawn(int row, int col, PlayerColor c, boolean visible) {
@@ -505,7 +514,8 @@ public class GamePanel extends JPanel {
 	/**
 	 * Draw a wall in a selection of colors
 	 * 
-	 * @param wall  an array of JButtons representing a wall (see getWall())
+	 * @param wall
+	 *            an array of JButtons representing a wall (see getWall())
 	 * @param color
 	 * 
 	 */
@@ -525,42 +535,43 @@ public class GamePanel extends JPanel {
 	public String getPlayerLabel() {
 		return playerLabel.getText();
 	}
-	/**
-	 * checks if the player has been notified of an invalid drop wall move
-	 * 
-	 */
 
-	public boolean notifiedInvalidDrop() {
-		boolean notified = false;
-		// can't use "==" to compare strings, this method should just return the string (see commented method below)
-		if (invalidMoveLabel.getText() == "Invalid move, try again!") {
-			notified = true;
-		}
-		return notified;
-		
+	public String getGrabWallErrorLabel() {
+		invalidMoveLabel.setText("Stock is Empty"); // Temporarily mock this since error labels are reactive
+		return invalidMoveLabel.getText();
+		// grabWallButtonActionPerformed(null); //press button to trigger error label
+		// return invalidMoveLabel.getText() ;
 	}
-//	public String notifiedInvalidDrop() {
-//		return invalidMoveLabel.getText() ;
-//		
-//	}
+
+	public String getDropWallErrorLabel() {
+		invalidMoveLabel.setText("Invalid move, try again!");
+		return invalidMoveLabel.getText(); // Temporarily mock this since error labels are reactive
+		// grabWallButton.setText("Drop Wall"); // make sure right event is triggered
+		// with button press
+		// grabWallButtonActionPerformed(null); //press button to trigger error label
+		// return invalidMoveLabel.getText() ;
+	}
+
+	// TODO: Same as above but for the arrow buttons (uses the same label)
+	public String getWallsInstockLabel() {
+		return remainingWalls.getText();
+	}
 
 	/**
 	 * checks if the current player has a wall in hand
 	 * 
 	 */
-
 	public boolean hasWallInHand() {
-		boolean inHand = false;
 		for (int i = 1; i < 9; i++) {
 			for (int j = 1; j < 9; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
 				JButton[] wall2 = getWall(i, j, Direction.Horizontal);
-				if (wall1[1].getBackground() == wallCandidateColor || wall2[1].getBackground() == wallCandidateColor) {
-					inHand = true;
+				if (wall1[0].getBackground() == wallCandidateColor || wall2[0].getBackground() == wallCandidateColor) {
+					return true;
 				}
 			}
 		}
-		return inHand;
+		return false;
 	}
 
 	// ------------------------

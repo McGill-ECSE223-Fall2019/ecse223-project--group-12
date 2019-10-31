@@ -2,6 +2,8 @@ package ca.mcgill.ecse223.quoridor.util;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -77,11 +79,10 @@ public class TestUtil {
 		for (int j = 0; j < 10; j++) {
 			new Wall(j, players[0]);
 		}
-		
+
 		for (int j = 0; j < 10; j++) {
-			new Wall(j+10, players[1]);
+			new Wall(j + 10, players[1]);
 		}
-		
 
 		ArrayList<Player> playersList = new ArrayList<Player>();
 		playersList.add(player1);
@@ -102,8 +103,8 @@ public class TestUtil {
 		// There are total 36 tiles in the first four rows and
 		// indexing starts from 0 -> tiles with indices 36 and 36+8=44 are the starting
 		// positions
-		Tile player1StartPos = getTile(9,5);
-		Tile player2StartPos = getTile(1,5);
+		Tile player1StartPos = getTile(9, 5);
+		Tile player2StartPos = getTile(1, 5);
 
 		Game game = new Game(GameStatus.Running, MoveMode.PlayerMove, quoridor);
 		game.setWhitePlayer(players.get(0));
@@ -242,17 +243,16 @@ public class TestUtil {
 	public static void removeCurrentPlayersWalls() {
 		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Player currentPlayer = getCurrentPlayer();
-		Wall wall = null;
 		if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
 			List<Wall> walls = gamePosition.getWhiteWallsInStock();
-			for (int i = 0; i < walls.size(); i++) {
-				wall = walls.get(i);
+			List<Wall> wallsToRemove = new ArrayList<Wall>(walls);
+			for (Wall wall : wallsToRemove) {
 				gamePosition.removeWhiteWallsInStock(wall);
 			}
 		} else if (currentPlayer.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
 			List<Wall> walls = gamePosition.getBlackWallsInStock();
-			for (int i = 0; i < walls.size(); i++) {
-				wall = walls.get(i);
+			List<Wall> wallsToRemove = new ArrayList<Wall>(walls);
+			for (Wall wall : wallsToRemove) {
 				gamePosition.removeBlackWallsInStock(wall);
 			}
 
@@ -288,5 +288,5 @@ public class TestUtil {
 		}
 		return null;
 	}
-	
+
 }
