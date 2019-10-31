@@ -13,7 +13,6 @@ import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
-import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
@@ -21,8 +20,6 @@ import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import ca.mcgill.ecse223.quoridor.view.GamePanel;
-import io.cucumber.java.After;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -35,29 +32,6 @@ import io.cucumber.java.en.When;
 public class GrabWallStepDefinitions {
 
 	private String errorMessage = "";
-
-	// ------------Helper Methods----------------//
-
-	private Tile getInitialPositionTile() {
-		Tile initialPosTile = null;
-		List<Tile> currentTiles = QuoridorApplication.getQuoridor().getBoard().getTiles();
-		for (int i = 0; i < currentTiles.size(); i++) {
-			int col = currentTiles.get(i).getColumn();
-			int row = currentTiles.get(i).getRow();
-			if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
-					.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer()) && col == 5
-					&& row == 9) {
-				initialPosTile = currentTiles.get(i);
-				break;
-			} else if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
-					.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer()) && col == 5
-					&& row == 1) {
-				initialPosTile = currentTiles.get(i);
-				break;
-			}
-		}
-		return initialPosTile;
-	}
 
 	// ------------------------------------------//
 
