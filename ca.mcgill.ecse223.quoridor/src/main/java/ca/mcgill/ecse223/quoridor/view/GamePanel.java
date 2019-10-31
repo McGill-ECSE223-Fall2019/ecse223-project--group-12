@@ -21,7 +21,6 @@ import javax.swing.Timer;
 import javax.swing.border.LineBorder;
 import javax.swing.JOptionPane;
 
-import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
@@ -523,6 +522,9 @@ public class GamePanel extends JPanel {
 	// Public Methods for Testing
 	// ------------------------
 
+	public String getPlayerLabel() {
+		return playerLabel.getText();
+	}
 	/**
 	 * checks if the player has been notified of an invalid drop wall move
 	 * 
@@ -530,11 +532,17 @@ public class GamePanel extends JPanel {
 
 	public boolean notifiedInvalidDrop() {
 		boolean notified = false;
+		// can't use "==" to compare strings, this method should just return the string (see commented method below)
 		if (invalidMoveLabel.getText() == "Invalid move, try again!") {
 			notified = true;
 		}
 		return notified;
+		
 	}
+//	public String notifiedInvalidDrop() {
+//		return invalidMoveLabel.getText() ;
+//		
+//	}
 
 	/**
 	 * checks if the current player has a wall in hand

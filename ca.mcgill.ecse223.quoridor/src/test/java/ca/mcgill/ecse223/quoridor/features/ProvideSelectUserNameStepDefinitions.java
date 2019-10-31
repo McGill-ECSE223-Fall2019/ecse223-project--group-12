@@ -7,7 +7,6 @@ package ca.mcgill.ecse223.quoridor.features;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -15,6 +14,7 @@ import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 import ca.mcgill.ecse223.quoridor.model.Player;
+import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
@@ -38,13 +38,15 @@ public class ProvideSelectUserNameStepDefinitions {
 	@Given("A new game is initializing")
 	public void a_new_game_is_initializing() {
 		TestUtil.initQuoridorAndBoard();
-		//TestUtil.createUsersAndPlayers("user1", "user2");
 		new Game(GameStatus.Initializing, MoveMode.PlayerMove, QuoridorApplication.getQuoridor());
 	}
 
 	@Given("Next player to set user name is {string}")
 	public void next_player_to_set_user_name_is(String color) {
-		
+		/*
+		 * Nothing to do here with the model, since a black and white player don't have
+		 * to be added to the game in any particular order
+		 */
 		switch (color) {
 		case "white":
 			nextPlayerIsWhite = true;
@@ -77,7 +79,7 @@ public class ProvideSelectUserNameStepDefinitions {
 			} else {
 				throw new java.lang.IllegalArgumentException("player color was not properly set");
 			}
-		} catch ( InvalidInputException e) {
+		} catch (InvalidInputException e) {
 		}
 	}
 
@@ -90,6 +92,10 @@ public class ProvideSelectUserNameStepDefinitions {
 
 	@Given("There is no existing user {string}")
 	public void there_is_no_existing_user(String name) {
+		User user = TestUtil.getUserByName(name);
+		if (user != null) {
+			user.delete();
+		}
 		assertNull(TestUtil.getUserByName(name));
 	}
 
@@ -110,17 +116,14 @@ public class ProvideSelectUserNameStepDefinitions {
 
 	@Then("The player shall be warned that {string} already exists")
 	public void the_player_shall_be_warned_that_already_exists(String name) {
-		assertEquals("The username " + name + " already exists" , error);
+		assertEquals("The username " + name + " already exists", error);
 	}
 
 	@Then("Next player to set user name shall be {string}")
 	public void next_player_to_set_user_name_shall_be(String color) {
 		/*
-		 * Verify that the players names have not been updated. This is a compromise
-		 * because ideally we could initialize a game with no players, and just verify
-		 * if the player is null, but the model prevents a game without players. For
-		 * now, if a player has not been updated, then it must still be their turn to
-		 * set user name
+		 * Since players don't have to be added in any order, just verify the other
+		 * player has not yet been set
 		 */
 		switch (color) {
 		case "white":
@@ -143,11 +146,5 @@ public class ProvideSelectUserNameStepDefinitions {
 		nextPlayerIsWhite = false;
 		nextPlayeColorWasSet = false;
 		error = "";
-	}
-
-	// Place your extracted methods below
-
-	private Game getCurrentGame() {
-		return QuoridorApplication.getQuoridor().getCurrentGame();
 	}
 }

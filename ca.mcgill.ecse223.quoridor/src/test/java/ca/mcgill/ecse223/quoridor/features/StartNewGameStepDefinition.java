@@ -14,9 +14,7 @@ import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Tile;
-import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
-import ca.mcgill.ecse223.quoridor.view.MenuPanel;
 import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -42,7 +40,6 @@ public class StartNewGameStepDefinition {
 	@Given("^The game is not running$")
 	public void the_game_is_not_running() {
 		TestUtil.initQuoridorAndBoard();
-		// players = TestUtil.createUsersAndPlayers("user1", "user2");
 	}
 
 	@When("A new game is being initialized")
@@ -50,7 +47,6 @@ public class StartNewGameStepDefinition {
 		try {
 			QuoridorController.initializeGame();
 		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -58,10 +54,10 @@ public class StartNewGameStepDefinition {
 	@When("White player chooses a username")
 	public void white_player_chooses_a_username() {
 		try {
+			// used set new user here since the scenario does not include the precondition: "A user exists".
 			QuoridorController.setNewUserAsWhite("User1");
 			;
 		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -69,9 +65,8 @@ public class StartNewGameStepDefinition {
 	@When("Black player chooses a username")
 	public void black_player_chooses_a_username() {
 		try {
-			QuoridorController.setNewUserAsBlack("user2");
+			QuoridorController.setNewUserAsBlack("User2");
 		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -119,7 +114,6 @@ public class StartNewGameStepDefinition {
 		// check pawn is in starting positions
 		assertEquals(TestUtil.getTile(9, 5), getWhitePositionTile());
 		assertEquals(TestUtil.getTile(1, 5), getBlackPositionTile());
-
 	}
 
 	/**
@@ -135,10 +129,6 @@ public class StartNewGameStepDefinition {
 
 	private Game getCurrentGame() {
 		return QuoridorApplication.getQuoridor().getCurrentGame();
-	}
-
-	private User getUser(int i) {
-		return QuoridorApplication.getQuoridor().getUser(i);
 	}
 
 	private Board getBoard() {

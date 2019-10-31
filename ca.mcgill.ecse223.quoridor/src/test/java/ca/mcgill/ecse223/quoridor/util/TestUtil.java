@@ -260,22 +260,11 @@ public class TestUtil {
 	}
 
 	/**
-	 * @author Kaan Gure
+	 * @authorRemi Carriere
 	 * @return
 	 */
 	public static Player getCurrentPlayer() {
-		Player currentPlayer = null;
-		if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
-				.equals(QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer())) {
-
-			currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
-		} else if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
-				.equals(QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer())) {
-
-			currentPlayer = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
-
-		}
-		return currentPlayer;
+		return QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
 	}
 
 	/**

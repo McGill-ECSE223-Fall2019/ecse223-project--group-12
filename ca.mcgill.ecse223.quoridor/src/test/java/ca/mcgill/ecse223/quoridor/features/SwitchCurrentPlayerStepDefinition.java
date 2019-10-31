@@ -16,6 +16,7 @@ import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
+import ca.mcgill.ecse223.quoridor.view.GamePanel;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -72,7 +73,13 @@ public class SwitchCurrentPlayerStepDefinition {
 	public void the_user_interface_shall_be_showing_it_is_turn(String color) {
 		Player player = TestUtil.getPlayerByColor(color);
 		assertEquals(player, quoridor.getCurrentGame().getCurrentPosition().getPlayerToMove());
-
+		// GUI Test
+		GamePanel gamePanel = new GamePanel();
+		gamePanel.refreshData();
+		String playerLabel =  gamePanel.getPlayerLabel();
+		playerLabel = playerLabel.toLowerCase();
+		boolean b = playerLabel.contains(color); // This player Label is "Player: {color} - {username}"
+		assertTrue(b);
 	}
 
 	@Then("The clock of {string} shall be stopped")
