@@ -383,34 +383,39 @@ public class GamePanel extends JPanel {
 	}
 
 	private void upButtonButtonActionPerformed(ActionEvent evt) {
-		boolean boundary = QuoridorController.moveWall("up");
-		refreshData();
-		if (boundary) {
-			invalidMoveLabel.setText("Reaching Top boundary!");
-		}
-	}
-
-	private void leftButtonButtonActionPerformed(ActionEvent evt) {
-		boolean boundary = QuoridorController.moveWall("left");
-		refreshData();
-		if (boundary) {
-			invalidMoveLabel.setText("Reaching Left boundary!");
+		try{
+			QuoridorController.moveWall("up");
+			refreshData();
+		}catch (InvalidInputException e) {
+			invalidMoveLabel.setText(e.getMessage());
 		}
 	}
 
 	private void downButtonButtonActionPerformed(ActionEvent evt) {
-		boolean boundary = QuoridorController.moveWall("down");
-		refreshData();
-		if (boundary) {
-			invalidMoveLabel.setText("Reaching Bottom boundary!");
+		try{
+			QuoridorController.moveWall("down");
+			refreshData();
+		}catch (InvalidInputException e) {
+			invalidMoveLabel.setText(e.getMessage());
+		}
+	}
+
+
+	private void leftButtonButtonActionPerformed(ActionEvent evt) {
+		try{
+			QuoridorController.moveWall("left");
+			refreshData();
+		}catch (InvalidInputException e) {
+			invalidMoveLabel.setText(e.getMessage());
 		}
 	}
 
 	private void rightButtonButtonActionPerformed(ActionEvent evt) {
-		boolean boundary = QuoridorController.moveWall("right");
-		refreshData();
-		if (boundary) {
-			invalidMoveLabel.setText("Reaching Right boundary!");
+		try{
+			QuoridorController.moveWall("right");
+			refreshData();
+		}catch (InvalidInputException e) {
+			invalidMoveLabel.setText(e.getMessage());
 		}
 	}
 
@@ -579,6 +584,7 @@ public class GamePanel extends JPanel {
 		}
 		return false;
 	}
+	
 
 	// ------------------------
 	// UI Swing Components
