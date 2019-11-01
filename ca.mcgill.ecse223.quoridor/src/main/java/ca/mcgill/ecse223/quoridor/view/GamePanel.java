@@ -311,6 +311,7 @@ public class GamePanel extends JPanel {
 		clearGame();
 		refreshData();
 		timer.start();
+		refreshData();
 	}
 	// ------------------------
 	// Action Methods
