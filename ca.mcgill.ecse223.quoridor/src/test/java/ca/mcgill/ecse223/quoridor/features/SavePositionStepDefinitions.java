@@ -9,9 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 
+
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -95,5 +97,11 @@ public class SavePositionStepDefinitions {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		Timestamp lastModified = new Timestamp(file.lastModified());
 		assertNotEquals(lastModified.compareTo(now), 0, 0);
+	}
+	
+	@After
+	public void cleanUp() {
+		File file = new File("src\\test\\resources\\savedgames\\save_game_test.dat" );
+		file.delete();
 	}
 }
