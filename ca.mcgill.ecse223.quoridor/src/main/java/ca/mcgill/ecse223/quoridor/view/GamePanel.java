@@ -307,6 +307,11 @@ public class GamePanel extends JPanel {
 		}
 	}
 
+	public void loadGameStart() {
+		clearGame();
+		refreshData();
+		timer.start();
+	}
 	// ------------------------
 	// Action Methods
 	// ------------------------
@@ -316,8 +321,8 @@ public class GamePanel extends JPanel {
 	 */
 	public void startGamePopUp() {
 		clearGame();
-		int name = JOptionPane.showConfirmDialog(this.getParent(), "Click yes to start the clock!", "StartGame", 0);
-		if (name == 0) {
+		int option = JOptionPane.showConfirmDialog(this.getParent(), "Click yes to start the clock!", "StartGame", 0);
+		if (option == 0) {
 			QuoridorController.startClock();
 			refreshData();
 			timer.start();

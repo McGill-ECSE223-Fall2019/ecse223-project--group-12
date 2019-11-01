@@ -81,7 +81,8 @@ public class QuoridorController {
 	 * Creates a new user
 	 * 
 	 * @author Remi Carriere
-	 * @param name The name of the user
+	 * @param name
+	 *            The name of the user
 	 * @throws java.lang.UnsupportedOperationException
 	 * @throws ca.mcgill.ecse223.quoridor.controller.InvalidInputException
 	 */
@@ -100,7 +101,8 @@ public class QuoridorController {
 	 * Sets the remainingTime of each player to totalTime
 	 * 
 	 * @author Remi Carriere
-	 * @param totalTime The desired thinking time
+	 * @param totalTime
+	 *            The desired thinking time
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -182,7 +184,8 @@ public class QuoridorController {
 	 * current position
 	 * 
 	 * @author Remi Carriere
-	 * @param gamePosition The game position to verify
+	 * @param gamePosition
+	 *            The game position to verify
 	 * @return
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -304,7 +307,8 @@ public class QuoridorController {
 	 * Sets the given user as the white player
 	 * 
 	 * @author Remi Carriere
-	 * @param user The selected user
+	 * @param user
+	 *            The selected user
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -337,7 +341,8 @@ public class QuoridorController {
 	 * Sets the given user as the black player
 	 * 
 	 * @author Remi Carriere
-	 * @param user The selected user
+	 * @param user
+	 *            The selected user
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -369,7 +374,8 @@ public class QuoridorController {
 	 * Creates new user, and sets the user as the white player
 	 * 
 	 * @author Remi Carriere
-	 * @param name Name of the user
+	 * @param name
+	 *            Name of the user
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -382,7 +388,8 @@ public class QuoridorController {
 	 * Creates new user, and sets the user as the black player
 	 * 
 	 * @author Remi Carriere
-	 * @param name Name of the user
+	 * @param name
+	 *            Name of the user
 	 * @throws InvalidInputException
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -572,25 +579,39 @@ public class QuoridorController {
 	 * Loads a previously saved game position into the current game position
 	 * 
 	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
-	 * @param fullPath of the saved file
+	 * @param fullPath
+	 *            of the saved file
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static boolean loadPosition(String fileName) throws java.lang.UnsupportedOperationException {
+	public static boolean loadPosition(String fileName, boolean test) throws java.lang.UnsupportedOperationException {
+		// Initialize Game Add default users and time
 		try {
 			initializeGame();
+			setNewUserAsWhite("User 1");
+			setNewUserAsBlack("User 2");
+			setTotalThinkingTime(Time.valueOf("00:30:00"));
+			startClock(); // Francis: I put this here, but you only need to call it right before creating
+							// the new game position, seems to be working ok like this though
 		} catch (InvalidInputException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		//validate text file
-		if (!validateTextFile(SAVED_GAMES_FOLDER + fileName)) {
+
+		String fullPath = SAVED_GAMES_FOLDER + fileName;
+		// Necessary since Travis CI expects resources created during tests to be in
+		// test folder
+		if (test) {
+			fullPath = TEST_SAVED_GAMES_FOLDER + fileName;
+		}
+
+		// validate text file
+		if (!validateTextFile(fullPath)) {
 			return false;
 		}
-		
-		//extract text line for each player
-		File file = new File(SAVED_GAMES_FOLDER + fileName); 
+
+		// extract text line for each player
+		File file = new File(fullPath);
 		String firstPlayerLine = new String();
 		String secondPlayerLine = new String();
 		BufferedReader br;
@@ -602,20 +623,20 @@ public class QuoridorController {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//parse text data into objects and variables
+
+		// parse text data into objects and variables
 		String whitePlayerLine, blackPlayerLine;
 		Player whitePlayer, blackPlayer, playerToMove;
 		Game myGame = QuoridorApplication.getQuoridor().getCurrentGame();
 		whitePlayer = myGame.getWhitePlayer();
 		blackPlayer = myGame.getBlackPlayer();
-		
-		if (firstPlayerLine.charAt(0)=='W') {
+
+		if (firstPlayerLine.charAt(0) == 'W') {
 			whitePlayerLine = firstPlayerLine;
 			blackPlayerLine = secondPlayerLine;
 			playerToMove = whitePlayer;
@@ -624,19 +645,19 @@ public class QuoridorController {
 			blackPlayerLine = firstPlayerLine;
 			playerToMove = blackPlayer;
 		}
-		
+
 		int whiteCol, whiteRow, blackCol, blackRow;
 		PlayerPosition whitePos, blackPos;
 		Tile whiteTile, blackTile;
-		
-		whiteCol = whitePlayerLine.charAt(3)-96;
-		whiteRow = whitePlayerLine.charAt(4);
-		whiteTile = QuoridorApplication.getQuoridor().getBoard().getTile(whiteRow*9+whiteCol);
+
+		whiteCol = whitePlayerLine.charAt(3) - 96;
+		whiteRow = Integer.parseInt(String.valueOf(whitePlayerLine.charAt(4)));
+		whiteTile = getTile(whiteRow, whiteCol);
 		whitePos = new PlayerPosition(whitePlayer, whiteTile);
-		
-		blackCol = blackPlayerLine.charAt(3)-96;
-		blackRow = blackPlayerLine.charAt(4);
-		blackTile = QuoridorApplication.getQuoridor().getBoard().getTile(blackRow*9+blackCol);
+
+		blackCol = blackPlayerLine.charAt(3) - 96;
+		blackRow = Integer.parseInt(String.valueOf(blackPlayerLine.charAt(4)));
+		blackTile = getTile(blackRow, blackCol);
 		blackPos = new PlayerPosition(blackPlayer, blackTile);
 
 		int id;
@@ -646,13 +667,13 @@ public class QuoridorController {
 		} else {
 			id = posList.size();
 		}
-		
-		GamePosition loadedPos = new GamePosition(id, whitePos, blackPos, playerToMove
-, QuoridorApplication.getQuoridor().getCurrentGame());
-		
-		//TODO read wall positions from text data
-		
-		//validate and set position into model
+
+		GamePosition loadedPos = new GamePosition(id, whitePos, blackPos, playerToMove,
+				QuoridorApplication.getQuoridor().getCurrentGame());
+
+		// TODO read wall positions from text data
+
+		// validate and set position into model
 		if (validatePosition(loadedPos)) {
 			myGame.setCurrentPosition(loadedPos);
 			return true;
@@ -660,9 +681,9 @@ public class QuoridorController {
 			return false;
 		}
 	}
-	
+
 	private static boolean validateTextFile(String path) {
-		File file = new File(path); 
+		File file = new File(path);
 		String firstPlayerLine = new String();
 		String secondPlayerLine = new String();
 		String thirdLine = new String();
@@ -676,19 +697,18 @@ public class QuoridorController {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} 
+			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		//check if file contains exactly 2 lines
+
+		// check if file contains exactly 2 lines
 		if (firstPlayerLine == null || secondPlayerLine == null || thirdLine != null) {
 			return false;
 		}
-		
-		//check if file contains white player and black player
+
+		// check if file contains white player and black player
 		if (firstPlayerLine.charAt(0) == 'W') {
 			if (secondPlayerLine.charAt(0) != 'B') {
 				return false;
@@ -700,35 +720,34 @@ public class QuoridorController {
 		} else {
 			return false;
 		}
-		
-		//check if each line is correct format
+
+		// check if each line is correct format
 		if (!validateTextLine(firstPlayerLine) || !validateTextLine(firstPlayerLine)) {
 			return false;
 		}
-		
-		
+
 		return true;
 	}
-	
+
 	private static boolean validateTextLine(String line) {
 		int l = line.length();
-		if (l<5) {
+		if (l < 5) {
 			return false;
 		}
-		
-		if (l>5) {
-			if (l%5!=0) {
+
+		if (l > 5) {
+			if (l % 5 != 0) {
 				return false;
 			}
-			
+
 			String regPattern = "^";
-			for (int i=0; i<((l/5)-1); i++) {
-				regPattern+= ", [a-i][1-9](v|h)";
+			for (int i = 0; i < ((l / 5) - 1); i++) {
+				regPattern += ", [a-i][1-9](v|h)";
 			}
-			regPattern+="$";
-						
+			regPattern += "$";
+
 			String subString = line.substring(5);
-			
+
 			if (!subString.matches(regPattern)) {
 				return false;
 			}
@@ -740,7 +759,8 @@ public class QuoridorController {
 	 * Saves the current game position into a file
 	 * 
 	 * @author Francis Comeau Gherkin feature: SavePosition.feature
-	 * @param gamePosiion to save and fileName of what to save it as
+	 * @param gamePosiion
+	 *            to save and fileName of what to save it as
 	 * @return True if load was successful, false is unable to load
 	 * @throws java.lang.UnsupportedOperationException
 	 */
@@ -907,7 +927,7 @@ public class QuoridorController {
 	 * 
 	 * @author Kaan Gure Gherkin Feature: GrabWall.feature
 	 * @throws java.lang.UnsupportedOperationException
-	 * @throws InvalidInputException 
+	 * @throws InvalidInputException
 	 */
 
 	public static void grabWall() throws InvalidInputException {
@@ -925,7 +945,7 @@ public class QuoridorController {
 				throw new InvalidInputException("Stock is Empty");
 			}
 			w = gp.getWhiteWallsInStock(0);
-		
+
 			gp.removeWhiteWallsInStock(w);
 		} else if (p.hasGameAsBlack()) {
 			tile = getTile(1, 5);
@@ -933,7 +953,7 @@ public class QuoridorController {
 				throw new InvalidInputException("Stock is Empty");
 			}
 			w = gp.getBlackWallsInStock(0);
-			
+
 			gp.removeBlackWallsInStock(w);
 		}
 		WallMove wm = new WallMove(0, 0, p, tile, g, Direction.Vertical, w);
@@ -947,7 +967,7 @@ public class QuoridorController {
 	 * 
 	 * @author Kaan Gure Gherkin Feature: DropWall.feature
 	 * @throws java.lang.UnsupportedOperationException
-	 * @throws InvalidInputException 
+	 * @throws InvalidInputException
 	 */
 
 	public static void dropWall() throws InvalidInputException {
@@ -967,7 +987,7 @@ public class QuoridorController {
 			g.setWallMoveCandidate(null);
 			g.setMoveMode(MoveMode.PlayerMove);
 			makeMove();
-		} else  {
+		} else {
 			throw new InvalidInputException("Invalid move, try again!");
 		}
 
