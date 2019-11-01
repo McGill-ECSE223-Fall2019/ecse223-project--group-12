@@ -2,15 +2,10 @@ package ca.mcgill.ecse223.quoridor.features;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
-import ca.mcgill.ecse223.quoridor.model.Game;
-import ca.mcgill.ecse223.quoridor.model.Player;
-import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
-import ca.mcgill.ecse223.quoridor.model.Wall;
-import ca.mcgill.ecse223.quoridor.util.TestUtil;
+import ca.mcgill.ecse223.quoridor.model.Direction;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -24,29 +19,27 @@ public class RotateWallStepDefinitions {
 	@When("I try to flip the wall")
 	public void i_try_to_flip_the_wall() {
 		QuoridorController.rotateWall();
-		throw new cucumber.api.PendingException();
 	}
 
 	@Then("The wall shall be rotated over the board to {string}")
 	public void the_wall_shall_be_rotated_over_the_board_to(String string) {
-		// Write code here that turns the phrase above into concrete actions
-		// boolean rotateWall = false;
-		// Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		// Player player = TestUtil.getCurrentPlayer();
-		// List<Wall> allWall = player.getWalls();
-		// int row = playerPosition.getTile().getRow();
-		// int col = playerPosition.getTile().getColumn();
-		// for (int i = 0; i < allWall.size(); i++) {
-		// if (allWall.get(i).getMove().getTargetTile().getColumn() == col
-		// && allWall.get(i).getMove().getTargetTile().getRow() == row
-		// && allWall.get(i).getMove().getWallDirection() ==
-		// TestUtil.getDirection(string)) {
-		// rotateWall = true;
-		// break;
-		// }
-		// }
-		//
-		// assertTrue(rotateWall);
+		boolean existWall = false;
+		switch (string) {
+		case "horizontal":
+			if (Direction.Horizontal == QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
+					.getWallDirection()) {
+				existWall = true;
+				break;
+			}
+		case "vertical":
+			if (Direction.Vertical == QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
+					.getWallDirection()) {
+				existWall = true;
+				break;
+			}
+		}
+		assertTrue(existWall);
+	}
 	}
 
-}
+

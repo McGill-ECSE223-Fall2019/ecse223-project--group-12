@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
@@ -69,7 +67,6 @@ public class MoveWallStepDefinitions {
 		default:
 			throw new java.lang.IllegalArgumentException("Invalid Side: " + side);
 		}
-
 	}
 
 	@When("I try to move the wall {string}")
@@ -79,21 +76,13 @@ public class MoveWallStepDefinitions {
 
 	@Then("The wall shall be moved over the board to position \\({int}, {int})")
 	public void the_wall_shall_be_moved_over_the_board_to_position(Integer row, Integer col) {
-		// Write code here that turns the phrase above into concrete actions
-//		boolean wallExists = false;
-//		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-//		List<Wall> walls = game.getCurrentPosition().getPlayerToMove().getWalls();
-//		for (int i = 0; i < walls.size(); i++) {
-//			if (walls.get(i).getMove().getTargetTile().getColumn() == col
-//					&& walls.get(i).getMove().getTargetTile().getRow() == row
-//				) 
-//			{
-//				wallExists = true;
-//				break;
-//			}
-//		}
-//		assertTrue(wallExists);
-		throw new cucumber.api.PendingException();
+		boolean existWall = false;
+		Tile tile = QuoridorApplication.getQuoridor().getCurrentGame().
+				getWallMoveCandidate().getTargetTile();
+		if (tile.getRow() == row && tile.getColumn() == col) {
+			existWall = true;
+			}
+		assertTrue(existWall);
 	}
 
 	@Then("A wall move candidate shall exist with {string} at position \\({int}, {int})")
@@ -120,8 +109,6 @@ public class MoveWallStepDefinitions {
 				existWall = true;
 				break;
 			}
-		default:
-			throw new java.lang.IllegalArgumentException("Invalid direction: " + dir);
 		}
 		assertTrue(existWall);
 	}
@@ -154,8 +141,6 @@ public class MoveWallStepDefinitions {
 	@Then("I shall be notified that my move is illegal")
 	public void i_shall_be_notified_that_my_move_is_illegal() {
 		GamePosition currentPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
-		assertTrue (QuoridorController.validatePosition(currentPosition));
-		throw new cucumber.api.PendingException();
-	
+		assertTrue (QuoridorController.validatePosition(currentPosition));	
 	}
 }
