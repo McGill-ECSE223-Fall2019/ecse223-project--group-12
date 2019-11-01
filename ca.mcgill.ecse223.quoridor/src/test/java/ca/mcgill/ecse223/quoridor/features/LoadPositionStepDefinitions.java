@@ -34,7 +34,7 @@ public class LoadPositionStepDefinitions {
 	@When("I initiate to load a saved game {string}")
 	public void i_initiate_to_load_a_saved_game(String fileName) {
 		try {
-			isValid = QuoridorController.loadPosition(fileName);
+			isValid = QuoridorController.loadPosition(fileName, true);
 		} catch (java.lang.UnsupportedOperationException e) {
 			// Skip test if method not implemented
 			throw new cucumber.api.PendingException();
