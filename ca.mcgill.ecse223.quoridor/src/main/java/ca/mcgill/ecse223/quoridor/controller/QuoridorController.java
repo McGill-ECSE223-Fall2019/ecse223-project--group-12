@@ -200,6 +200,7 @@ public class QuoridorController {
 		// Check overLapping pawns
 		if (whiteTile.equals(blackTile)) {
 			return false;
+			//throw new java.lang.IllegalArgumentException("pawns" + whiteTile.toString() );
 		}
 		// Pawns are ok, check walls
 		// Create a list of all walls on the board
@@ -230,6 +231,7 @@ public class QuoridorController {
 					// Check for FULL overlap or criss-cross
 					if (tile.equals(tileToCompare)) {
 						return false;
+						//throw new java.lang.IllegalArgumentException("Full over lap or criss cross" + tile.toString() );
 					}
 					// Check horizontal overlap
 					else if (wall.getMove().getWallDirection() == Direction.Horizontal // same row
@@ -238,6 +240,7 @@ public class QuoridorController {
 						if (tile.getColumn() == tileToCompare.getColumn() + 1
 								|| tile.getColumn() == tileToCompare.getColumn() - 1) {
 							return false;
+							//throw new java.lang.IllegalArgumentException(" horizon over lap " + tile.toString() );
 						}
 					}
 					// check vertical overlap
@@ -248,6 +251,7 @@ public class QuoridorController {
 						if (tile.getRow() == tileToCompare.getRow() + 1
 								|| tile.getRow() == tileToCompare.getRow() - 1) {
 							return false;
+							//throw new java.lang.IllegalArgumentException(" vert over lap " + tile.toString() );
 						}
 					}
 				}
@@ -588,8 +592,18 @@ public class QuoridorController {
 		// Initialize Game Add default users and time
 		try {
 			initializeGame();
-			setNewUserAsWhite("User 1");
-			setNewUserAsBlack("User 2");
+			User defaultWhite = getUserByName("User 1");
+			User defaultBlack = getUserByName("User 2");
+			if (defaultWhite == null) {
+				createUser("User 1");
+				defaultWhite = getUserByName("User 1");
+			}
+			if (defaultBlack == null) {
+				createUser("User 2");
+				defaultBlack = getUserByName("User 2");
+			}
+			setWhitePlayerInGame(defaultWhite);
+			setBlackPlayerInGame(defaultBlack);
 			setTotalThinkingTime(Time.valueOf("00:30:00"));
 			startClock(); // Francis: I put this here, but you only need to call it right before creating
 							// the new game position, seems to be working ok like this though
@@ -670,6 +684,10 @@ public class QuoridorController {
 
 		GamePosition loadedPos = new GamePosition(id, whitePos, blackPos, playerToMove,
 				QuoridorApplication.getQuoridor().getCurrentGame());
+		loadedPos.setWhitePosition(whitePos);
+		loadedPos.setBlackPosition(blackPos);
+		loadedPos.setId(id);
+		loadedPos.setPlayerToMove(playerToMove);
 		
 		// Add the walls as in stock for the players
 		List<Wall> whiteWalls = whitePlayer.getWalls();
@@ -693,12 +711,12 @@ public class QuoridorController {
 			return false;
 		}
 	}
-	
+
 	private static void loadWalls(String line, Player player) {
-		if (line.length()<=5) {
+		if (line.length() <= 5) {
 			return;
 		}
-		
+
 		int col, row;
 		Direction direction;
 		Wall wall;
@@ -733,8 +751,9 @@ public class QuoridorController {
 			}
 			g.setWallMoveCandidate(null);
 		}
+		QuoridorApplication.getQuoridor().getCurrentGame().setCurrentPosition(gp);
 	}
-	
+
 	private static boolean validateTextFile(String path) {
 		File file = new File(path);
 		
@@ -785,10 +804,10 @@ public class QuoridorController {
 
 	private static boolean validateTextLine(String line) {
 		int l = line.length();
-		if (l < 5 || l>55) {
+		if (l < 5 || l > 55) {
 			return false;
 		}
-		
+
 		String regPattern = "^(B|W): [a-i][1-9]";
 		String subString = line.substring(0, 5);
 		if (!subString.matches(regPattern)) {
@@ -1192,7 +1211,7 @@ public class QuoridorController {
 	public static void moveWall(String side) throws InvalidInputException {
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
 		if (wm != null) {
-			if(side.contains("up")) {
+			if (side.contains("up")) {
 				int urow = wm.getTargetTile().getRow() - 1;
 				int ucol = wm.getTargetTile().getColumn();
 				if (urow > 0) {
@@ -1201,7 +1220,7 @@ public class QuoridorController {
 				} else {
 					throw new InvalidInputException("Reaching Top Boundary!");
 				}
-			}else if (side.contains("down")) {
+			} else if (side.contains("down")) {
 				int drow = wm.getTargetTile().getRow() + 1;
 				int dcol = wm.getTargetTile().getColumn();
 				if (drow < 9) {
@@ -1210,7 +1229,7 @@ public class QuoridorController {
 				} else {
 					throw new InvalidInputException("Reaching Bottom Boundary!");
 				}
-			}else if (side.contains("left")){
+			} else if (side.contains("left")) {
 				int lrow = wm.getTargetTile().getRow();
 				int lcol = wm.getTargetTile().getColumn() - 1;
 				if (lcol > 0) {
@@ -1219,7 +1238,7 @@ public class QuoridorController {
 				} else {
 					throw new InvalidInputException("Reaching Left Boundary!");
 				}
-			}else if (side.contains("right")){
+			} else if (side.contains("right")) {
 				int rrow = wm.getTargetTile().getRow();
 				int rcol = wm.getTargetTile().getColumn() + 1;
 				if (rcol < 9) {
