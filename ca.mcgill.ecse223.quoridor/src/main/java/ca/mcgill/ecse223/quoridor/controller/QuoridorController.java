@@ -671,7 +671,9 @@ public class QuoridorController {
 		GamePosition loadedPos = new GamePosition(id, whitePos, blackPos, playerToMove,
 				QuoridorApplication.getQuoridor().getCurrentGame());
 
-		// TODO read wall positions from text data
+		// read wall positions from text data
+		loadWalls(whitePlayerLine, whitePlayer);
+		loadWalls(blackPlayerLine, blackPlayer);
 
 		// validate and set position into model
 		if (validatePosition(loadedPos)) {
@@ -681,7 +683,31 @@ public class QuoridorController {
 			return false;
 		}
 	}
-
+	
+	private static void loadWalls(String line, Player player) {
+		if (line.length()<=5) {
+			return;
+		}
+		
+		int col, row;
+		Direction direction;
+		Wall wall;
+		
+		for (int i=0; i < ((line.length() / 5) - 1);i++) {
+			wall = player.getWall(i);
+			col = line.charAt(i*5 + 7) - 96;
+			row = line.charAt(i*5 + 8);
+			if (line.charAt(i*5 + 9)=='v') {
+				direction = Direction.Vertical;
+			} else {
+				direction = Direction.Horizontal;
+			}
+			Tile tile = new Tile(row, col, QuoridorApplication.getQuoridor().getBoard());
+			WallMove move = new WallMove(i, 0, player, tile, QuoridorApplication.getQuoridor().getCurrentGame(), direction, wall);
+			wall.setMove(move);
+		}
+	}
+	
 	private static boolean validateTextFile(String path) {
 		File file = new File(path);
 		String firstPlayerLine = new String();
@@ -731,7 +757,12 @@ public class QuoridorController {
 
 	private static boolean validateTextLine(String line) {
 		int l = line.length();
-		if (l < 5) {
+		if (l < 5 || l>55) {
+			return false;
+		}
+		
+		String regPattern = "^(B|W): [a-i][1-9]";
+		if (!line.matches(regPattern)) {
 			return false;
 		}
 
@@ -740,7 +771,7 @@ public class QuoridorController {
 				return false;
 			}
 
-			String regPattern = "^";
+			regPattern = "^";
 			for (int i = 0; i < ((l / 5) - 1); i++) {
 				regPattern += ", [a-i][1-9](v|h)";
 			}
@@ -777,7 +808,7 @@ public class QuoridorController {
 		for (int i = 0; i < gamePos.getWhiteWallsOnBoard().size(); i++) {
 			wallMove = gamePos.getWhiteWallsOnBoard(i).getMove();
 			column = (char) (wallMove.getTargetTile().getColumn() + 96);
-			whitePos += " " + column + wallMove.getTargetTile().getRow()
+			whitePos += ", " + column + wallMove.getTargetTile().getRow()
 					+ wallMove.getWallDirection().toString().charAt(0);
 		}
 		// make string for black player's pawn and wall positions
@@ -787,7 +818,7 @@ public class QuoridorController {
 		for (int i = 0; i < gamePos.getBlackWallsOnBoard().size(); i++) {
 			wallMove = gamePos.getBlackWallsOnBoard(i).getMove();
 			column = (char) (wallMove.getTargetTile().getColumn() + 96);
-			blackPos += " " + column + wallMove.getTargetTile().getRow()
+			blackPos += ", " + column + wallMove.getTargetTile().getRow()
 					+ wallMove.getWallDirection().toString().charAt(0);
 		}
 
