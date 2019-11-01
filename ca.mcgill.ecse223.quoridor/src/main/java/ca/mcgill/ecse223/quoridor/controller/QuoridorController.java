@@ -580,7 +580,9 @@ public class QuoridorController {
 	// ------------------------
 
 	/**
-	 * Loads a previously saved game position into the current game position
+	 * Loads a previously 
+
+d game position into the current game position
 	 * 
 	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
 	 * @param fullPath
