@@ -622,9 +622,9 @@ d game position into the current game position
 		}
 
 		// validate text file
-//		if (!validateTextFile(fullPath)) {
-//			return false;
-//		}
+		if (!validateTextFile(fullPath)) {
+			return false;
+		}
 
 		// extract text line for each player
 		File file = new File(fullPath);
@@ -667,12 +667,12 @@ d game position into the current game position
 		Tile whiteTile, blackTile;
 
 		whiteCol = whitePlayerLine.charAt(3) - 96;
-		whiteRow = Integer.parseInt(String.valueOf(whitePlayerLine.charAt(4)));
+		whiteRow = whitePlayerLine.charAt(4) - 48;
 		whiteTile = getTile(whiteRow, whiteCol);
 		whitePos = new PlayerPosition(whitePlayer, whiteTile);
 
 		blackCol = blackPlayerLine.charAt(3) - 96;
-		blackRow = Integer.parseInt(String.valueOf(blackPlayerLine.charAt(4)));
+		blackRow = blackPlayerLine.charAt(4) - 48;
 		blackTile = getTile(blackRow, blackCol);
 		blackPos = new PlayerPosition(blackPlayer, blackTile);
 
@@ -684,20 +684,30 @@ d game position into the current game position
 			id = posList.size();
 		}
 
-		GamePosition loadedPos = myGame.getCurrentPosition();
+		GamePosition loadedPos = new GamePosition(id, whitePos, blackPos, playerToMove,
+				QuoridorApplication.getQuoridor().getCurrentGame());
 		loadedPos.setWhitePosition(whitePos);
 		loadedPos.setBlackPosition(blackPos);
 		loadedPos.setId(id);
 		loadedPos.setPlayerToMove(playerToMove);
+		
+		// Add the walls as in stock for the players
+		List<Wall> whiteWalls = whitePlayer.getWalls();
+		List<Wall> blackWalls = blackPlayer.getWalls();
 
-		// read wall positions from text data
-		loadWalls(whitePlayerLine, whitePlayer);
-		loadWalls(blackPlayerLine, blackPlayer);
+		for (Wall wall : whiteWalls) {
+			loadedPos.addWhiteWallsInStock(wall);
+		}
+		for (Wall wall : blackWalls) {
+			loadedPos.addBlackWallsInStock(wall);
+		}
 
-		loadedPos = myGame.getCurrentPosition();
 		// validate and set position into model
 		if (validatePosition(loadedPos)) {
 			myGame.setCurrentPosition(loadedPos);
+			// read wall positions from text data
+			loadWalls(whitePlayerLine, whitePlayer);
+			loadWalls(blackPlayerLine, blackPlayer);
 			return true;
 		} else {
 			return false;
@@ -712,36 +722,43 @@ d game position into the current game position
 		int col, row;
 		Direction direction;
 		Wall wall;
-		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
-
-		for (int i = 0; i < ((line.length() / 5) - 1); i++) {
-			wall = player.getWall(i);
-			col = line.charAt(i * 5 + 7) - 96;
-			row = Integer.parseInt(String.valueOf(line.charAt(i * 5 + 8)));
-			System.out.println(line.charAt(i * 5 + 9));
-			if (line.charAt(i * 5 + 9) == 'v') {
+		
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = g.getCurrentPosition();
+		
+		for (int i=0; i < ((line.length() / 5) - 1);i++) {
+			if (player.hasGameAsWhite()) {
+				wall = gp.getWhiteWallsInStock(0);
+				gp.removeWhiteWallsInStock(wall);
+			} else {
+				wall = gp.getBlackWallsInStock(0);
+				gp.removeBlackWallsInStock(wall);
+			}
+		
+			col = line.charAt(i*5 + 7) - 96;
+			row = line.charAt(i*5 + 8) - 48;
+			if (line.charAt(i*5 + 9)=='v') {
 				direction = Direction.Vertical;
 			} else {
 				direction = Direction.Horizontal;
 			}
-			
 			Tile tile = getTile(row, col);
-			new WallMove(i, 0, player, tile, QuoridorApplication.getQuoridor().getCurrentGame(),
-					direction, wall);
+			WallMove move = new WallMove(i, 0, player, tile, g, direction, wall);
+			g.setWallMoveCandidate(move);
+			Wall w = g.getWallMoveCandidate().getWallPlaced();
 			if (player.hasGameAsWhite()) {
-				gp.removeWhiteWallsInStock(wall);
-				gp.addWhiteWallsOnBoard(wall);
-			} else if (player.hasGameAsBlack()) {
-				gp.removeBlackWallsInStock(wall);
-				gp.addBlackWallsOnBoard(wall);
+				gp.addWhiteWallsOnBoard(w);
+			} else {
+				gp.addBlackWallsOnBoard(w);
 			}
-			
+			g.setWallMoveCandidate(null);
 		}
 		QuoridorApplication.getQuoridor().getCurrentGame().setCurrentPosition(gp);
 	}
 
 	private static boolean validateTextFile(String path) {
 		File file = new File(path);
+		
 		String firstPlayerLine = new String();
 		String secondPlayerLine = new String();
 		String thirdLine = new String();
@@ -794,7 +811,8 @@ d game position into the current game position
 		}
 
 		String regPattern = "^(B|W): [a-i][1-9]";
-		if (!line.matches(regPattern)) {
+		String subString = line.substring(0, 5);
+		if (!subString.matches(regPattern)) {
 			return false;
 		}
 
@@ -809,7 +827,7 @@ d game position into the current game position
 			}
 			regPattern += "$";
 
-			String subString = line.substring(5);
+			subString = line.substring(5);
 
 			if (!subString.matches(regPattern)) {
 				return false;
@@ -841,7 +859,7 @@ d game position into the current game position
 			wallMove = gamePos.getWhiteWallsOnBoard(i).getMove();
 			column = (char) (wallMove.getTargetTile().getColumn() + 96);
 			whitePos += ", " + column + wallMove.getTargetTile().getRow()
-					+ Character.toLowerCase(wallMove.getWallDirection().toString().charAt(0));
+					+ wallMove.getWallDirection().toString().toLowerCase().charAt(0);
 		}
 		// make string for black player's pawn and wall positions
 		Tile blackPlayerTile = gamePos.getBlackPosition().getTile();
@@ -850,8 +868,9 @@ d game position into the current game position
 		for (int i = 0; i < gamePos.getBlackWallsOnBoard().size(); i++) {
 			wallMove = gamePos.getBlackWallsOnBoard(i).getMove();
 			column = (char) (wallMove.getTargetTile().getColumn() + 96);
+			
 			blackPos += ", " + column + wallMove.getTargetTile().getRow()
-					+ Character.toLowerCase(wallMove.getWallDirection().toString().charAt(0));
+					+ wallMove.getWallDirection().toString().toLowerCase().charAt(0);
 		}
 
 		// save whitePos and blackPos to file
