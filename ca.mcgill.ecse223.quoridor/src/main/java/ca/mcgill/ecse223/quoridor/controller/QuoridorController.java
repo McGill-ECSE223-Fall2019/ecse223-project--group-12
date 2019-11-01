@@ -1111,6 +1111,7 @@ public class QuoridorController {
 
 	/**
 	 * @author Zechen Ren Gherkin feature: RotateWall.feature
+	 * @throws UnsupportedOperationException
 	 */
 	public static void rotateWall() throws java.lang.UnsupportedOperationException {
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
@@ -1124,58 +1125,49 @@ public class QuoridorController {
 
 	/**
 	 * @author Zechen Ren Gherkin feature: MoveWall.feature
+	 * @throws InvalidInputException
 	 */
 
-	public static boolean moveWall(String side) throws java.lang.UnsupportedOperationException {
+	public static void moveWall(String side) throws InvalidInputException {
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
 		if (wm != null) {
-
-			switch (side) {
-			case "up":
+			if(side.contains("up")) {
 				int urow = wm.getTargetTile().getRow() - 1;
 				int ucol = wm.getTargetTile().getColumn();
 				if (urow > 0) {
 					wm.setTargetTile(getTile(urow, ucol));
 					QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-					return false;
 				} else {
-					return true;
+					throw new InvalidInputException("Reaching Top Boundary!");
 				}
-
-			case "down":
+			}else if (side.contains("down")) {
 				int drow = wm.getTargetTile().getRow() + 1;
 				int dcol = wm.getTargetTile().getColumn();
 				if (drow < 9) {
 					wm.setTargetTile(getTile(drow, dcol));
 					QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-					return false;
 				} else {
-					return true;
+					throw new InvalidInputException("Reaching Bottom Boundary!");
 				}
-
-			case "left":
+			}else if (side.contains("left")){
 				int lrow = wm.getTargetTile().getRow();
 				int lcol = wm.getTargetTile().getColumn() - 1;
 				if (lcol > 0) {
 					wm.setTargetTile(getTile(lrow, lcol));
 					QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-					return false;
 				} else {
-					return true;
+					throw new InvalidInputException("Reaching Left Boundary!");
 				}
-
-			case "right":
+			}else if (side.contains("right")){
 				int rrow = wm.getTargetTile().getRow();
 				int rcol = wm.getTargetTile().getColumn() + 1;
 				if (rcol < 9) {
 					wm.setTargetTile(getTile(rrow, rcol));
 					QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(wm);
-					return false;
 				} else {
-					return true;
+					throw new InvalidInputException("Reaching Right Boundary!");
 				}
 			}
 		}
-		return false;
 	}
 }

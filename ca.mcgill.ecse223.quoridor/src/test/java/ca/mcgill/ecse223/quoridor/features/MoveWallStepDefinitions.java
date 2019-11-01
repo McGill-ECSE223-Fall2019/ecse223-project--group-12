@@ -5,10 +5,10 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
-import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
@@ -29,6 +29,8 @@ import io.cucumber.java.en.When;
  *
  */
 public class MoveWallStepDefinitions {
+
+	private String errorMessage = "";
 
 	@Given("A wall move candidate exists with {string} at position \\({int}, {int})")
 	public void a_wall_move_candidate_exists_with_at_position(String dir, Integer row, Integer col) {
@@ -70,15 +72,18 @@ public class MoveWallStepDefinitions {
 	}
 
 	@When("I try to move the wall {string}")
-	public void i_try_to_move_the_wall(String side) {
-		QuoridorController.moveWall(side);
+	public void i_try_to_move_the_wall(String side) throws InvalidInputException {
+		try {
+			QuoridorController.moveWall(side);
+		} catch (InvalidInputException e) {
+			errorMessage = e.getMessage();
+		}
 	}
 
 	@Then("The wall shall be moved over the board to position \\({int}, {int})")
 	public void the_wall_shall_be_moved_over_the_board_to_position(Integer row, Integer col) {
 		boolean existWall = false;
-		Tile tile = QuoridorApplication.getQuoridor().getCurrentGame().
-				getWallMoveCandidate().getTargetTile();
+		Tile tile = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile();
 		if (tile.getRow() == row && tile.getColumn() == col) {
 			existWall = true;
 			}
@@ -140,7 +145,6 @@ public class MoveWallStepDefinitions {
 
 	@Then("I shall be notified that my move is illegal")
 	public void i_shall_be_notified_that_my_move_is_illegal() {
-		GamePosition currentPosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
-		assertTrue (QuoridorController.validatePosition(currentPosition));	
+	assertTrue (errorMessage.contains("Reaching"));	
 	}
 }
