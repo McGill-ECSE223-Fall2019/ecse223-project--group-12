@@ -684,23 +684,12 @@ d game position into the current game position
 			id = posList.size();
 		}
 
-		GamePosition loadedPos = new GamePosition(id, whitePos, blackPos, playerToMove,
-				QuoridorApplication.getQuoridor().getCurrentGame());
+		GamePosition loadedPos = myGame.getCurrentPosition();
 		loadedPos.setWhitePosition(whitePos);
 		loadedPos.setBlackPosition(blackPos);
 		loadedPos.setId(id);
 		loadedPos.setPlayerToMove(playerToMove);
 		
-		// Add the walls as in stock for the players
-		List<Wall> whiteWalls = whitePlayer.getWalls();
-		List<Wall> blackWalls = blackPlayer.getWalls();
-
-		for (Wall wall : whiteWalls) {
-			loadedPos.addWhiteWallsInStock(wall);
-		}
-		for (Wall wall : blackWalls) {
-			loadedPos.addBlackWallsInStock(wall);
-		}
 
 		// validate and set position into model
 		if (validatePosition(loadedPos)) {
@@ -743,15 +732,12 @@ d game position into the current game position
 				direction = Direction.Horizontal;
 			}
 			Tile tile = getTile(row, col);
-			WallMove move = new WallMove(i, 0, player, tile, g, direction, wall);
-			g.setWallMoveCandidate(move);
-			Wall w = g.getWallMoveCandidate().getWallPlaced();
+			new WallMove(i, 0, player, tile, g, direction, wall);
 			if (player.hasGameAsWhite()) {
-				gp.addWhiteWallsOnBoard(w);
+				gp.addWhiteWallsOnBoard(wall);
 			} else {
-				gp.addBlackWallsOnBoard(w);
+				gp.addBlackWallsOnBoard(wall);
 			}
-			g.setWallMoveCandidate(null);
 		}
 		QuoridorApplication.getQuoridor().getCurrentGame().setCurrentPosition(gp);
 	}
