@@ -2,7 +2,6 @@ package ca.mcgill.ecse223.quoridor.features;
 
 import static org.junit.Assert.assertTrue;
 
-
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;

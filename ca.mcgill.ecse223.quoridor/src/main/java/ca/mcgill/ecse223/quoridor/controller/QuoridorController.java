@@ -55,7 +55,7 @@ public class QuoridorController {
 	 * 
 	 * @author Remi Carriere
 	 * @throws InvalidInputException
-	 * @throws java.lang.UnsupportedOperationException
+	 *             if the game is already running
 	 */
 	public static void initializeGame() throws InvalidInputException {
 		if (QuoridorApplication.getQuoridor().getCurrentGame() == null) {
@@ -66,7 +66,9 @@ public class QuoridorController {
 	}
 
 	/**
+	 * Destroys the current game and the timer task associated with it
 	 * 
+	 * @author Remi Carriere
 	 */
 	public static void destroyGame() {
 		if (QuoridorApplication.getQuoridor().getCurrentGame() != null) {
@@ -83,8 +85,8 @@ public class QuoridorController {
 	 * @author Remi Carriere
 	 * @param name
 	 *            The name of the user
-	 * @throws java.lang.UnsupportedOperationException
 	 * @throws ca.mcgill.ecse223.quoridor.controller.InvalidInputException
+	 *             if the user already exists or the username is invalid
 	 */
 	public static void createUser(String name) throws InvalidInputException {
 		if (name.trim().length() == 0 || name == null || name.length() < 3) {
@@ -104,7 +106,7 @@ public class QuoridorController {
 	 * @param totalTime
 	 *            The desired thinking time
 	 * @throws InvalidInputException
-	 * @throws java.lang.UnsupportedOperationException
+	 *             if the time set is less than 0
 	 */
 	public static void setTotalThinkingTime(Time totalTime) throws InvalidInputException {
 		// check if time is more than 0 seconds
@@ -121,13 +123,22 @@ public class QuoridorController {
 	}
 
 	/**
+	 * Sets the remainingTime of each player to totalTime
+	 * 
+	 * @author Remi Carriere
 	 * 
 	 * @param minutes
+	 *            integer representing minutes (2 digits)
 	 * @param seconds
+	 *            integer representing seconds(2 digits)
 	 * @throws InvalidInputException
+	 *             if the time set is less than 0, and if seconds or minutes is null
+	 *             or not 2 digits each
+	 * 
 	 */
 	public static void setTotalThinkingTime(Integer minutes, Integer seconds) throws InvalidInputException {
-		if (minutes != null && seconds != null) {
+		if (minutes != null && seconds != null && minutes.toString().length() != 2
+				&& seconds.toString().length() != 2) {
 			if (seconds >= 0 && minutes >= 0) {
 				Time time = Time.valueOf("00:" + minutes + ":" + seconds);
 				setTotalThinkingTime(time);
@@ -138,12 +149,11 @@ public class QuoridorController {
 	}
 
 	/**
-	 * Starts the clock for player that has the current turn. If the game is not yet
-	 * running, sets the GameStatus to Running and Initializes the board
+	 * Starts the game, starts a thread that refreshes the current players thinking
+	 * time every second. If the game is not yet running, sets the GameStatus to
+	 * Running and Initializes the board.
 	 * 
 	 * @author Remi Carriere
-	 * @throws InvalidInputException
-	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void startClock() {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
@@ -163,22 +173,6 @@ public class QuoridorController {
 		}
 	}
 
-	public static void refreshPlayerTIme() {
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		if (game != null && game.getGameStatus() == GameStatus.Running) {
-			Player p = game.getCurrentPosition().getPlayerToMove();
-			Time time = p.getRemainingTime();
-			Time minTime = Time.valueOf("00:00:00");
-			if (!minTime.equals(time)) {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(time);
-				cal.add(Calendar.SECOND, -1);
-				Time newTime = new Time(cal.getTimeInMillis());
-				p.setRemainingTime(newTime);
-			}
-		}
-	}
-
 	/**
 	 * Validates the given game position, including any wall candidate in the
 	 * current position
@@ -186,8 +180,7 @@ public class QuoridorController {
 	 * @author Remi Carriere
 	 * @param gamePosition
 	 *            The game position to verify
-	 * @return
-	 * @throws java.lang.UnsupportedOperationException
+	 * @return true if the position is valid, false otherwise
 	 */
 	public static boolean validatePosition(GamePosition gamePosition) {
 		if (gamePosition == null) {
@@ -200,7 +193,6 @@ public class QuoridorController {
 		// Check overLapping pawns
 		if (whiteTile.equals(blackTile)) {
 			return false;
-			//throw new java.lang.IllegalArgumentException("pawns" + whiteTile.toString() );
 		}
 		// Pawns are ok, check walls
 		// Create a list of all walls on the board
@@ -231,7 +223,6 @@ public class QuoridorController {
 					// Check for FULL overlap or criss-cross
 					if (tile.equals(tileToCompare)) {
 						return false;
-						//throw new java.lang.IllegalArgumentException("Full over lap or criss cross" + tile.toString() );
 					}
 					// Check horizontal overlap
 					else if (wall.getMove().getWallDirection() == Direction.Horizontal // same row
@@ -240,7 +231,6 @@ public class QuoridorController {
 						if (tile.getColumn() == tileToCompare.getColumn() + 1
 								|| tile.getColumn() == tileToCompare.getColumn() - 1) {
 							return false;
-							//throw new java.lang.IllegalArgumentException(" horizon over lap " + tile.toString() );
 						}
 					}
 					// check vertical overlap
@@ -251,7 +241,6 @@ public class QuoridorController {
 						if (tile.getRow() == tileToCompare.getRow() + 1
 								|| tile.getRow() == tileToCompare.getRow() - 1) {
 							return false;
-							//throw new java.lang.IllegalArgumentException(" vert over lap " + tile.toString() );
 						}
 					}
 				}
@@ -265,8 +254,12 @@ public class QuoridorController {
 	 * candidate, In addition to checking a new pawn position at <row> <col> for the
 	 * current player
 	 * 
+	 * @author Remi Carriere
+	 * 
 	 * @param row
+	 *            The row of the tile for the player position
 	 * @param col
+	 *            The column of the tile for the player position
 	 * @return true if the current position is valid and the new supplied pawn
 	 *         position is valid, false otherwise
 	 */
@@ -298,6 +291,7 @@ public class QuoridorController {
 	 * Validates the currentPosition of the board, including the current wall move
 	 * candidate
 	 * 
+	 * @author Remi Carriere
 	 * @return true if the current position is valid, false otherwise
 	 *
 	 */
@@ -308,13 +302,13 @@ public class QuoridorController {
 
 	/**
 	 * 
-	 * Sets the given user as the white player
+	 * Sets the given user as the white player, and adds the walls for the player
 	 * 
 	 * @author Remi Carriere
 	 * @param user
 	 *            The selected user
 	 * @throws InvalidInputException
-	 * @throws java.lang.UnsupportedOperationException
+	 *             if the input user is null
 	 */
 	public static void setWhitePlayerInGame(User user) throws InvalidInputException {
 		if (user != null) {
@@ -331,9 +325,13 @@ public class QuoridorController {
 	}
 
 	/**
+	 * Sets the given user as the white player, and adds the walls for the player
 	 * 
+	 * @author Remi Carriere
 	 * @param userName
+	 *            The name of the user
 	 * @throws InvalidInputException
+	 *             if the input user does not exist
 	 */
 	public static void setWhitePlayerInGame(String userName) throws InvalidInputException {
 		User user = getUserByName(userName);
@@ -342,13 +340,13 @@ public class QuoridorController {
 
 	/**
 	 * 
-	 * Sets the given user as the black player
+	 * Sets the given user as the black player, and adds the walls for the player
 	 * 
 	 * @author Remi Carriere
 	 * @param user
 	 *            The selected user
 	 * @throws InvalidInputException
-	 * @throws java.lang.UnsupportedOperationException
+	 *             if the input user is null
 	 */
 	public static void setBlackPlayerInGame(User user) throws InvalidInputException {
 		if (user != null) {
@@ -365,9 +363,13 @@ public class QuoridorController {
 	}
 
 	/**
+	 * Sets the given user as the black player, and adds the walls for the player
 	 * 
+	 * @author Remi Carriere
 	 * @param userName
+	 *            The name of the user
 	 * @throws InvalidInputException
+	 *             if the input user does not exist
 	 */
 	public static void setBlackPlayerInGame(String userName) throws InvalidInputException {
 		User user = getUserByName(userName);
@@ -381,7 +383,7 @@ public class QuoridorController {
 	 * @param name
 	 *            Name of the user
 	 * @throws InvalidInputException
-	 * @throws java.lang.UnsupportedOperationException
+	 * 
 	 */
 	public static void setNewUserAsWhite(String name) throws InvalidInputException {
 		createUser(name);
@@ -395,7 +397,6 @@ public class QuoridorController {
 	 * @param name
 	 *            Name of the user
 	 * @throws InvalidInputException
-	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static void setNewUserAsBlack(String name) throws InvalidInputException {
 		createUser(name);
@@ -403,15 +404,28 @@ public class QuoridorController {
 	}
 
 	/**
+	 * Removes the current wall move candidate. Will be useful when a player changes
+	 * his mind between wall move and player move
 	 * 
+	 * @author Remi Carriere
 	 */
 	public static void removeCandidateWall() {
 		QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(null);
 	}
+
 	/*
 	 * Query Methods
+	 * 
 	 */
 
+	/**
+	 * Gets the stats of the current player to move
+	 * 
+	 * @author Remi Carriere
+	 * 
+	 * @return a wrapper object containing the players remaining walls, name,
+	 *         moveMode and remiaining time
+	 */
 	public static PlayerStatsTO getPlayerStats() {
 		String name;
 		Time remainingTime;
@@ -438,6 +452,13 @@ public class QuoridorController {
 
 	}
 
+	/**
+	 * Gets the current player positions on the board
+	 * 
+	 * @author Remi Carriere
+	 * @return A list of playerPositionTOs (wrapper object containing the row and
+	 *         column of the tile of the player position)
+	 */
 	public static List<PlayerPositionTO> getPlayerPositions() {
 		ArrayList<PlayerPositionTO> playerPositions = new ArrayList<PlayerPositionTO>();
 		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
@@ -457,10 +478,9 @@ public class QuoridorController {
 	 * select user name
 	 * 
 	 * @author Remi Carriere
-	 * @return List<User> A list of all existing users
-	 * @throws java.lang.UnsupportedOperationException
+	 * @return List<UserTO> A list of all existing users
 	 */
-	public static List<UserTO> getAllUsers() throws java.lang.UnsupportedOperationException {
+	public static List<UserTO> getAllUsers() {
 		ArrayList<UserTO> users = new ArrayList<UserTO>();
 		for (User user : QuoridorApplication.getQuoridor().getUsers()) {
 			UserTO userTO = new UserTO(user.getName());
@@ -469,6 +489,13 @@ public class QuoridorController {
 		return users;
 	}
 
+	/**
+	 * Gets the locations of all the walls that are on the board
+	 * 
+	 * @author Remi Carriere
+	 * @return A list of wallMoveTOs (wrapper object containing the row, column and
+	 *         direction of the wall move)
+	 */
 	public static List<WallMoveTO> getWallMoves() {
 		List<WallMoveTO> wallMoveTOs = new ArrayList<WallMoveTO>();
 
@@ -488,6 +515,13 @@ public class QuoridorController {
 		return wallMoveTOs;
 	}
 
+	/**
+	 * Gets the location of the current wall move candidate
+	 * 
+	 * @author Remi Carriere
+	 * @return wallMoveTO of current candidate (wrapper object containing the row,
+	 *         column and direction of the wall move)
+	 */
 	public static WallMoveTO getWallMoveCandidate() {
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
 		if (wm != null) {
@@ -496,46 +530,32 @@ public class QuoridorController {
 		return null;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public static String getCurrentPlayer() {
-		if (QuoridorApplication.getQuoridor().getCurrentGame() != null) {
-
-			return QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().getUser()
-					.getName();
-		}
-		return null;
-	}
-
-	/**
-	 * Gets the game position so that a player can see the board in its current
-	 * position
-	 * 
-	 * @author Remi Carriere
-	 * @return The current game position
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	public static GamePosition getGamePosition() throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
-	}
-
-	/**
-	 * Gets the remaining time of a player so that a player can see his clock
-	 * counting down
-	 * 
-	 * @author Remi Carriere
-	 * @param player
-	 * @return The remaining time of the given player
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	public static Time getPlayerClock(Player player) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
-	}
 	/*
 	 * Private Helper Methods
+	 * 
 	 */
+
+	/**
+	 * Method that is called by the background thread mentioned above
+	 * 
+	 * @author Remi Carriere
+	 */
+	private static void refreshPlayerTIme() {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (game != null && game.getGameStatus() == GameStatus.Running) {
+			Player p = game.getCurrentPosition().getPlayerToMove();
+			Time time = p.getRemainingTime();
+			Time minTime = Time.valueOf("00:00:00");
+			// Stop decrementing time when we reach 0
+			if (!minTime.equals(time)) {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(time);
+				cal.add(Calendar.SECOND, -1);
+				Time newTime = new Time(cal.getTimeInMillis());
+				p.setRemainingTime(newTime);
+			}
+		}
+	}
 
 	/**
 	 * Gets a user of quoridor by username
@@ -580,17 +600,16 @@ public class QuoridorController {
 	// ------------------------
 
 	/**
-	 * Loads a previously 
-
-d game position into the current game position
+	 * Loads a previously
+	 * 
+	 * d game position into the current game position
 	 * 
 	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
 	 * @param fullPath
 	 *            of the saved file
 	 * @return True if load was successful, false is unable to load
-	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static boolean loadPosition(String fileName, boolean test) throws java.lang.UnsupportedOperationException {
+	public static boolean loadPosition(String fileName, boolean test) {
 		// Initialize Game Add default users and time
 		try {
 			initializeGame();
@@ -609,9 +628,8 @@ d game position into the current game position
 			setTotalThinkingTime(Time.valueOf("00:30:00"));
 			startClock(); // Francis: I put this here, but you only need to call it right before creating
 							// the new game position, seems to be working ok like this though
-		} catch (InvalidInputException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (InvalidInputException e) {
+			e.printStackTrace();
 		}
 
 		String fullPath = SAVED_GAMES_FOLDER + fileName;
@@ -637,11 +655,9 @@ d game position into the current game position
 				firstPlayerLine = br.readLine();
 				secondPlayerLine = br.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -689,7 +705,6 @@ d game position into the current game position
 		loadedPos.setBlackPosition(blackPos);
 		loadedPos.setId(id);
 		loadedPos.setPlayerToMove(playerToMove);
-		
 
 		// validate and set position into model
 		if (validatePosition(loadedPos)) {
@@ -711,11 +726,11 @@ d game position into the current game position
 		int col, row;
 		Direction direction;
 		Wall wall;
-		
+
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = g.getCurrentPosition();
-		
-		for (int i=0; i < ((line.length() / 5) - 1);i++) {
+
+		for (int i = 0; i < ((line.length() / 5) - 1); i++) {
 			if (player.hasGameAsWhite()) {
 				wall = gp.getWhiteWallsInStock(0);
 				gp.removeWhiteWallsInStock(wall);
@@ -723,10 +738,10 @@ d game position into the current game position
 				wall = gp.getBlackWallsInStock(0);
 				gp.removeBlackWallsInStock(wall);
 			}
-		
-			col = line.charAt(i*5 + 7) - 96;
-			row = line.charAt(i*5 + 8) - 48;
-			if (line.charAt(i*5 + 9)=='v') {
+
+			col = line.charAt(i * 5 + 7) - 96;
+			row = line.charAt(i * 5 + 8) - 48;
+			if (line.charAt(i * 5 + 9) == 'v') {
 				direction = Direction.Vertical;
 			} else {
 				direction = Direction.Horizontal;
@@ -744,7 +759,7 @@ d game position into the current game position
 
 	private static boolean validateTextFile(String path) {
 		File file = new File(path);
-		
+
 		String firstPlayerLine = new String();
 		String secondPlayerLine = new String();
 		String thirdLine = new String();
@@ -756,11 +771,9 @@ d game position into the current game position
 				secondPlayerLine = br.readLine();
 				thirdLine = br.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -825,13 +838,11 @@ d game position into the current game position
 	/**
 	 * Saves the current game position into a file
 	 * 
-	 * @author Francis Comeau Gherkin feature: SavePosition.feature
-	 * @param gamePosiion
-	 *            to save and fileName of what to save it as
-	 * @return True if load was successful, false is unable to load
-	 * @throws java.lang.UnsupportedOperationException
+	 * @author Francis Comeau Gherkin feature: SavePosition.feature @param
+	 * gamePosiion to save and fileName of what to save it as @return True if load
+	 * was successful, false is unable to load @throws
 	 */
-	public static void savePosition(String fileName, boolean test) throws java.lang.UnsupportedOperationException {
+	public static void savePosition(String fileName, boolean test) {
 		GamePosition gamePos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 
 		// make string for white player's pawn and wall positions
@@ -854,7 +865,7 @@ d game position into the current game position
 		for (int i = 0; i < gamePos.getBlackWallsOnBoard().size(); i++) {
 			wallMove = gamePos.getBlackWallsOnBoard(i).getMove();
 			column = (char) (wallMove.getTargetTile().getColumn() + 96);
-			
+
 			blackPos += ", " + column + wallMove.getTargetTile().getRow()
 					+ wallMove.getWallDirection().toString().toLowerCase().charAt(0);
 		}
@@ -879,13 +890,10 @@ d game position into the current game position
 			}
 			pw.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// throw new java.lang.UnsupportedOperationException();
 	}
 
 	/**
@@ -893,7 +901,6 @@ d game position into the current game position
 	 * 
 	 * @author Francis Comeau
 	 * @return The user's answer to overwriting the file
-	 * @throws java.lang.UnsupportedOperationException
 	 */
 	public static boolean askOverwriteFile() {
 		throw new java.lang.UnsupportedOperationException();
@@ -908,7 +915,6 @@ d game position into the current game position
 	 * @throws InvalidInputException
 	 */
 	public static void initBoard() {
-		// TODO: This method was only partially implemented to test the GUI
 		Board board;
 		Player w = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
 		if (QuoridorApplication.getQuoridor().getBoard() == null) {
@@ -952,28 +958,10 @@ d game position into the current game position
 	}
 
 	/**
-	 * @param player
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	public static void stopClock(Player player) throws java.lang.UnsupportedOperationException {
-		throw new java.lang.UnsupportedOperationException();
-	}
-
-	/**
 	 * 
 	 * @param player
-	 * @throws java.lang.UnsupportedOperationException
 	 */
-	public static void makeMove(Player player) throws java.lang.UnsupportedOperationException {
-
-	}
-
-	/**
-	 * 
-	 * @param player
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-	public static void makeMove() throws java.lang.UnsupportedOperationException {
+	public static void makeMove() {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = g.getCurrentPosition();
 		Player p = gp.getPlayerToMove();
@@ -994,12 +982,10 @@ d game position into the current game position
 	 * Grabs a wall from the current players stock
 	 * 
 	 * @author Kaan Gure Gherkin Feature: GrabWall.feature
-	 * @throws java.lang.UnsupportedOperationException
 	 * @throws InvalidInputException
 	 */
 
 	public static void grabWall() throws InvalidInputException {
-		// TODO: This method was only partially implemented to test the GUI
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 
 		GamePosition gp = g.getCurrentPosition();
@@ -1027,20 +1013,16 @@ d game position into the current game position
 		WallMove wm = new WallMove(0, 0, p, tile, g, Direction.Vertical, w);
 		g.setWallMoveCandidate(wm);
 		g.setMoveMode(MoveMode.WallMove);
-		// throw new java.lang.UnsupportedOperationException();
 	}
 
 	/**
 	 * Drops the wall from the current player's hand to the board
 	 * 
 	 * @author Kaan Gure Gherkin Feature: DropWall.feature
-	 * @throws java.lang.UnsupportedOperationException
 	 * @throws InvalidInputException
 	 */
 
 	public static void dropWall() throws InvalidInputException {
-		// TODO: This method was only partially implemented to test the GUI
-
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = g.getCurrentPosition();
 		WallMove wallMove = g.getWallMoveCandidate();
@@ -1061,127 +1043,14 @@ d game position into the current game position
 
 	}
 
-	/*
-	 * 
-	 * Query Methods
-	 * 
-	 */
-
-	/**
-	 * Query method: Gets the number of walls in stock of the current player so that
-	 * it can be displayed in the GUI
-	 * 
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-
-	public static int getRemainingWallsInStock() throws java.lang.UnsupportedOperationException {
-		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition gp = g.getCurrentPosition();
-		Player p = gp.getPlayerToMove();
-		int numberWalls = 0;
-		if (p.hasGameAsWhite()) {
-			numberWalls = gp.getWhiteWallsInStock().size();
-		} else if (p.hasGameAsBlack()) {
-			numberWalls = gp.getBlackWallsInStock().size();
-		}
-		return numberWalls;
-		// full implementation of GUI needed for implementation
-	}
-
-	/**
-	 * Query method: Checks if current wall placement move is valid so that the
-	 * player can be notified in the GUI via another method call
-	 * 
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-
-	public static boolean isCurrentWallMoveValid() throws java.lang.UnsupportedOperationException {
-
-		// full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
-	}
-
-	/*
-	 * 
-	 * Future GUI Related Methods
-	 * 
-	 */
-
-	/**
-	 * Future GUI related method: Alert if player has no more walls in stock
-	 * 
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-
-	public static boolean alertStockIsEmpty() throws java.lang.UnsupportedOperationException {
-		// full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
-	}
-
-	/**
-	 * Future GUI related method: Sets wall in hand that will be represented in the
-	 * GUI
-	 * 
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-
-	public static void setWallInHand(Wall wallInHand) throws java.lang.UnsupportedOperationException {
-		// full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
-	}
-
-	/**
-	 * Future GUI related method: Gets wall in hand that will be represented in the
-	 * GUI
-	 * 
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-
-	public static Wall getWallInHand() throws java.lang.UnsupportedOperationException {
-		// full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
-	}
-
-	/**
-	 * Future GUI related method: Clears wall in hand that will be represented in
-	 * the GUI
-	 * 
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-
-	public static void clearWallInHand() throws java.lang.UnsupportedOperationException {
-		// full implementation of GUI needed for implementation
-		throw new java.lang.UnsupportedOperationException();
-	}
-
-	/**
-	 * Future GUI related method: notify invalid move in GUI
-	 * 
-	 * @author Kaan Gure
-	 * @throws java.lang.UnsupportedOperationException
-	 */
-
-	public static boolean notifyInvalidMove() throws java.lang.UnsupportedOperationException {
-		// full implementation of GUI needed for implementation
-		// returns true if player is notified of invalid move in GUI
-		throw new java.lang.UnsupportedOperationException();
-	}
-
 	// ------------------------
 	// Zechen
 	// ------------------------
 
 	/**
 	 * @author Zechen Ren Gherkin feature: RotateWall.feature
-	 * @throws UnsupportedOperationException
 	 */
-	public static void rotateWall() throws java.lang.UnsupportedOperationException {
+	public static void rotateWall() {
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
 		if (wm != null && wm.getWallDirection() == Direction.Vertical) {
 			wm.setWallDirection(Direction.Horizontal);

@@ -2,12 +2,15 @@ package ca.mcgill.ecse223.quoridor.view;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.sql.Time;
 import java.text.ParseException;
 import java.util.Iterator;
 
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -15,17 +18,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.MaskFormatter;
+
+import org.apache.commons.io.FileUtils;
 
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.to.UserTO;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import java.awt.Font;
-
-import java.io.File;
-import org.apache.commons.io.FileUtils;
 
 public class MenuPanel extends JPanel {
 	private static final long serialVersionUID = -4426310869335015542L;
@@ -46,21 +46,16 @@ public class MenuPanel extends JPanel {
 	private JLabel setThinkingTimeLable;
 	private JFormattedTextField thinkingTimeTextField;
 	private JButton stertGameButton;
-	private JLabel loadGameLabel;
-
-	private JPanel interfacePanel;
-
-	private JPanel bannerPanel;
-
-	private JPanel imagePanel; // Place holder for ads lol
-
-	private JLabel startGameErrorLabel;
-
-	private JLabel titleLabel;
-
+	// Load position
 	private JComboBox<String> loadGameToggelList;
-
 	private JButton loadGameButton;
+	private JLabel loadGameLabel;
+	// Panels
+	private JPanel interfacePanel;
+	private JPanel bannerPanel;
+	private JPanel imagePanel; // Place holder for ads?
+	private JLabel startGameErrorLabel;
+	private JLabel titleLabel;
 
 	public MenuPanel() {
 		initComponents();
@@ -77,6 +72,7 @@ public class MenuPanel extends JPanel {
 		interfacePanel = new JPanel();
 		bannerPanel = new JPanel();
 		imagePanel = new JPanel();
+	
 		// Time
 		MaskFormatter timeFormat = null;
 		try {

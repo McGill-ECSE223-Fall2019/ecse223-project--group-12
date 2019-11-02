@@ -13,13 +13,16 @@ import java.sql.Time;
 import java.util.List;
 
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.OverlayLayout;
 import javax.swing.Timer;
 import javax.swing.border.LineBorder;
-import javax.swing.JOptionPane;
 
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -29,34 +32,36 @@ import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO.PlayerColor;
 import ca.mcgill.ecse223.quoridor.to.PlayerStatsTO;
 import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JSeparator;
-
 public class GamePanel extends JPanel {
 	private static final long serialVersionUID = -4426310869335015542L;
 
-	private JButton saveExitToMenuButton;
-	private JButton grabWallButton;
+
+	//Panels
 	private JPanel controlUIPanel;
 	private JPanel gameBoardPanel;
-	private final int BOARD_SIZE = 19; // 9*2+1 to accommodate for slots
+	private JPanel dashboardPanel;
+	private JPanel arrowPanel;
+	// Labels
 	private JLabel remainingWalls;
 	private JLabel movemode;
 	private JLabel playerLabel;
+	private JLabel remainingTime;
+	// Buttons
 	private JButton rotateWallButton;
-	private JPanel dashboardPanel;
-	private JPanel arrowPanel;
 	private JButton leftButton;
 	private JButton upButton;
 	private JButton rightButton;
 	private JButton downButton;
-	private JLabel remainingTime;
+	private JButton saveExitToMenuButton;
+	private JButton grabWallButton;
 	private JButton confirmMoveButton;
+	// Separators
 	private JSeparator upperSeparator;
 	private JSeparator middleSeparator;
 	private JSeparator lowerSeparator;
 	private JLabel invalidMoveLabel;
+	// Constants
+	private final int BOARD_SIZE = 19; // 9*2+1 to accommodate for slots
 	private final Color wallColor = Color.RED;
 	private final Color wallCandidateColor = Color.YELLOW;
 	private final Color invisibleWallColor = new Color(210, 166, 121);
@@ -65,6 +70,7 @@ public class GamePanel extends JPanel {
 	private final Color tileColor = new Color(153, 102, 0);
 	private final Color boardBackGroundColor = new Color(191, 128, 64);
 	private final Color boardBorderColor = new Color(134, 89, 45);
+	// Timer thread to refresh time
 	private Timer timer;
 
 	public GamePanel() {
@@ -307,12 +313,7 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-	public void loadGameStart() {
-		clearGame();
-		refreshData();
-		timer.start();
-		refreshData();
-	}
+
 	// ------------------------
 	// Action Methods
 	// ------------------------
@@ -332,6 +333,15 @@ public class GamePanel extends JPanel {
 			QuoridorController.destroyGame();
 			returnToMenu();
 		}
+	}
+	/**
+	 * Currently loads a gamePosition given from the menu panel
+	 */
+	public void loadGameStart() {
+		clearGame();
+		refreshData();
+		timer.start();
+		refreshData();
 	}
 
 	/**
@@ -384,38 +394,37 @@ public class GamePanel extends JPanel {
 	}
 
 	private void upButtonButtonActionPerformed(ActionEvent evt) {
-		try{
+		try {
 			QuoridorController.moveWall("up");
 			refreshData();
-		}catch (InvalidInputException e) {
+		} catch (InvalidInputException e) {
 			invalidMoveLabel.setText(e.getMessage());
 		}
 	}
 
 	private void downButtonButtonActionPerformed(ActionEvent evt) {
-		try{
+		try {
 			QuoridorController.moveWall("down");
 			refreshData();
-		}catch (InvalidInputException e) {
+		} catch (InvalidInputException e) {
 			invalidMoveLabel.setText(e.getMessage());
 		}
 	}
 
-
 	private void leftButtonButtonActionPerformed(ActionEvent evt) {
-		try{
+		try {
 			QuoridorController.moveWall("left");
 			refreshData();
-		}catch (InvalidInputException e) {
+		} catch (InvalidInputException e) {
 			invalidMoveLabel.setText(e.getMessage());
 		}
 	}
 
 	private void rightButtonButtonActionPerformed(ActionEvent evt) {
-		try{
+		try {
 			QuoridorController.moveWall("right");
 			refreshData();
-		}catch (InvalidInputException e) {
+		} catch (InvalidInputException e) {
 			invalidMoveLabel.setText(e.getMessage());
 		}
 	}
@@ -488,7 +497,10 @@ public class GamePanel extends JPanel {
 		return wall;
 
 	}
-
+	/**
+	 * enables or disables all player controls except switch player
+	 * @param enabled
+	 */
 	private void setEnabledMoves(boolean enabled) {
 		grabWallButton.setEnabled(enabled);
 		rotateWallButton.setEnabled(enabled);
@@ -549,19 +561,21 @@ public class GamePanel extends JPanel {
 	}
 
 	public String getGrabWallErrorLabel() {
-		invalidMoveLabel.setText("Stock is Empty"); // Temporarily mock this since error labels are reactive
+		invalidMoveLabel.setText("Stock is Empty"); // Temporarily mock this since error labels are reactive, the error
+													// label cannot be updated with the refresh method, only with a
+													// button press
 		return invalidMoveLabel.getText();
-		// grabWallButtonActionPerformed(null); //press button to trigger error label
-		// return invalidMoveLabel.getText() ;
+
 	}
 
 	public String getDropWallErrorLabel() {
 		invalidMoveLabel.setText("Invalid move, try again!");
 		return invalidMoveLabel.getText(); // Temporarily mock this since error labels are reactive
-		// grabWallButton.setText("Drop Wall"); // make sure right event is triggered
-		// with button press
-		// grabWallButtonActionPerformed(null); //press button to trigger error label
-		// return invalidMoveLabel.getText() ;
+	}
+
+	public String getMoveWallErrorLabel() {
+		invalidMoveLabel.setText("Reaching Boundary!");
+		return invalidMoveLabel.getText(); // Temporarily mock this since error labels are reactive
 	}
 
 	// TODO: Same as above but for the arrow buttons (uses the same label)
@@ -574,6 +588,8 @@ public class GamePanel extends JPanel {
 	 * 
 	 */
 	public boolean hasWallInHand() {
+		// itterate though all possible walls (JButton[]) and see if one of them is
+		// yellow
 		for (int i = 1; i < 9; i++) {
 			for (int j = 1; j < 9; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
@@ -585,7 +601,21 @@ public class GamePanel extends JPanel {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Checks if a wall candidate exits at {row} {dir} in either direction
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	public boolean wallExisistAtPosition(int row, int col) {
+		JButton[] wall1 = getWall(row, col, Direction.Vertical);
+		JButton[] wall2 = getWall(row, col, Direction.Horizontal);
+		if (wall1[0].getBackground() == wallCandidateColor || wall2[0].getBackground() == wallCandidateColor) {
+			return true;
+		}
+		return false;
+	}
 
 	// ------------------------
 	// UI Swing Components

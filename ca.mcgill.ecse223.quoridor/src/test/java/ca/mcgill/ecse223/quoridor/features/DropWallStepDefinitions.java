@@ -1,9 +1,9 @@
 package ca.mcgill.ecse223.quoridor.features;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
-
-import ca.mcgill.ecse223.quoridor.view.GamePanel;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
+import ca.mcgill.ecse223.quoridor.view.GamePanel;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -159,7 +160,6 @@ public class DropWallStepDefinitions {
 	/**
 	 * @author Kaan Gure
 	 */
-
 	@Then("I shall be notified that my wall move is invalid") // GUI related
 	public void i_shall_be_notified_that_my_wall_move_is_invalid() {
 		assertEquals("Invalid move, try again!",errorMessage );

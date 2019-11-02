@@ -14,6 +14,7 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
+import ca.mcgill.ecse223.quoridor.view.GamePanel;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -86,8 +87,11 @@ public class MoveWallStepDefinitions {
 		Tile tile = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile();
 		if (tile.getRow() == row && tile.getColumn() == col) {
 			existWall = true;
-			}
+		}
 		assertTrue(existWall);
+		GamePanel gPanel = new GamePanel();
+		gPanel.refreshData();
+		assertTrue(gPanel.wallExisistAtPosition(row, col));
 	}
 
 	@Then("A wall move candidate shall exist with {string} at position \\({int}, {int})")
@@ -123,19 +127,19 @@ public class MoveWallStepDefinitions {
 		// Write code here that turns the phrase above into concrete actions
 		switch (side) {
 		case "right":
-			assertEquals(8 , QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile()
+			assertEquals(8, QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile()
 					.getColumn());
 			break;
 		case "left":
-			assertEquals(1 , QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile()
+			assertEquals(1, QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile()
 					.getColumn());
 			break;
 		case "up":
-			assertEquals(1 ,
+			assertEquals(1,
 					QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile().getRow());
 			break;
 		case "down":
-			assertEquals(8 ,
+			assertEquals(8,
 					QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getTargetTile().getRow());
 			break;
 		default:
@@ -145,6 +149,11 @@ public class MoveWallStepDefinitions {
 
 	@Then("I shall be notified that my move is illegal")
 	public void i_shall_be_notified_that_my_move_is_illegal() {
-	assertTrue (errorMessage.contains("Reaching"));	
+		assertTrue(errorMessage.contains("Reaching"));
+		assertTrue(errorMessage.contains("Boundary"));
+		GamePanel gPanel = new GamePanel();
+		gPanel.refreshData();
+		String s = gPanel.getMoveWallErrorLabel();
+		assertTrue(s.equals("Reaching Boundary!"));
 	}
 }

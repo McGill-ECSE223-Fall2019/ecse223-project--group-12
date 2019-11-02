@@ -3,7 +3,6 @@ package ca.mcgill.ecse223.quoridor.view;
 import java.awt.Color;
 import java.awt.Graphics;
 
-
 import javax.swing.JPanel;
 
 public class BlackCircle extends JPanel {

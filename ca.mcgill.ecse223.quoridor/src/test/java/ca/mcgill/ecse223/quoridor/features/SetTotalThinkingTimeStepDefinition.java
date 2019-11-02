@@ -24,7 +24,8 @@ public class SetTotalThinkingTimeStepDefinition {
 	@When("{int}:{int} is set as the thinking time")
 	public void is_set_as_the_thinking_time(Integer minutes, Integer seconds) {
 		try {
-			QuoridorController.setTotalThinkingTime(minutes, seconds);
+			Time time = Time.valueOf("00:"+minutes+":"+seconds);
+			QuoridorController.setTotalThinkingTime(time);
 		} catch (InvalidInputException e) {
 			throw new cucumber.api.PendingException();
 		}

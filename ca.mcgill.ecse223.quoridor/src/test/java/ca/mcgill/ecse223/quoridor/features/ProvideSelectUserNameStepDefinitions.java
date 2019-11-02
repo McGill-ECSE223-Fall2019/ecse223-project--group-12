@@ -117,6 +117,8 @@ public class ProvideSelectUserNameStepDefinitions {
 	@Then("The player shall be warned that {string} already exists")
 	public void the_player_shall_be_warned_that_already_exists(String name) {
 		assertEquals("The username " + name + " already exists", error);
+		// Cannot check gui here since the error JLabel will be null (it is not updated
+		// in the refresh method but only when a button is refreshed)
 	}
 
 	@Then("Next player to set user name shall be {string}")
