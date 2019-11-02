@@ -29,7 +29,7 @@ public class SavePositionStepDefinitions {
 
 	@Given("No file {string} exists in the filesystem")
 	public void no_file_exists_in_the_filesystem(String fileName) {
-		File file = new File("src\\test\\resources\\savedgames\\" + fileName);
+		File file = new File("src\\test\\resources\\" + fileName);
 		file.delete();
 	}
 
@@ -45,13 +45,13 @@ public class SavePositionStepDefinitions {
 
 	@Then("A file with {string} shall be created in the filesystem")
 	public void a_file_with_shall_be_created_in_the_filesystem(String fileName) {
-		boolean fileExists = new File("src\\test\\resources\\savedgames\\" + fileName).exists();
+		boolean fileExists = new File("src\\test\\resources\\" + fileName).exists();
 		assertTrue(fileExists);
 	}
 
 	@Given("File {string} exists in the filesystem")
 	public void file_exists_in_the_filesystem(String fileName) {
-		File file = new File("src\\test\\resources\\savedgames\\"+fileName);
+		File file = new File("src\\test\\resources\\"+fileName);
 		try {
 			file.createNewFile();
 		} catch (IOException e) {
@@ -72,7 +72,7 @@ public class SavePositionStepDefinitions {
 
 	@Then("File with {string} shall be updated in the filesystem")
 	public void file_with_shall_be_updated_in_the_filesystem(String fileName) {
-		File file = new File("src\\test\\resources\\savedgames\\"+fileName);
+		File file = new File("src\\test\\resources\\"+fileName);
 		Timestamp lastModified = new Timestamp(file.lastModified());
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		assertEquals(lastModified.compareTo(now), 0, 0);
@@ -90,7 +90,7 @@ public class SavePositionStepDefinitions {
 
 	@Then("File {string} shall not be changed in the filesystem")
 	public void file_shall_not_be_changed_in_the_filesystem(String fileName) {
-		File file = new File("src\\test\\resources\\savedgames\\"+fileName);
+		File file = new File("src\\test\\resources\\"+fileName);
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		Timestamp lastModified = new Timestamp(file.lastModified());
 		assertNotEquals(lastModified.compareTo(now), 0, 0);
@@ -98,7 +98,7 @@ public class SavePositionStepDefinitions {
 	
 	@After
 	public void cleanUp() {
-		File file = new File("src\\test\\resources\\savedgames\\save_game_test.dat" );
+		File file = new File("src\\test\\resources\\save_game_test.dat" );
 		file.delete();
 	}
 }

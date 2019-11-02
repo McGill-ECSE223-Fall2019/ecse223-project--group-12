@@ -36,7 +36,7 @@ import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
 public class QuoridorController {
 
-	public static final String TEST_SAVED_GAMES_FOLDER = "src\\test\\resources\\savedgames\\";
+	public static final String TEST_SAVED_GAMES_FOLDER = "src\\test\\resources\\";
 	public static final String SAVED_GAMES_FOLDER = "savedgames\\";
 
 	public QuoridorController() {
@@ -636,7 +636,7 @@ public class QuoridorController {
 		// Necessary since Travis CI expects resources created during tests to be in
 		// test folder
 		if (test) {
-			fullPath = TEST_SAVED_GAMES_FOLDER + fileName;
+			fullPath = fileName;
 		}
 
 		// validate text file
