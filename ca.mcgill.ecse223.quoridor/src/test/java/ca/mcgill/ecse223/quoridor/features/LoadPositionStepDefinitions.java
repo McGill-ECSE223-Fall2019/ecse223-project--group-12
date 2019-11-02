@@ -44,13 +44,17 @@ public class LoadPositionStepDefinitions {
 	@When("The position to load is valid") //Causing trouble for now, will fix it later
 	public void the_position_to_load_is_valid() {
 		isValid = true;
-		throw new cucumber.api.PendingException();
 	}
 
 	@Then("It shall be {string}'s turn")
 	public void it_shall_be_s_turn(String color) {
-		assertEquals(color, QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
-				.getUser().getName());
+		String playerToMove = "";
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsWhite()) {
+			playerToMove = "white";
+		} else if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsBlack()) {
+			playerToMove = "black";
+		}
+		assertTrue(color.equals(playerToMove));
 	}
 
 	@Then("{string} shall be at {int}:{int}")
@@ -98,18 +102,15 @@ public class LoadPositionStepDefinitions {
 		int blackRemainingWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackWallsInStock().size();
 		assertEquals(whiteRemainingWalls, remainingWalls, 0);
 		assertEquals(blackRemainingWalls, remainingWalls, 0);
-		throw new cucumber.api.PendingException();
 	}
 
 	@When("The position to load is invalid")
 	public void the_position_to_load_is_invalid() {
 		isValid = false;
-		throw new cucumber.api.PendingException();
 	}
 
 	@Then("The load shall return an error")
 	public void the_load_shall_return_an_error() {
 		assertFalse(isValid);
-		throw new cucumber.api.PendingException();
 	}
 }
