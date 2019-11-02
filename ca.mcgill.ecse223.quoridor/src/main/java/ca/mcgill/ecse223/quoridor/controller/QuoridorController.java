@@ -902,6 +902,22 @@ public class QuoridorController {
 	 * @author Francis Comeau
 	 * @return The user's answer to overwriting the file
 	 */
+	
+	public static boolean checkFileExists(String fileName, boolean test) {
+		
+		String fullPath = SAVED_GAMES_FOLDER+fileName;
+		if (test) {
+			fullPath = TEST_SAVED_GAMES_FOLDER+fileName;
+		}
+		
+		File file = new File(fullPath);
+		if (file.exists()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public static boolean askOverwriteFile() {
 		throw new java.lang.UnsupportedOperationException();
 	}

@@ -365,17 +365,23 @@ public class GamePanel extends JPanel {
 		if (saveGameOption == 0) {
 			String fileName = JOptionPane.showInputDialog(this.getParent(), "Enter the name of the file", "Save Game",
 					1);
-			if (fileName != null) {
-				QuoridorController.savePosition(fileName + ".dat", false);
-				if (true // the file already exists, ask to overwrite
-				) {
+			if (fileName == null) {
+				return;
+			} else if (fileName.equals("")) {
+				JOptionPane.showMessageDialog(this.getParent(), "Sorry filename is not valid");
+				return;
+			} else {
+				fileName+=".dat";
+				if (QuoridorController.checkFileExists(fileName, false)) {
 					int overWriteOption = JOptionPane.showConfirmDialog(this.getParent(),
-							"are you sure you want to overwrite?");
+							"File already exists, are you sure you want to overwrite?");
 					if (overWriteOption == 0) {
-						// overwrite
+						QuoridorController.savePosition(fileName, false);
 					} else {
-						// dont overwrite
+						return;
 					}
+				} else {
+					QuoridorController.savePosition(fileName, false);
 				}
 			}
 			QuoridorController.destroyGame();
