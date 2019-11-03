@@ -930,46 +930,6 @@ public class QuoridorController {
 	 * @throws InvalidInputException
 	 */
 	public static void initBoard() {
-		/*Board board;
-		Player w = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
-		if (QuoridorApplication.getQuoridor().getBoard() == null) {
-			// create a new board
-			board = new Board(QuoridorApplication.getQuoridor());
-			// Creating tiles by rows, i.e., the column index changes with every tile
-			// creation
-			for (int i = 1; i <= 9; i++) { // rows
-				for (int j = 1; j <= 9; j++) { // columns
-					board.addTile(i, j);
-				}
-			}
-		}
-
-		// update to use getTile() and set to tiles E1 and E9
-
-		Tile player1StartPos = getTile(9, 5);
-		Tile player2StartPos = getTile(1, 5);
-
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		PlayerPosition player1Position = new PlayerPosition(game.getWhitePlayer(), player1StartPos);
-		PlayerPosition player2Position = new PlayerPosition(game.getBlackPlayer(), player2StartPos);
-
-		GamePosition gamePosition = new GamePosition(0, player1Position, player2Position, w, game);
-		// Add the walls as in stock for the players
-		Player white = game.getWhitePlayer();
-		Player black = game.getBlackPlayer();
-		List<Wall> whiteWalls = white.getWalls();
-		List<Wall> blackWalls = black.getWalls();
-
-		for (Wall wall : whiteWalls) {
-			gamePosition.addWhiteWallsInStock(wall);
-		}
-		for (Wall wall : blackWalls) {
-			gamePosition.addBlackWallsInStock(wall);
-		}
-		game.setCurrentPosition(gamePosition);
-		if (game.getGameStatus() == GameStatus.ReadyToStart) {
-			startClock();
-		}*/
 		Quoridor quoridor = QuoridorApplication.getQuoridor();
 		Game g = quoridor.getCurrentGame();
 		Player b = g.getBlackPlayer();
@@ -999,22 +959,6 @@ public class QuoridorController {
 		}	
 	}
 
-	/**
-	 * 
-	 * @param player
-	 */
-	/*public static void makeMove() {
-		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition gp = g.getCurrentPosition();
-		Player p = gp.getPlayerToMove();
-		if (p.hasGameAsWhite()) {
-			gp.setPlayerToMove(g.getBlackPlayer());
-		} else if (p.hasGameAsBlack()) {
-			gp.setPlayerToMove(g.getWhitePlayer());
-		}
-		g.setCurrentPosition(gp);
-
-	}*/
 	private static GamePosition copyGamePosition(GamePosition gp) {
 		Game g = gp.getGame();
 		GamePosition newGp;
