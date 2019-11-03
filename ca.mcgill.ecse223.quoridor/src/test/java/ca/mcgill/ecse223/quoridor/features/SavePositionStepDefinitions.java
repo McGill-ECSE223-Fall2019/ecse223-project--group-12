@@ -35,21 +35,24 @@ public class SavePositionStepDefinitions {
 
 	@When("The user initiates to save the game with name {string}")
 	public void the_user_initiates_to_save_the_game_with_name(String fileName) {
-			QuoridorController.savePosition(fileName, false, true);
+		QuoridorController.savePosition(fileName, false, true);
 	}
 
 	@Then("A file with {string} shall be created in the filesystem")
 	public void a_file_with_shall_be_created_in_the_filesystem(String fileName) {
-		this.fileName = fileName;
 		boolean fileExists = new File("src\\test\\resources\\" + fileName).exists();
 		assertTrue(fileExists);
 	}
 
 	@Given("File {string} exists in the filesystem")
 	public void file_exists_in_the_filesystem(String fileName) {
-		File file = new File("src\\test\\resources\\"+fileName);
+		this.fileName = fileName;
+		File file = new File("src\\test\\resources\\" + fileName);
 		try {
 			file.createNewFile();
+			file.setLastModified(0); // Set the modified to 0 so we can see if it was updated
+			file.setWritable(true);
+			file.setReadable(true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -62,10 +65,10 @@ public class SavePositionStepDefinitions {
 
 	@Then("File with {string} shall be updated in the filesystem")
 	public void file_with_shall_be_updated_in_the_filesystem(String fileName) {
-		File file = new File("src\\test\\resources\\"+fileName);
+		File file = new File("src\\test\\resources\\" + fileName);
 		Timestamp lastModified = new Timestamp(file.lastModified());
-		Timestamp now = new Timestamp(System.currentTimeMillis());
-		assertEquals(lastModified.compareTo(now), 0, 1);
+
+		assertNotEquals(lastModified.getTime(), 0); //Check if the stamp has changed
 	}
 
 	@When("The user cancels to overwrite existing file")
@@ -75,15 +78,14 @@ public class SavePositionStepDefinitions {
 
 	@Then("File {string} shall not be changed in the filesystem")
 	public void file_shall_not_be_changed_in_the_filesystem(String fileName) {
-		File file = new File("src\\test\\resources\\"+fileName);
-		Timestamp now = new Timestamp(System.currentTimeMillis());
+		File file = new File("src\\test\\resources\\" + fileName);
 		Timestamp lastModified = new Timestamp(file.lastModified());
-		assertNotEquals(lastModified.compareTo(now), 0, 0);
+		assertEquals(lastModified.getTime(), 0); //Check if the stamp is as originally set
 	}
-	
+
 	@After
 	public void cleanUp() {
-		File file = new File("src\\test\\resources\\save_game_test.dat" );
+		File file = new File("src\\test\\resources\\save_game_test.dat");
 		file.delete();
 	}
 }
