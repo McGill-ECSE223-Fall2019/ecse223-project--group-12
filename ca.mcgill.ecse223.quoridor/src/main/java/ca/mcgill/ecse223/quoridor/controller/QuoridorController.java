@@ -23,6 +23,7 @@ import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Move;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
+import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
@@ -929,7 +930,7 @@ public class QuoridorController {
 	 * @throws InvalidInputException
 	 */
 	public static void initBoard() {
-		Board board;
+		/*Board board;
 		Player w = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
 		if (QuoridorApplication.getQuoridor().getBoard() == null) {
 			// create a new board
@@ -968,14 +969,41 @@ public class QuoridorController {
 		game.setCurrentPosition(gamePosition);
 		if (game.getGameStatus() == GameStatus.ReadyToStart) {
 			startClock();
+		}*/
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game g = quoridor.getCurrentGame();
+		Player b = g.getBlackPlayer();
+		Player w = g.getWhitePlayer();
+		GamePosition gp;
+		Board currentBoard = quoridor.getBoard();
+		if (currentBoard == null) {
+			currentBoard = new Board(quoridor);
+			for (int i = 1;i<10;i++) {
+				for (int j = 1;j<10;j++) {
+					currentBoard.addTile(i, j);
+				}
+			}
 		}
+		gp = new GamePosition(0,new PlayerPosition(w,getTile(9,5)),new PlayerPosition(b,getTile(1,5)),w,g);
+		for (int i = 0;i < 10;i++) {
+			if (i < b.getWalls().size()) {
+				gp.addBlackWallsInStock(b.getWall(i));
+			}
+			if (i < b.getWalls().size()) {
+				gp.addWhiteWallsInStock(w.getWall(i));
+			}
+		}
+		g.setCurrentPosition(gp);
+		if (g.getGameStatus() == GameStatus.ReadyToStart) {
+			startClock();	
+		}	
 	}
 
 	/**
 	 * 
 	 * @param player
 	 */
-	public static void makeMove() {
+	/*public static void makeMove() {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = g.getCurrentPosition();
 		Player p = gp.getPlayerToMove();
@@ -985,6 +1013,46 @@ public class QuoridorController {
 			gp.setPlayerToMove(g.getWhitePlayer());
 		}
 		g.setCurrentPosition(gp);
+
+	}*/
+	private static GamePosition copyGamePosition(GamePosition gp) {
+		Game g = gp.getGame();
+		GamePosition newGp;
+		Tile white = gp.getWhitePosition().getTile();
+		Player w = g.getWhitePlayer();
+		Tile black = gp.getBlackPosition().getTile();
+		Player b = g.getBlackPlayer();
+		PlayerPosition wP = new PlayerPosition(w,white);
+		PlayerPosition bP = new PlayerPosition(b,black);
+		newGp = new GamePosition(gp.getId()+1,wP,bP,w,g);
+		for(Wall wall:gp.getBlackWallsInStock()) {
+			newGp.addBlackWallsInStock(wall);
+		}
+		for(Wall wall:gp.getWhiteWallsInStock()) {
+			newGp.addWhiteWallsInStock(wall);
+		}
+		for(Wall wall:gp.getWhiteWallsOnBoard()) {
+			newGp.addWhiteWallsOnBoard(wall);
+		}
+		for(Wall wall:gp.getBlackWallsOnBoard()) {
+			newGp.addBlackWallsOnBoard(wall);
+		}
+
+		return newGp;
+		
+	}
+	public static void confirmMove() {
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = g.getCurrentPosition();
+		GamePosition newGp = copyGamePosition(gp);
+		Player p = gp.getPlayerToMove();
+		if (p.hasGameAsWhite()) {
+			newGp.setPlayerToMove(g.getBlackPlayer());
+		} else if (p.hasGameAsBlack()) {
+			newGp.setPlayerToMove(g.getWhitePlayer());
+		}
+		g.addPosition(newGp);
+		g.setCurrentPosition(newGp);
 
 	}
 
@@ -1050,7 +1118,7 @@ public class QuoridorController {
 			}
 			g.setWallMoveCandidate(null);
 			g.setMoveMode(MoveMode.PlayerMove);
-			makeMove();
+
 			List<Move> moves = g.getMoves(); //increment the round number and move number
 			int ms = moves.size();
 			Move lastMove = moves.get(ms-1);
@@ -1061,6 +1129,7 @@ public class QuoridorController {
 			nextMove.setMoveNumber(currentMove++);
 			lastMove.setNextMove(nextMove);
 
+			confirmMove();
 		} else {
 			throw new InvalidInputException("Invalid move, try again!");
 		}

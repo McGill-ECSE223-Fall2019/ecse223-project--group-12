@@ -51,12 +51,12 @@ public class InitializeBoardStepDefinitions {
 
 	@Then("All of White's walls shall be in stock")
 	public void all_of_White_s_walls_shall_be_in_stock() {
-		assertEquals(10, quoridor.getCurrentGame().getWhitePlayer().getWalls().size());
+		assertEquals(10, quoridor.getCurrentGame().getCurrentPosition().numberOfWhiteWallsInStock());
 	}
 
 	@Then("All of Black's walls shall be in stock")
 	public void all_of_Black_s_walls_shall_be_in_stock() {
-		assertEquals(10, quoridor.getCurrentGame().getBlackPlayer().getWalls().size());
+		assertEquals(10, quoridor.getCurrentGame().getCurrentPosition().numberOfBlackWallsInStock());
 	}
 
 	@Then("White's clock shall be counting down")
@@ -72,10 +72,11 @@ public class InitializeBoardStepDefinitions {
 		// get the remaining time again
 		Time afterTime = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getRemainingTime();
 		// Check if time is counting down (00:30:00 is after 00:29:59)
-		boolean countingDown = initialTime.after(afterTime);
-		boolean notcountingDown = initialTime.equals(afterTime);
-		assertTrue(countingDown);
-		assertFalse(notcountingDown);
+		/*boolean countingDown = initialTime.after(afterTime);
+		boolean notcountingDown = initialTime.equals(afterTime);*/
+		//boolean countingDown = initialTime.getTime() > afterTime.getTime();
+		assertTrue(initialTime.getTime() > afterTime.getTime());
+		//assertFalse(notcountingDown);
 	}
 
 	@Then("It shall be shown that this is White's turn")

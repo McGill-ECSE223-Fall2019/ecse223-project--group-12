@@ -68,7 +68,7 @@ public class SwitchCurrentPlayerStepDefinition {
 
 	@When("Player {string} completes his move")
 	public void player_completes_his_move(String color) {
-		QuoridorController.makeMove();
+		QuoridorController.confirmMove();
 	}
 
 	@Then("The user interface shall be showing it is {string} turn")
