@@ -1056,9 +1056,11 @@ public class QuoridorController {
 			Move lastMove = moves.get(ms-1);
 			int currentRound = lastMove.getRoundNumber();
 			int currentMove = lastMove.getMoveNumber();
-			Move nextMove = lastMove.getNextMove();
+			Move nextMove = lastMove;
 			nextMove.setRoundNumber(currentRound++);
 			nextMove.setMoveNumber(currentMove++);
+			lastMove.setNextMove(nextMove);
+
 		} else {
 			throw new InvalidInputException("Invalid move, try again!");
 		}
