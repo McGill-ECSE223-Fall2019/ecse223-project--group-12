@@ -705,17 +705,12 @@ public class QuoridorController {
 		loadedPos.setBlackPosition(blackPos);
 		loadedPos.setId(id);
 		loadedPos.setPlayerToMove(playerToMove);
-
+		// Add walls for each player
+		loadWalls(whitePlayerLine, whitePlayer);
+		loadWalls(blackPlayerLine, blackPlayer);
+		myGame.setCurrentPosition(loadedPos);
 		// validate and set position into model
-		if (validatePosition(loadedPos)) {
-			myGame.setCurrentPosition(loadedPos);
-			// read wall positions from text data
-			loadWalls(whitePlayerLine, whitePlayer);
-			loadWalls(blackPlayerLine, blackPlayer);
-			return true;
-		} else {
-			return false;
-		}
+		return validatePosition();
 	}
 
 	private static void loadWalls(String line, Player player) {
@@ -839,10 +834,10 @@ public class QuoridorController {
 	 * Saves the current game position into a file
 	 * 
 	 * @author Francis Comeau Gherkin feature: SavePosition.feature @param
-	 * gamePosiion to save and fileName of what to save it as @return True if load
-	 * was successful, false is unable to load @throws
+	 *         gamePosiion to save and fileName of what to save it as @return True
+	 *         if load was successful, false is unable to load @throws
 	 */
-	public static void savePosition(String fileName, boolean test) {
+	public static void writePositionFile(String fileName, boolean test) {
 		GamePosition gamePos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 
 		// make string for white player's pawn and wall positions
@@ -902,24 +897,26 @@ public class QuoridorController {
 	 * @author Francis Comeau
 	 * @return The user's answer to overwriting the file
 	 */
-	
+
 	public static boolean checkFileExists(String fileName, boolean test) {
-		
-		String fullPath = SAVED_GAMES_FOLDER+fileName;
+
+		String fullPath = SAVED_GAMES_FOLDER + fileName;
 		if (test) {
-			fullPath = TEST_SAVED_GAMES_FOLDER+fileName;
+			fullPath = TEST_SAVED_GAMES_FOLDER + fileName;
 		}
-		
+
 		File file = new File(fullPath);
 		if (file.exists()) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
-	public static boolean askOverwriteFile() {
-		throw new java.lang.UnsupportedOperationException();
+
+	public static void savePosition(String fileName, boolean overWrite, boolean test) {
+		if (!checkFileExists(fileName, test) || overWrite) {
+			writePositionFile(fileName, test);
+		}
 	}
 
 	// ------------------------

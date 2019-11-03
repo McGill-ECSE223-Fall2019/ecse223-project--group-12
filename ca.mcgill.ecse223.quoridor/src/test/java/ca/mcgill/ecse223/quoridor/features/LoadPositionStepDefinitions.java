@@ -27,31 +27,28 @@ import io.cucumber.java.en.When;
  *
  */
 public class LoadPositionStepDefinitions {
-	
+
 	private Boolean isValid;
 
 	@When("I initiate to load a saved game {string}")
 	public void i_initiate_to_load_a_saved_game(String fileName) {
-		try {
-			isValid = QuoridorController.loadPosition(fileName, true);
-		} catch (java.lang.UnsupportedOperationException e) {
-			// Skip test if method not implemented
-			throw new cucumber.api.PendingException();
-		}
-
+		isValid = QuoridorController.loadPosition(fileName, true);
 	}
 
-	@When("The position to load is valid") //Causing trouble for now, will fix it later
+	@When("The position to load is valid") // Causing trouble for now, will fix it later
 	public void the_position_to_load_is_valid() {
-		isValid = true;
+		// Validate the current position (Redundant since this is already done in the loadPosition() method)
+		isValid = QuoridorController.validatePosition();
 	}
 
 	@Then("It shall be {string}'s turn")
 	public void it_shall_be_s_turn(String color) {
 		String playerToMove = "";
-		if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsWhite()) {
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
+				.hasGameAsWhite()) {
 			playerToMove = "white";
-		} else if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsBlack()) {
+		} else if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove()
+				.hasGameAsBlack()) {
 			playerToMove = "black";
 		}
 		assertTrue(color.equals(playerToMove));
@@ -98,15 +95,18 @@ public class LoadPositionStepDefinitions {
 
 	@Then("Both players shall have {int} in their stacks")
 	public void both_players_shall_have_in_their_stacks(Integer remainingWalls) {
-		int whiteRemainingWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhiteWallsInStock().size();
-		int blackRemainingWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackWallsInStock().size();
+		int whiteRemainingWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+				.getWhiteWallsInStock().size();
+		int blackRemainingWalls = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+				.getBlackWallsInStock().size();
 		assertEquals(whiteRemainingWalls, remainingWalls, 0);
 		assertEquals(blackRemainingWalls, remainingWalls, 0);
 	}
 
 	@When("The position to load is invalid")
 	public void the_position_to_load_is_invalid() {
-		isValid = false;
+		// Validate the current position (Redundant since this is already done in the loadPosition() method)
+		isValid = QuoridorController.validatePosition();
 	}
 
 	@Then("The load shall return an error")

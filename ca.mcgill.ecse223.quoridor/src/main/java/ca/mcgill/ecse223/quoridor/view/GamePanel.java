@@ -376,12 +376,12 @@ public class GamePanel extends JPanel {
 					int overWriteOption = JOptionPane.showConfirmDialog(this.getParent(),
 							"File already exists, are you sure you want to overwrite?");
 					if (overWriteOption == 0) {
-						QuoridorController.savePosition(fileName, false);
+						QuoridorController.writePositionFile(fileName, false);
 					} else {
 						return;
 					}
-				} else {
-					QuoridorController.savePosition(fileName, false);
+				} else { 
+					QuoridorController.writePositionFile(fileName, false);
 				}
 			}
 			QuoridorController.destroyGame();
