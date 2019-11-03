@@ -462,7 +462,7 @@ public class GamePanel extends JPanel {
 	}
 
 	private void confirmMoveButtonActionPerformed(ActionEvent evt) {
-		QuoridorController.makeMove();
+		QuoridorController.confirmMove();
 		refreshData();
 	}
 
