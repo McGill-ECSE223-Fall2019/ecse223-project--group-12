@@ -134,7 +134,7 @@ public class DropWallStepDefinitions {
 	@Then("It shall not be my turn to move")
 	public void it_shall_not_be_my_turn_to_move() {
 		Player currentPlayer = TestUtil.getCurrentPlayer();
-		Player whitePlayer = TestUtil.getPlayerByColor("white"); // the player to move was set as whit in beginning of scenario
+		Player whitePlayer = TestUtil.getPlayerByColor("white"); // the player to move was set as white in beginning of scenario
 		assertNotEquals(currentPlayer, whitePlayer);
 	}
 
@@ -154,7 +154,7 @@ public class DropWallStepDefinitions {
 		}
 		WallMove candidate = new WallMove(0, 0, p, tile, g, direction, wall);
 		g.setWallMoveCandidate(candidate);
-		assertFalse(QuoridorController.validatePosition());
+		assertFalse(QuoridorController.validatePosition()); //asserting precondition
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class DropWallStepDefinitions {
 	@Then("I shall be notified that my wall move is invalid") // GUI related
 	public void i_shall_be_notified_that_my_wall_move_is_invalid() {
 		assertEquals("Invalid move, try again!",errorMessage );
-		// gui test TBD
+		// Message shown to player in the GUI
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class DropWallStepDefinitions {
 	@Then("It shall be my turn to move")
 	public void it_shall_be_my_turn_to_move() {
 		Player currentPlayer = TestUtil.getCurrentPlayer();
-		Player whitePlayer = TestUtil.getPlayerByColor("white"); // the player to move was set as whit in beginning of scenario
+		Player whitePlayer = TestUtil.getPlayerByColor("white"); // the player to move was set as white in beginning of scenario
 		assertEquals(currentPlayer, whitePlayer);	
 	}
 

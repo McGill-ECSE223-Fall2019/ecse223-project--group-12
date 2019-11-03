@@ -62,7 +62,7 @@ public class GrabWallStepDefinitions {
 	public void i_have_more_walls_on_stock() {
 		Player player = TestUtil.getCurrentPlayer();
 		Wall wall = TestUtil.getAWallInStockForCurrenPlayer();
-		// Create a new wall if stock is empty to ensure pre condition holds
+		// Create a new wall if stock is empty to ensure precondition holds
 		if (wall == null) {
 			wall = new Wall(21, player);
 		}
