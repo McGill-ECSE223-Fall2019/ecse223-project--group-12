@@ -20,6 +20,7 @@ import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.Move;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Tile;
@@ -1005,23 +1006,23 @@ public class QuoridorController {
 		Player p = gp.getPlayerToMove();
 		Wall w = null;
 		Tile tile = getTile(1, 1); // just to avoid null pointers for now
-		if (p.hasGameAsWhite()) {
+		if (p.hasGameAsWhite()) { 
 			tile = getTile(8, 5);
 			// check if wall left in stock
 			if (gp.getWhiteWallsInStock().size() == 0) {
 				throw new InvalidInputException("Stock is Empty");
 			}
-			w = gp.getWhiteWallsInStock(0);
+			w = gp.getWhiteWallsInStock(0); //grab first wall in the stock
 
-			gp.removeWhiteWallsInStock(w);
+			gp.removeWhiteWallsInStock(w); //remove garbbed wall from stock
 		} else if (p.hasGameAsBlack()) {
 			tile = getTile(1, 5);
 			if (gp.getBlackWallsInStock().size() == 0) {
 				throw new InvalidInputException("Stock is Empty");
 			}
-			w = gp.getBlackWallsInStock(0);
+			w = gp.getBlackWallsInStock(0); //grab first wall in the stock
 
-			gp.removeBlackWallsInStock(w);
+			gp.removeBlackWallsInStock(w); //remove garbbed wall from stock
 		}
 		WallMove wm = new WallMove(0, 0, p, tile, g, Direction.Vertical, w);
 		g.setWallMoveCandidate(wm);
@@ -1041,7 +1042,7 @@ public class QuoridorController {
 		WallMove wallMove = g.getWallMoveCandidate();
 		Wall wall = wallMove.getWallPlaced();
 		Player p = gp.getPlayerToMove();
-		if (validatePosition()) {
+		if (validatePosition()) { //check if wall move is valid
 			if (p.hasGameAsWhite()) {
 				gp.addWhiteWallsOnBoard(wall);
 			} else if (p.hasGameAsBlack()) {
@@ -1050,6 +1051,14 @@ public class QuoridorController {
 			g.setWallMoveCandidate(null);
 			g.setMoveMode(MoveMode.PlayerMove);
 			makeMove();
+			List<Move> moves = g.getMoves(); //increment the round number and move number
+			int ms = moves.size();
+			Move lastMove = moves.get(ms-1);
+			int currentRound = lastMove.getRoundNumber();
+			int currentMove = lastMove.getMoveNumber();
+			Move nextMove = lastMove.getNextMove();
+			nextMove.setRoundNumber(currentRound++);
+			nextMove.setMoveNumber(currentMove++);
 		} else {
 			throw new InvalidInputException("Invalid move, try again!");
 		}
