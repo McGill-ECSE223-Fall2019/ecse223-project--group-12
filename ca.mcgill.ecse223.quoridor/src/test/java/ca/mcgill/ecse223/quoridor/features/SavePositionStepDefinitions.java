@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Time;
 import java.sql.Timestamp;
 
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -68,9 +67,8 @@ public class SavePositionStepDefinitions {
 	public void file_with_shall_be_updated_in_the_filesystem(String fileName) {
 		File file = new File("src\\test\\resources\\" + fileName);
 		Timestamp lastModified = new Timestamp(file.lastModified());
-		Timestamp now = new Timestamp(System.currentTimeMillis());
-		System.out.println(now.toString() + "  sdfsdf " + lastModified.toString());
-		assertNotEquals(lastModified.getTime(), 0); //Check if the stamp hgas changed
+
+		assertNotEquals(lastModified.getTime(), 0); //Check if the stamp has changed
 	}
 
 	@When("The user cancels to overwrite existing file")
@@ -81,9 +79,7 @@ public class SavePositionStepDefinitions {
 	@Then("File {string} shall not be changed in the filesystem")
 	public void file_shall_not_be_changed_in_the_filesystem(String fileName) {
 		File file = new File("src\\test\\resources\\" + fileName);
-		Timestamp now = new Timestamp(System.currentTimeMillis());
 		Timestamp lastModified = new Timestamp(file.lastModified());
-		System.out.println(now.toString() + "   " + lastModified.toString());
 		assertEquals(lastModified.getTime(), 0); //Check if the stamp is as originally set
 	}
 
