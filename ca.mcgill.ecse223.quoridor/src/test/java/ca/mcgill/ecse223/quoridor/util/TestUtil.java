@@ -74,11 +74,11 @@ public class TestUtil {
 
 		// Create all walls. Walls with lower ID belong to player1,
 		// while the second half belongs to player 2
-		for (int j = 0; j < 10; j++) {
+		for (int j = 1; j <= 10; j++) {
 			new Wall(j, players[0]);
 		}
 
-		for (int j = 0; j < 10; j++) {
+		for (int j = 1; j <= 10; j++) {
 			new Wall(j + 10, players[1]);
 		}
 

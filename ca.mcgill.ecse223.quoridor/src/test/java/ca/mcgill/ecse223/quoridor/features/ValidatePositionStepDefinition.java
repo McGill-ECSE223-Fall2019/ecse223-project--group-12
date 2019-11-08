@@ -93,7 +93,7 @@ public class ValidatePositionStepDefinition {
 		// keys: wrow, wcol, wdir
 		Player[] players = { quoridor.getCurrentGame().getWhitePlayer(), quoridor.getCurrentGame().getBlackPlayer() };
 		int playerIdx = 0;
-		int wallIdxForPlayer = 0;
+		int wallIdxForPlayer = 1;
 		for (Map<String, String> map : valueMaps) {
 			Integer wrow = Integer.decode(map.get("wrow"));
 			Integer wcol = Integer.decode(map.get("wcol"));
