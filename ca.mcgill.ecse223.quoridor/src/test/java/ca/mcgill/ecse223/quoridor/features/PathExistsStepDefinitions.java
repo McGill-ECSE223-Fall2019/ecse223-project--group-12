@@ -63,7 +63,7 @@ public class PathExistsStepDefinitions {
 	}
 
 	@Then("Path is available for {string} player\\(s)")
-	public void path_is_available_for_player_s(String expected) {
+	public void path_is_available_for_player_s(String expectedResult) {
 		String result = "";
 		if (pathExists[0] && pathExists[1]) {
 			result = "both";
@@ -74,6 +74,6 @@ public class PathExistsStepDefinitions {
 		} else {
 			result = "none";
 		}
-		assertEquals(expected, result);
+		assertEquals(expectedResult, result);
 	}
 }

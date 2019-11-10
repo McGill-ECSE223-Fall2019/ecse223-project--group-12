@@ -10,7 +10,11 @@ import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
-
+/**
+ * 
+ * @author Remi Carriere
+ *
+ */
 public class BoardGraph {
 	private final int tileNodes = 81; // No. of tile nodes/tiles
 
@@ -114,7 +118,7 @@ public class BoardGraph {
 	 */
 	public boolean pathExists(int startRow, int startCol, int destination) {
 
-		int source = getTileIndex(startRow, startCol);
+		int currentNode = getTileIndex(startRow, startCol);
 		// Mark the tile nodes as unvisited (initialized to false)
 		boolean visited[] = new boolean[tileNodes];
 
@@ -122,28 +126,28 @@ public class BoardGraph {
 		LinkedList<Integer> queue = new LinkedList<Integer>();
 
 		// Mark the source tile node as visited and add it to queue
-		visited[source] = true;
-		queue.add(source);
+		visited[currentNode] = true;
+		queue.add(currentNode);
 
 		while (queue.size() != 0) {
 			// Dequeue a tile node
-			source = queue.poll();
+			currentNode = queue.poll();
 			
 			// Check if the source tile node is a winning position
 			for (int i = 1; i < 10; i++) {
-				if (source == getTileIndex(destination, i)) {
+				if (currentNode == getTileIndex(destination, i)) {
 					return true;
 				}
 			}
 
 			// iterate through adjacent tiles at source tile node
-			Iterator<Integer> i = adj[source].listIterator();
-			while (i.hasNext()) {
-				int n = i.next();
+			Iterator<Integer> adjTiles = adj[currentNode].listIterator();
+			while (adjTiles.hasNext()) {
+				int adjTile = adjTiles.next();
 				// visit the tile node and add it to the queue if it has not been visited
-				if (!visited[n]) {
-					visited[n] = true;
-					queue.add(n);
+				if (!visited[adjTile]) {
+					visited[adjTile] = true;
+					queue.add(adjTile);
 				}
 			}
 		}
