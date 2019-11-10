@@ -304,6 +304,34 @@ public class QuoridorController {
 
 	/**
 	 * 
+	 * Verifies if a path exists between the players' current positions and their
+	 * destinations
+	 * 
+	 * @author Remi Carriere
+	 * @return
+	 */
+	public static boolean[] validatePath() {
+		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		// Get white position and destination
+		int whiteRow = gp.getWhitePosition().getTile().getRow();
+		int whiteCol = gp.getWhitePosition().getTile().getColumn();
+		int whiteDest = gp.getGame().getWhitePlayer().getDestination().getTargetNumber();
+		// Get black position and destination
+		int blackRow = gp.getBlackPosition().getTile().getRow();
+		int blackCol = gp.getBlackPosition().getTile().getColumn();
+		int blackDest = gp.getGame().getBlackPlayer().getDestination().getTargetNumber();
+		// Create a graph representation of the board
+		BoardGraph bg = new BoardGraph();
+		bg.syncEdges();
+		// check if the path exists
+		boolean whitePath = bg.pathExists(whiteRow, whiteCol, whiteDest);
+		boolean blackPath = bg.pathExists(blackRow, blackCol, blackDest);
+		boolean[] result = { whitePath, blackPath };
+		return result;
+	}
+
+	/**
+	 * 
 	 * Sets the given user as the white player, and adds the walls for the player
 	 * 
 	 * @author Remi Carriere
@@ -938,14 +966,14 @@ public class QuoridorController {
 		Board currentBoard = quoridor.getBoard();
 		if (currentBoard == null) {
 			currentBoard = new Board(quoridor);
-			for (int i = 1;i<10;i++) {
-				for (int j = 1;j<10;j++) {
+			for (int i = 1; i < 10; i++) {
+				for (int j = 1; j < 10; j++) {
 					currentBoard.addTile(i, j);
 				}
 			}
 		}
-		gp = new GamePosition(0,new PlayerPosition(w,getTile(9,5)),new PlayerPosition(b,getTile(1,5)),w,g);
-		for (int i = 0;i < 10;i++) {
+		gp = new GamePosition(0, new PlayerPosition(w, getTile(9, 5)), new PlayerPosition(b, getTile(1, 5)), w, g);
+		for (int i = 0; i < 10; i++) {
 			if (i < b.getWalls().size()) {
 				gp.addBlackWallsInStock(b.getWall(i));
 			}
@@ -955,8 +983,8 @@ public class QuoridorController {
 		}
 		g.setCurrentPosition(gp);
 		if (g.getGameStatus() == GameStatus.ReadyToStart) {
-			startClock();	
-		}	
+			startClock();
+		}
 	}
 
 	private static GamePosition copyGamePosition(GamePosition gp) {
@@ -966,25 +994,26 @@ public class QuoridorController {
 		Player w = g.getWhitePlayer();
 		Tile black = gp.getBlackPosition().getTile();
 		Player b = g.getBlackPlayer();
-		PlayerPosition wP = new PlayerPosition(w,white);
-		PlayerPosition bP = new PlayerPosition(b,black);
-		newGp = new GamePosition(gp.getId()+1,wP,bP,w,g);
-		for(Wall wall:gp.getBlackWallsInStock()) {
+		PlayerPosition wP = new PlayerPosition(w, white);
+		PlayerPosition bP = new PlayerPosition(b, black);
+		newGp = new GamePosition(gp.getId() + 1, wP, bP, w, g);
+		for (Wall wall : gp.getBlackWallsInStock()) {
 			newGp.addBlackWallsInStock(wall);
 		}
-		for(Wall wall:gp.getWhiteWallsInStock()) {
+		for (Wall wall : gp.getWhiteWallsInStock()) {
 			newGp.addWhiteWallsInStock(wall);
 		}
-		for(Wall wall:gp.getWhiteWallsOnBoard()) {
+		for (Wall wall : gp.getWhiteWallsOnBoard()) {
 			newGp.addWhiteWallsOnBoard(wall);
 		}
-		for(Wall wall:gp.getBlackWallsOnBoard()) {
+		for (Wall wall : gp.getBlackWallsOnBoard()) {
 			newGp.addBlackWallsOnBoard(wall);
 		}
 
 		return newGp;
-		
+
 	}
+
 	public static void confirmMove() {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = g.getCurrentPosition();
@@ -1018,23 +1047,23 @@ public class QuoridorController {
 		Player p = gp.getPlayerToMove();
 		Wall w = null;
 		Tile tile = getTile(1, 1); // just to avoid null pointers for now
-		if (p.hasGameAsWhite()) { 
+		if (p.hasGameAsWhite()) {
 			tile = getTile(8, 5);
 			// check if wall left in stock
 			if (gp.getWhiteWallsInStock().size() == 0) {
 				throw new InvalidInputException("Stock is Empty");
 			}
-			w = gp.getWhiteWallsInStock(0); //grab first wall in the stock
+			w = gp.getWhiteWallsInStock(0); // grab first wall in the stock
 
-			gp.removeWhiteWallsInStock(w); //remove garbbed wall from stock
+			gp.removeWhiteWallsInStock(w); // remove garbbed wall from stock
 		} else if (p.hasGameAsBlack()) {
 			tile = getTile(1, 5);
 			if (gp.getBlackWallsInStock().size() == 0) {
 				throw new InvalidInputException("Stock is Empty");
 			}
-			w = gp.getBlackWallsInStock(0); //grab first wall in the stock
+			w = gp.getBlackWallsInStock(0); // grab first wall in the stock
 
-			gp.removeBlackWallsInStock(w); //remove garbbed wall from stock
+			gp.removeBlackWallsInStock(w); // remove garbbed wall from stock
 		}
 		WallMove wm = new WallMove(0, 0, p, tile, g, Direction.Vertical, w);
 		g.setWallMoveCandidate(wm);
@@ -1054,7 +1083,8 @@ public class QuoridorController {
 		WallMove wallMove = g.getWallMoveCandidate();
 		Wall wall = wallMove.getWallPlaced();
 		Player p = gp.getPlayerToMove();
-		if (validatePosition()) { //check if wall move is valid
+		boolean [] pathsExist = validatePath();
+		if (validatePosition() && pathsExist[0] && pathsExist[1] ) { // check if wall move is valid
 			if (p.hasGameAsWhite()) {
 				gp.addWhiteWallsOnBoard(wall);
 			} else if (p.hasGameAsBlack()) {
@@ -1063,9 +1093,9 @@ public class QuoridorController {
 			g.setWallMoveCandidate(null);
 			g.setMoveMode(MoveMode.PlayerMove);
 
-			List<Move> moves = g.getMoves(); //increment the round number and move number
+			List<Move> moves = g.getMoves(); // increment the round number and move number
 			int ms = moves.size();
-			Move lastMove = moves.get(ms-1);
+			Move lastMove = moves.get(ms - 1);
 			int currentRound = lastMove.getRoundNumber();
 			int currentMove = lastMove.getMoveNumber();
 			Move nextMove = lastMove;

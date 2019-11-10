@@ -67,8 +67,8 @@ public class TestUtil {
 		 * 
 		 */
 		// @formatter:on
-		Player player1 = new Player(Time.valueOf("00:00:30"), user1, 9, Direction.Vertical);
-		Player player2 = new Player(Time.valueOf("00:00:30"), user2, 1, Direction.Vertical);
+		Player player1 = new Player(Time.valueOf("00:00:30"), user1, 1, Direction.Vertical);
+		Player player2 = new Player(Time.valueOf("00:00:30"), user2, 9, Direction.Vertical);
 
 		Player[] players = { player1, player2 };
 
