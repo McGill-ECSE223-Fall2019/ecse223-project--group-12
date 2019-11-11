@@ -323,6 +323,7 @@ public class QuoridorController {
 		// Create a graph representation of the board
 		BoardGraph bg = new BoardGraph();
 		bg.syncEdges();
+		
 		// check if the path exists
 		boolean whitePath = bg.pathExists(whiteRow, whiteCol, whiteDest);
 		boolean blackPath = bg.pathExists(blackRow, blackCol, blackDest);
@@ -1083,8 +1084,8 @@ public class QuoridorController {
 		WallMove wallMove = g.getWallMoveCandidate();
 		Wall wall = wallMove.getWallPlaced();
 		Player p = gp.getPlayerToMove();
-		boolean [] pathsExist = validatePath();
-		if (validatePosition() && pathsExist[0] && pathsExist[1] ) { // check if wall move is valid
+		boolean[] pathsExist = validatePath();
+		if (validatePosition() && pathsExist[0] && pathsExist[1]) { // check if wall move is valid
 			if (p.hasGameAsWhite()) {
 				gp.addWhiteWallsOnBoard(wall);
 			} else if (p.hasGameAsBlack()) {
@@ -1172,6 +1173,22 @@ public class QuoridorController {
 					throw new InvalidInputException("Reaching Right Boundary!");
 				}
 			}
+		}
+	}
+
+	// ------------------------
+	// Team
+	// ------------------------
+	public static void movePawn(Player p, String side) {
+		if (side.equals("right")) {
+			GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+			PawnBehavior pb = new PawnBehavior();
+			pb.setPlayer(p);
+			pb.setCurrentGame(QuoridorApplication.getQuoridor().getCurrentGame());
+			pb.startGame();
+			pb.moveRight();
+		} else {
+			throw new java.lang.IllegalArgumentException();
 		}
 	}
 }

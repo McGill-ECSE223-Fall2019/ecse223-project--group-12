@@ -104,6 +104,15 @@ public class BoardGraph {
 			adj[blockedTile2].remove(wallTile2);
 		}
 	}
+	
+	public boolean isAdjacent(int row, int col, int adjRow, int adjCol) {
+		int tile = getTileIndex(row, col);
+		Integer adjTile = getTileIndex(adjRow, adjCol);
+		if (adj[tile].contains(adjTile)) {
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Checks if a path exists to the destination
