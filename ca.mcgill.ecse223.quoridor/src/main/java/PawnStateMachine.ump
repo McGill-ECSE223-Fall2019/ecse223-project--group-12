@@ -1,43 +1,48 @@
 namespace ca.mcgill.ecse223.quoridor.controller;
-
 use QuoridorGame.ump;
-
 class PawnBehavior {
-	depend ca.mcgill.ecse223.quoridor.model.Direction;
 	depend ca.mcgill.ecse223.quoridor.model.Tile;
 	depend ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 	depend ca.mcgill.ecse223.quoridor.model.GamePosition;
 	depend java.util.*;
-
     0..1 -> 0..1 Game currentGame;
     0..1 -> 0..1 Player player;
-
     pawnSM {
     	Playing {
-			finishGame -> Finished;
 			Setup {
-				startGame[ getCurrentPawnColumn() == 9 ] -> AtEastEdge; 
-				startGame[ getCurrentPawnColumn() == 8 ] -> NextToEastEdge;
-				startGame[ getCurrentPawnColumn() < 8 ] -> InMiddle;		
+				startGame[ getCurrentPawnColumn() == 9 ] -> AtEastEdge;
+				startGame[ getCurrentPawnColumn() <= 8 ] -> InMiddle;		
 			}
 			InMiddle{
-				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 6 ] -> /{movePawnRight();} NextToEastEdge;
-				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 7 ]-> /{movePawnRight();} InMiddle;
+				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
+				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() > 2 ]-> /{movePawn(MoveDirection.North);} InMiddle;
+				
+				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
+				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 8 ]-> /{movePawn(MoveDirection.East);} InMiddle;
+				
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() == 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} InMiddle;
+				
+				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() == 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
+				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() > 2 ]-> /{movePawn(MoveDirection.West);} InMiddle;
+							
 			}
-			NextToEastEdge{
-				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 7 ] -> /{movePawnRight();} AtEastEdge;
+			AtNorthEdge{
+				moveUp / { illegalMove(); } -> AtNorthEdge;
 			}
-			AtEastEdge { 
+			AtEastEdge {
 				moveRight / { illegalMove(); } -> AtEastEdge;
 			}
-		} 
-		Finished {
-		
+			AtSouthEdge{
+				moveDown / { illegalMove(); } -> AtSouthEdge;
+			}
+			AtWestEdge{
+				moveLeft / { illegalMove(); } -> AtWestEdge;
+			}
 		}
 	}
-
     // Returns the current row number of the pawn
-    int getCurrentPawnRow() { 
+    int getCurrentPawnRow() {
     	Player player  = currentGame.getCurrentPosition().getPlayerToMove();
 		if (player.hasGameAsWhite()) {
 			return currentGame.getCurrentPosition().getWhitePosition().getTile().getRow();
@@ -46,7 +51,7 @@ class PawnBehavior {
 		}
 	}
     // Returns the current column number of the pawn
-    int getCurrentPawnColumn() {  
+    int getCurrentPawnColumn() {
     	Player player  = currentGame.getCurrentPosition().getPlayerToMove();
 		if (player.hasGameAsWhite()) {
 			return currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
@@ -56,60 +61,52 @@ class PawnBehavior {
 	}
     // Returns if it is legal to step in the given direction
     boolean isLegalStep(MoveDirection dir) {
-    	GamePosition gp = currentGame.getCurrentPosition();
-    	int row = 0;
-    	int col = 0;
-    	int newRow = 0;
-    	int newCol = 0;
-    	if (player.hasGameAsWhite()) {
-    		row =  gp.getWhitePosition().getTile().getRow();
-    		col = gp.getWhitePosition().getTile().getColumn();
-    	} else {
-    		row =  gp.getBlackPosition().getTile().getRow();
-    		col = gp.getBlackPosition().getTile().getColumn();
-    	}
-    	
+    	int row = getCurrentPawnRow();
+    	int col = getCurrentPawnColumn();
+    	int newRow = row; // initial values to be updated
+    	int newCol = col;
     	// Check direction
     	if (dir == MoveDirection.East ){
-    		newCol = col +1;
     		newRow = row;
-    	} else {
-    		return false; //TODO: Remaining Directions
-    	}
+    		newCol = col +1;
+    	} else if (dir == MoveDirection.West){
+			newRow = row;
+			newCol = col -1;
+		} else if (dir == MoveDirection.South){
+			newRow = row + 1;
+			newCol = col;
+		} else if (dir == MoveDirection.North){
+			newRow = row - 1;
+			newCol = col;
+		}
     	BoardGraph bg = new BoardGraph();
-		bg.syncEdges();
-    	return bg.isAdjacent(row,col,newRow,newCol); 
+		bg.syncWallEdges();
+    	return bg.isAdjacent(row,col,newRow,newCol);
     }
     // Returns if it is legal to jump in the given direction
     boolean isLegalJump(MoveDirection dir) { return false; }
-
     // Action to be called when an illegal move is attempted
     void illegalMove() {
     	//throw new InvalidMoveException("");
  	 }
- 	 
- 	 void movePawnRight(){
+ 	 void movePawn(MoveDirection dir){
  	 	GamePosition gp = currentGame.getCurrentPosition();
+ 	 	
  	 	if (player.hasGameAsWhite()) {
-			PlayerPosition old = gp.getWhitePosition();
-			Tile t = old.getTile();
-			int newRow = t.getRow();
-			int newCol = t.getColumn() +1;
-			Tile newTile = getTile(newRow, newCol);
+			PlayerPosition currentPosition = gp.getWhitePosition();
+			Tile currentTile = currentPosition.getTile();
+			Tile newTile = getTargetTile(currentTile, dir);
 			PlayerPosition newPos = new PlayerPosition(player, newTile);
 			gp.setWhitePosition(newPos);
 		} else {		
-			PlayerPosition old = gp.getBlackPosition();
-			Tile t = old.getTile();
-			int newRow = t.getRow();
-			int newCol = t.getColumn() +1;
-			Tile newTile = getTile(newRow, newCol);
+			PlayerPosition currentPosition = gp.getBlackPosition();
+			Tile currentTile = currentPosition.getTile();
+			Tile newTile = getTargetTile(currentTile, dir);
 			PlayerPosition newPos = new PlayerPosition(player, newTile);
 			gp.setBlackPosition(newPos);	
 		}
  	 }
- 	 
- 	 Tile getTile(int row, int col) {
+ 	Tile getTile(int row, int col) {
 		Iterator<Tile> itr = currentGame.getQuoridor().getBoard().getTiles().iterator();
 		while (itr.hasNext()) {
 			Tile t = itr.next();
@@ -119,7 +116,26 @@ class PawnBehavior {
 		}
 		return null;
 	}
-    
+	Tile getTargetTile(Tile currentTile, MoveDirection dir){
+		if (dir == MoveDirection.East){
+			int newRow = currentTile.getRow();
+			int newCol = currentTile.getColumn() +1;
+			return getTile(newRow, newCol);
+		} else if (dir == MoveDirection.West){
+			int newRow = currentTile.getRow();
+			int newCol = currentTile.getColumn() -1;
+			return getTile(newRow, newCol);
+		} else if (dir == MoveDirection.South){
+			int newRow = currentTile.getRow() + 1;
+			int newCol = currentTile.getColumn();
+			return getTile(newRow, newCol);
+		} else if (dir == MoveDirection.North){
+			int newRow = currentTile.getRow() - 1;
+			int newCol = currentTile.getColumn();
+			return getTile(newRow, newCol);
+		}
+		return null;
+	}
     // Enumeration for the possible moving directions
     // (directions are from the viewpoint of white player)
     enum MoveDirection { East, South, West, North; }

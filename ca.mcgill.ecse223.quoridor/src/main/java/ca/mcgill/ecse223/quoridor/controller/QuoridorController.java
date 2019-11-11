@@ -322,7 +322,7 @@ public class QuoridorController {
 		int blackDest = gp.getGame().getBlackPlayer().getDestination().getTargetNumber();
 		// Create a graph representation of the board
 		BoardGraph bg = new BoardGraph();
-		bg.syncEdges();
+		bg.syncWallEdges();
 		
 		// check if the path exists
 		boolean whitePath = bg.pathExists(whiteRow, whiteCol, whiteDest);
@@ -1180,15 +1180,18 @@ public class QuoridorController {
 	// Team
 	// ------------------------
 	public static void movePawn(Player p, String side) {
+		PawnBehavior pb = new PawnBehavior();
+		pb.setPlayer(p);
+		pb.setCurrentGame(QuoridorApplication.getQuoridor().getCurrentGame());
+		pb.startGame();
 		if (side.equals("right")) {
-			GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
-			PawnBehavior pb = new PawnBehavior();
-			pb.setPlayer(p);
-			pb.setCurrentGame(QuoridorApplication.getQuoridor().getCurrentGame());
-			pb.startGame();
 			pb.moveRight();
-		} else {
-			throw new java.lang.IllegalArgumentException();
+		} else if (side.equals("left")){
+			pb.moveLeft();
+		}else if (side.equals("up")){
+			pb.moveUp();
+		}else if (side.equals("down")){
+			pb.moveDown();
 		}
 	}
 }

@@ -1,29 +1,25 @@
 package ca.mcgill.ecse223.quoridor.controller;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 /**
- * 
+ *
  * @author Remi Carriere
  *
  */
 public class BoardGraph {
 	private final int tileNodes = 81; // No. of tile nodes/tiles
-
 	private LinkedList<Integer> adj[]; // Adjacency Lists
-
 	// Constructor
 	@SuppressWarnings("unchecked")
 	public BoardGraph() {
-
 		adj = new LinkedList[tileNodes];
 		// First, Create all the nodes
 		for (int i = 0; i < tileNodes; i++) {
@@ -32,13 +28,12 @@ public class BoardGraph {
 		// Then, create all the edges
 		for (int i = 1; i < 10; i++) {
 			for (int j = 1; j < 10; j++) {
-				int currentTile = getTileIndex(i, j);
+				Integer currentTile = getTileIndex(i, j);
 				// get the indices of adjacent tiles
 				Integer northTile = getTileIndex(i - 1, j);
 				Integer eastTile = getTileIndex(i, j + 1);
 				Integer southTile = getTileIndex(i + 1, j);
 				Integer westTile = getTileIndex(i, j - 1);
-
 				// add tiles to the adjacency list of current tile (tiles will be null for
 				// edge cases like borders and corners)
 				if (northTile != null) {
@@ -55,13 +50,12 @@ public class BoardGraph {
 				}
 			}
 		}
-
 	}
-
 	/**
-	 * Removes all edges based on current walls
+	 * Removes all edges based on current walls, after calling this method on the
+	 * graph, we can find possible step moves and paths
 	 */
-	public void syncEdges() {
+	public void syncWallEdges() {
 		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		// Create a list of all walls
 		List<Wall> boardWalls = new ArrayList<Wall>();
@@ -77,8 +71,8 @@ public class BoardGraph {
 		}
 		// Iterate through current walls and remove edges, each wall removes two edges
 		for (Wall wall : boardWalls) {
-			int row = wall.getMove().getTargetTile().getRow();
-			int col = wall.getMove().getTargetTile().getColumn();
+			Integer row = wall.getMove().getTargetTile().getRow();
+			Integer col = wall.getMove().getTargetTile().getColumn();
 			Direction direction = wall.getMove().getWallDirection();
 			Integer wallTile1 = null;
 			Integer wallTile2 = null;
@@ -104,7 +98,35 @@ public class BoardGraph {
 			adj[blockedTile2].remove(wallTile2);
 		}
 	}
-	
+	/**
+	 * Removes all edges based on current walls, after calling this method on the
+	 * graph, we can find possible step moves and paths
+	 */
+	public void syncJumpMoves() {
+		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		Tile whiteTile = gamePosition.getWhitePosition().getTile();
+		Tile blackTile = gamePosition.getBlackPosition().getTile();
+		Integer wIndex = getTileIndex(whiteTile.getRow(), whiteTile.getColumn());
+		Integer bIndex = getTileIndex(blackTile.getRow(), blackTile.getColumn());
+		//check if the move would be blocked by a wall anyways (i.e check if a navigation woutl be possible between white and black tile)
+		if(!adj[wIndex].contains(bIndex)) { // Not going to work with diagonal jumps
+			//no normal jump moves possible
+			return;
+		} else {
+			// remove the path between the two adjacent pawns
+			//add normal jump move (check walls behind the pawn being jumped)
+			// add diagonal jumpmove
+		}
+	}
+	/**
+	 * Verifies if a step move or jump move is possible between two coordinates
+	 *
+	 * @param row    Row of starting tile
+	 * @param col    Column of starting tile
+	 * @param adjRow Row of tile to move to
+	 * @param adjCol Column of tile to move to
+	 * @return True if the move is possible, false otherwise
+	 */
 	public boolean isAdjacent(int row, int col, int adjRow, int adjCol) {
 		int tile = getTileIndex(row, col);
 		Integer adjTile = getTileIndex(adjRow, adjCol);
@@ -113,46 +135,36 @@ public class BoardGraph {
 		}
 		return false;
 	}
-
 	/**
 	 * Checks if a path exists to the destination
-	 * 
-	 * @param startRow
-	 *            row position of player
-	 * @param startCol
-	 *            row position of player
-	 * @param destination
-	 *            the winning position for player (1 or 9 for two player)
+	 *
+	 * @param startRow    row position of player
+	 * @param startCol    row position of player
+	 * @param destination the winning position for player (1 or 9 for two player)
 	 * @return
 	 */
 	public boolean pathExists(int startRow, int startCol, int destination) {
-
 		int currentNode = getTileIndex(startRow, startCol);
 		// Mark the tile nodes as unvisited (initialized to false)
 		boolean visited[] = new boolean[tileNodes];
-
 		// Create a queue for BFS
 		LinkedList<Integer> queue = new LinkedList<Integer>();
-
 		// Mark the source tile node as visited and add it to queue
 		visited[currentNode] = true;
 		queue.add(currentNode);
-
 		while (queue.size() != 0) {
 			// Dequeue a tile node
 			currentNode = queue.poll();
-			
 			// Check if the source tile node is a winning position
 			for (int i = 1; i < 10; i++) {
 				if (currentNode == getTileIndex(destination, i)) {
 					return true;
 				}
 			}
-
 			// iterate through adjacent tiles at source tile node
 			Iterator<Integer> adjTiles = adj[currentNode].listIterator();
 			while (adjTiles.hasNext()) {
-				int adjTile = adjTiles.next();
+				Integer adjTile = adjTiles.next();
 				// visit the tile node and add it to the queue if it has not been visited
 				if (!visited[adjTile]) {
 					visited[adjTile] = true;
@@ -163,14 +175,11 @@ public class BoardGraph {
 		// no path was found, return false
 		return false;
 	}
-
 	/**
 	 * Gets the index of specified tile
-	 * 
-	 * @param row
-	 *            Integer from 1 to 9
-	 * @param col
-	 *            Integer from 1 to 9
+	 *
+	 * @param row Integer from 1 to 9
+	 * @param col Integer from 1 to 9
 	 * @return The index of the tile (Integer from 0 to 80). (1,1) = 0, (2,1) = 9,
 	 *         (9,9)=80
 	 */
