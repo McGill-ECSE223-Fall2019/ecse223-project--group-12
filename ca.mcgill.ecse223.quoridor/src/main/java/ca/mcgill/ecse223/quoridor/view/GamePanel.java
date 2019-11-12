@@ -469,7 +469,7 @@ public class GamePanel extends JPanel {
 		refreshData();
 	}
 
-	private void squareButtonActionPerformed(ActionEvent evt) {
+	private void anyTileButtonActionPerformed(ActionEvent evt) {
 		List<TileTO> adjTiles = QuoridorController.getAdjTiles();
 		if (!pawnMoveSelected) {
 			pawnMoveSelected = true;
@@ -477,7 +477,6 @@ public class GamePanel extends JPanel {
 				JButton tile = getTileSquare(adjTile.getRow(), adjTile.getCol());
 				tile.setBackground(wallCandidateColor);
 			}
-			System.out.println("armed");
 		} else {
 			int rowToMove = Integer.parseInt(String.valueOf(evt.getActionCommand().charAt(0)));
 			int colToMOve = Integer.parseInt(String.valueOf(evt.getActionCommand().charAt(2)));
@@ -743,7 +742,7 @@ public class GamePanel extends JPanel {
 					square.setActionCommand(((j - 1) / 2 + 1) + "," + ((i - 1) / 2 + 1));
 					square.addActionListener(new java.awt.event.ActionListener() {
 						public void actionPerformed(java.awt.event.ActionEvent evt) {
-							squareButtonActionPerformed(evt);
+							anyTileButtonActionPerformed(evt);
 						}
 					});
 				}

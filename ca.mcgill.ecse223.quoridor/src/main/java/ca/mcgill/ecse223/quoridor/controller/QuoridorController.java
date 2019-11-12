@@ -16,6 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.PawnBehavior.MoveDirection;
 import ca.mcgill.ecse223.quoridor.model.Board;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -577,7 +578,7 @@ public class QuoridorController {
 		int row = pos.getTile().getRow();
 		int col = pos.getTile().getColumn();
 		BoardGraph bg = new BoardGraph();
-		bg.syncWallEdges();
+		bg.syncJumpMoves();
 		List<Integer> adjTileNodes = bg.getAdjacentNodes(row, col);
 		for (Integer adjTileNode : adjTileNodes) {
 			int adjRow = adjTileNode / 9 + 1;
@@ -1218,7 +1219,7 @@ public class QuoridorController {
 	// ------------------------
 	// Team
 	// ------------------------
-	public static void movePawn(Player p, String side) {
+	public static boolean movePawn(Player p, String side) {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		PawnBehavior pawnBehavior = null;
 		// Initiate the pawn machines if it's the first move (or if game is out of sync
@@ -1238,14 +1239,18 @@ public class QuoridorController {
 		// Call actions of state machine
 		if (side.equals("right")) {
 			pawnBehavior.moveRight();
+			return pawnBehavior.isLegalStep(MoveDirection.East);
 		} else if (side.equals("left")) {
 			pawnBehavior.moveLeft();
+			return pawnBehavior.isLegalStep(MoveDirection.West);
 		} else if (side.equals("up")) {
 			pawnBehavior.moveUp();
+			return pawnBehavior.isLegalStep(MoveDirection.North);
 		} else if (side.equals("down")) {
 			pawnBehavior.moveDown();
+			return pawnBehavior.isLegalStep(MoveDirection.South);
 		}
-		confirmMove();
+		return false;
 	}
 
 	private static void initPawnMachines() {

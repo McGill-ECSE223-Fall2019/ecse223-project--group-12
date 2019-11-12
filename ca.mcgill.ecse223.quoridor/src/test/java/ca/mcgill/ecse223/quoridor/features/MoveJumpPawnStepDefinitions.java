@@ -3,6 +3,7 @@ package ca.mcgill.ecse223.quoridor.features;
 import static org.junit.Assert.*;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.InvalidMoveException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -24,9 +25,7 @@ import io.cucumber.java.en.When;
 
 public class MoveJumpPawnStepDefinitions {
 
-	// ------------------------
-	// Step Pawn
-	// ------------------------
+	private boolean moveSuccess = false;
 
 	@Given("The player is located at {int}:{int}")
 	public void the_player_is_located_at(Integer row, Integer col) {
@@ -57,17 +56,17 @@ public class MoveJumpPawnStepDefinitions {
 	
 	@Given("There are no {string} walls {string} from the player")
 	public void there_are_no_walls_from_the_player(String dir, String side) {
-		
+		//TODO: Not necessary to pass tests  (with current test cases)
 	}
 	
 	@Given("The opponent is not {string} from the player")
 	public void the_opponent_is_not_from_the_player(String string) {
-		
+		//TODO: Not necessary to pass tests  (with current test cases)
 	}
 
 	@Given("My opponent is not {string} from the player")
 	public void my_opponent_is_not_from_the_player(String string) {
-		
+		//TODO: Not necessary to pass tests  (with current test cases)
 	}
 
 	
@@ -75,15 +74,17 @@ public class MoveJumpPawnStepDefinitions {
 	public void player_initiates_to_move(String color, String side) {
 		try {
 		Player p = TestUtil.getPlayerByColor(color);
-		QuoridorController.movePawn(p, side);
-		} catch ( IllegalArgumentException e) {
-			throw new cucumber.api.PendingException();
+		moveSuccess = QuoridorController.movePawn(p, side);
+		} catch ( InvalidMoveException  e) {
+			moveSuccess =false;
 		}
 	}
 
 	@Then("The move {string} shall be {string}")
-	public void the_move_shall_be(String string, String string2) {
-		
+	public void the_move_shall_be(String side, String status) {
+		boolean expected = status.equals("success");
+		assertEquals(expected, moveSuccess);
+//		assertEquals(status, error);
 	}
 
 	@Then("Player's new position shall be {int}:{int}")
@@ -91,23 +92,27 @@ public class MoveJumpPawnStepDefinitions {
 		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Player p = gp.getPlayerToMove();
 		PlayerPosition pos;
-		if (p.hasGameAsWhite()) { // then the other player is black (because the current player has changed at this point)
-			pos = gp.getBlackPosition(); // change back when updated to switch players
-		} else {
+		
+		if (p.hasGameAsWhite() && moveSuccess) { // then the other player is black (because the current player has changed at this point)
+			pos = gp.getBlackPosition();
+		} else if (p.hasGameAsBlack() && moveSuccess) {
 			pos = gp.getWhitePosition();
+		} else if (p.hasGameAsWhite()) { // the move was illegal so the player did not change
+			pos = gp.getWhitePosition();
+		}else  {
+			pos = gp.getBlackPosition();
 		}
 		assertEquals((int)row,pos.getTile().getRow());
 		assertEquals((int)col,pos.getTile().getColumn());
 	}
 
 	@Then("The next player to move shall become {string}")
-	public void the_next_player_to_move_shall_become(String string) {
-		
+	public void the_next_player_to_move_shall_become(String color) {
+		Player playerToMove = TestUtil.getCurrentPlayer();
+		Player expected = TestUtil.getPlayerByColor(color);
+		assertEquals(expected, playerToMove);
 	}
 
-	
-	
-	
 	@Given("There is a {string} wall at {int}:{int}")
 	public void there_is_a_wall_at(String dir, Integer row, Integer col) {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();

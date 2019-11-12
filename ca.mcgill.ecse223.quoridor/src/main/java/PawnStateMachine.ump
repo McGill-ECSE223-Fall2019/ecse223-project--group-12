@@ -19,12 +19,16 @@ class PawnBehavior {
 			InMiddle{
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() > 2 ]-> /{movePawn(MoveDirection.North);} InMiddle;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() == 3] -> /{jumpPawn(MoveDirection.North);} AtNorthEdge;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() > 3] -> /{jumpPawn(MoveDirection.North);} InMiddle;		
 				
 				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
 				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 8 ]-> /{movePawn(MoveDirection.East);} InMiddle;
 				
 				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() == 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
 				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} InMiddle;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South) && getCurrentPawnRow() == 7] -> /{jumpPawn(MoveDirection.South);} AtSouthEdge;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South) && getCurrentPawnRow() < 7] -> /{jumpPawn(MoveDirection.South);} InMiddle;
 				
 				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() == 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
 				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() > 2 ]-> /{movePawn(MoveDirection.West);} InMiddle;
@@ -37,6 +41,7 @@ class PawnBehavior {
 				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 8 ]-> /{movePawn(MoveDirection.East);} AtNorthEdge;
 				
 				moveDown [ isLegalStep(MoveDirection.South) ]-> /{movePawn(MoveDirection.South);} InMiddle;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South)] -> /{jumpPawn(MoveDirection.South);} InMiddle;
 				
 				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() == 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
 				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() > 2 ]-> /{movePawn(MoveDirection.West);} AtNorthEdge;
@@ -49,15 +54,18 @@ class PawnBehavior {
 				
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() > 2 ]-> /{movePawn(MoveDirection.North);} AtEastEdge;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North)] -> /{jumpPawn(MoveDirection.North);} AtEastEdge;
 				
 				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() == 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
-				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} AtEastEdge;		
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} AtEastEdge;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South)] -> /{jumpPawn(MoveDirection.South);} AtEastEdge;		
 				
 			}
 			AtSouthEdge{
 				moveDown / { illegalMove(); } -> AtSouthEdge;
 				
 				moveUp [ isLegalStep(MoveDirection.North) ]-> /{movePawn(MoveDirection.North);} InMiddle;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North)] -> /{jumpPawn(MoveDirection.North);} InMiddle;
 				
 				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
 				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 8 ]-> /{movePawn(MoveDirection.East);} AtSouthEdge;
@@ -73,9 +81,11 @@ class PawnBehavior {
 
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() > 2 ]-> /{movePawn(MoveDirection.North);} AtWestEdge;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North)] -> /{jumpPawn(MoveDirection.North);} AtWestEdge;
 					
 				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() == 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
 				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} AtWestEdge;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South)] -> /{jumpPawn(MoveDirection.South);} AtWestEdge;	
 				
 			}
 		}
@@ -118,14 +128,68 @@ class PawnBehavior {
 		}
     	BoardGraph bg = new BoardGraph();
 		bg.syncWallEdges();
-    	return bg.isAdjacent(row,col,newRow,newCol);
+		bg.syncStepMoves();
+		if(bg.isAdjacent(row,col,newRow,newCol)){
+			return true;
+		}else{
+			return false;
+		}
     }
     // Returns if it is legal to jump in the given direction
-    boolean isLegalJump(MoveDirection dir) { return false; }
+    boolean isLegalJump(MoveDirection dir) {
+    System.out.println("hhassad");
+        int row = getCurrentPawnRow();
+    	int col = getCurrentPawnColumn();
+    	int newRow = row; // initial values to be updated
+    	int newCol = col;
+    	// Check direction
+    	if (dir == MoveDirection.East ){
+    		newRow = row;
+    		newCol = col + 2;
+    	} else if (dir == MoveDirection.West){
+			newRow = row;
+			newCol = col - 2;
+		} else if (dir == MoveDirection.South){
+			newRow = row + 2;
+			newCol = col;
+		} else if (dir == MoveDirection.North){
+			newRow = row - 2;
+			newCol = col;
+		}
+    	BoardGraph bg = new BoardGraph();
+		bg.syncJumpMoves();
+		if(bg.isAdjacent(row,col,newRow,newCol)){
+		System.out.println("yayy");
+			return true;
+		}else{
+			return false;
+		}
+    }
     // Action to be called when an illegal move is attempted
-    void illegalMove() {
-    	//throw new InvalidMoveException("");
+    void illegalMove() throws InvalidMoveException{
+    	throw new InvalidMoveException("Illegal move!");
  	 }
+ 	 void jumpPawn(MoveDirection dir){
+ 	  	GamePosition gp = currentGame.getCurrentPosition();
+ 	 	System.out.println("hhh");
+ 	 	if (player.hasGameAsWhite()) {
+			PlayerPosition currentPosition = gp.getWhitePosition();
+			Tile currentTile = currentPosition.getTile();
+			Tile newTile = getTargetTile(currentTile, dir);
+			newTile = getTargetTile(newTile, dir);
+			PlayerPosition newPos = new PlayerPosition(player, newTile);
+			gp.setWhitePosition(newPos);
+		} else {		
+			PlayerPosition currentPosition = gp.getBlackPosition();
+			Tile currentTile = currentPosition.getTile();
+			Tile newTile = getTargetTile(currentTile, dir);
+			newTile = getTargetTile(newTile, dir);
+			PlayerPosition newPos = new PlayerPosition(player, newTile);
+			gp.setBlackPosition(newPos);	
+		}
+		QuoridorController.confirmMove();
+ 	 }
+ 	 
  	 void movePawn(MoveDirection dir){
  	 	GamePosition gp = currentGame.getCurrentPosition();
  	 	
@@ -142,6 +206,7 @@ class PawnBehavior {
 			PlayerPosition newPos = new PlayerPosition(player, newTile);
 			gp.setBlackPosition(newPos);	
 		}
+		QuoridorController.confirmMove();
  	 }
  	Tile getTile(int row, int col) {
 		Iterator<Tile> itr = currentGame.getQuoridor().getBoard().getTiles().iterator();

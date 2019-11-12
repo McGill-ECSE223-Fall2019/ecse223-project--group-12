@@ -1,4 +1,5 @@
 package ca.mcgill.ecse223.quoridor.controller;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,15 +10,25 @@ import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
+
 /**
  *
  * @author Remi Carriere
  *
  */
 public class BoardGraph {
+
+	// ------------------------
+	// MEMBER VARIABLES
+	// ------------------------
+
 	private final int tileNodes = 81; // No. of tile nodes/tiles
 	private LinkedList<Integer> adj[]; // Adjacency Lists
-	// Constructor
+
+	// ------------------------
+	// CONSTRUCTOR
+	// ------------------------
+
 	@SuppressWarnings("unchecked")
 	public BoardGraph() {
 		adj = new LinkedList[tileNodes];
@@ -51,9 +62,14 @@ public class BoardGraph {
 			}
 		}
 	}
+
+	// ------------------------
+	// INTERFACE
+	// ------------------------
+
 	/**
 	 * Removes all edges based on current walls, after calling this method on the
-	 * graph, we can find possible step moves and paths
+	 * graph, we can find possible paths
 	 */
 	public void syncWallEdges() {
 		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
@@ -98,33 +114,59 @@ public class BoardGraph {
 			adj[blockedTile2].remove(wallTile2);
 		}
 	}
+
 	/**
 	 * Removes all edges based on current walls, after calling this method on the
-	 * graph, we can find possible step moves and paths
+	 * graph, we can find possible step moves, jumpMoves and paths
 	 */
 	public void syncJumpMoves() {
+		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		int wRow = gamePosition.getWhitePosition().getTile().getRow();
+		int wCol = gamePosition.getWhitePosition().getTile().getColumn();
+		int bRow = gamePosition.getBlackPosition().getTile().getRow();
+		int bCol = gamePosition.getBlackPosition().getTile().getColumn();
+
+		Integer wIndex = getTileIndex(wRow, wCol);
+		Integer bIndex = getTileIndex(bRow, bCol);
+		// every legal jump move is an illegal step move
+
+		// reset edges to check if pawns are adjacent
+		resetEdges();
+		// Check if opponent is adjacent (i.e. a jump move is possible)
+		if (!adj[wIndex].contains(bIndex)) {
+			syncStepMoves();
+			syncWallEdges();
+			return; // No jump moves possible
+		}
+		syncNonDiagJumpMoves();
+		syncStepMoves();
+		syncWallEdges();
+	}
+
+	public void syncStepMoves() {
 		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Tile whiteTile = gamePosition.getWhitePosition().getTile();
 		Tile blackTile = gamePosition.getBlackPosition().getTile();
 		Integer wIndex = getTileIndex(whiteTile.getRow(), whiteTile.getColumn());
 		Integer bIndex = getTileIndex(blackTile.getRow(), blackTile.getColumn());
-		//check if the move would be blocked by a wall anyways (i.e check if a navigation woutl be possible between white and black tile)
-		if(!adj[wIndex].contains(bIndex)) { // Not going to work with diagonal jumps
-			//no normal jump moves possible
-			return;
-		} else {
-			// remove the path between the two adjacent pawns
-			//add normal jump move (check walls behind the pawn being jumped)
-			// add diagonal jumpmove
+		// check if the pawns are adjacent to each other
+		if (adj[wIndex].contains(bIndex)) { // Not going to work with diagonal jumps
+			adj[wIndex].remove(bIndex);
+			adj[bIndex].remove(wIndex);
 		}
 	}
+
 	/**
 	 * Verifies if a step move or jump move is possible between two coordinates
 	 *
-	 * @param row    Row of starting tile
-	 * @param col    Column of starting tile
-	 * @param adjRow Row of tile to move to
-	 * @param adjCol Column of tile to move to
+	 * @param row
+	 *            Row of starting tile
+	 * @param col
+	 *            Column of starting tile
+	 * @param adjRow
+	 *            Row of tile to move to
+	 * @param adjCol
+	 *            Column of tile to move to
 	 * @return True if the move is possible, false otherwise
 	 */
 	public boolean isAdjacent(int row, int col, int adjRow, int adjCol) {
@@ -135,16 +177,21 @@ public class BoardGraph {
 		}
 		return false;
 	}
+
 	public LinkedList<Integer> getAdjacentNodes(int row, int col) {
 		int tileIndex = getTileIndex(row, col);
 		return adj[tileIndex];
 	}
+
 	/**
 	 * Checks if a path exists to the destination
 	 *
-	 * @param startRow    row position of player
-	 * @param startCol    row position of player
-	 * @param destination the winning position for player (1 or 9 for two player)
+	 * @param startRow
+	 *            row position of player
+	 * @param startCol
+	 *            row position of player
+	 * @param destination
+	 *            the winning position for player (1 or 9 for two player)
 	 * @return
 	 */
 	public boolean pathExists(int startRow, int startCol, int destination) {
@@ -179,11 +226,18 @@ public class BoardGraph {
 		// no path was found, return false
 		return false;
 	}
+
+	// ------------------------
+	// PRIVATE HELPER METHODS
+	// ------------------------
+
 	/**
 	 * Gets the index of specified tile
 	 *
-	 * @param row Integer from 1 to 9
-	 * @param col Integer from 1 to 9
+	 * @param row
+	 *            Integer from 1 to 9
+	 * @param col
+	 *            Integer from 1 to 9
 	 * @return The index of the tile (Integer from 0 to 80). (1,1) = 0, (2,1) = 9,
 	 *         (9,9)=80
 	 */
@@ -192,5 +246,203 @@ public class BoardGraph {
 			return ((row - 1) * 9 + col - 1);
 		}
 		return null;
+	}
+
+	private void syncNonDiagJumpMoves() {
+		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		int wRow = gamePosition.getWhitePosition().getTile().getRow();
+		int wCol = gamePosition.getWhitePosition().getTile().getColumn();
+		int bRow = gamePosition.getBlackPosition().getTile().getRow();
+		int bCol = gamePosition.getBlackPosition().getTile().getColumn();
+
+		Integer wIndex = getTileIndex(wRow, wCol);
+		Integer bIndex = getTileIndex(bRow, bCol);
+		syncWallEdges();
+		// north for white / south for black
+		if (wRow > bRow && wCol == bCol) {
+			// north jump for white
+			Integer target = getTileIndex(bRow - 1, wCol);
+			// check no walls between white and black, and between black and target
+			if (adj[wIndex].contains(bIndex) && adj[bIndex].contains(target) && target != null) {
+				adj[wIndex].add(target);
+			}
+			// regular jump move is blocked by one or more walls, find diagonal jumps
+			else {
+				// white northwest
+				target = getTileIndex(bRow, wCol - 1);
+				Integer targetPath = getTileIndex(wRow, wCol - 1);
+				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				// white northEast
+				target = getTileIndex(bRow, wCol + 1);
+				targetPath = getTileIndex(wRow, wCol + 1);
+				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+			}
+
+			// south jump for black
+			target = getTileIndex(wRow + 1, wCol);
+			if (adj[bIndex].contains(wIndex) && adj[wIndex].contains(target) && target != null) {
+				adj[bIndex].add(target);
+			}
+			// regular jump move is blocked by one or more walls, find diagonal jumps
+			else {
+				// black southwest
+				target = getTileIndex(wRow, wCol - 1);
+				Integer targetPath = getTileIndex(bRow, bCol - 1);
+				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				// Black southEast
+				target = getTileIndex(wRow, wCol + 1);
+				targetPath = getTileIndex(bRow, bCol + 1);
+				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+			}
+		}
+		// north for black / south for white
+		else if (wRow < bRow && wCol == bCol) {
+			// south jump for white
+			Integer target = getTileIndex(bRow + 1, wCol);
+			// check no walls between white and black, and between black and target
+			if (adj[wIndex].contains(bIndex) && adj[bIndex].contains(target) && target != null) {
+				adj[wIndex].add(target);
+			} else {
+				// white southwest
+				target = getTileIndex(bRow, wCol - 1);
+				Integer targetPath = getTileIndex(wRow, wCol - 1);
+				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				// white southEast
+				target = getTileIndex(bRow, wCol + 1);
+				targetPath = getTileIndex(wRow, wCol + 1);
+				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+			}
+			// north jump for black
+			target = getTileIndex(wRow - 1, wCol);
+			if (adj[bIndex].contains(wIndex) && adj[wIndex].contains(target) && target != null) {
+				adj[bIndex].add(target);
+			}
+			// regular jump move is blocked by one or more walls, find diagonal jumps
+			else {
+				// black Northwest
+				target = getTileIndex(wRow, wCol - 1);
+				Integer targetPath = getTileIndex(bRow, bCol - 1);
+				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				// Black northEast
+				target = getTileIndex(wRow, wCol + 1);
+				targetPath = getTileIndex(bRow, bCol + 1);
+				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+			}
+		}
+		// east for white and west for black
+		else if (wCol < bCol && wRow == bRow) {
+			// east jump for white
+			Integer target = getTileIndex(bRow, bCol + 1);
+			// check no walls between white and black, and between black and target
+			if (adj[wIndex].contains(bIndex) && adj[bIndex].contains(target) && target != null) {
+				adj[wIndex].add(target);
+			}
+			// regular jump move is blocked by one or more walls, find diagonal jumps
+			else {
+				// white southEast
+				target = getTileIndex(bRow + 1, bCol);
+				Integer targetPath = getTileIndex(wRow + 1, wCol);
+				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				// white northEast
+				target = getTileIndex(bRow - 1, bCol);
+				targetPath = getTileIndex(wRow - 1, wCol);
+				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+			}
+			// west jump for black
+			target = getTileIndex(wRow, wCol - 1);
+			if (adj[bIndex].contains(wIndex) && adj[wIndex].contains(target) && target != null) {
+				adj[bIndex].add(target);
+			}
+			// regular jump move is blocked by one or more walls, find diagonal jumps
+			else {
+				// black northEast
+				target = getTileIndex(wRow + 1, wCol);
+				Integer targetPath = getTileIndex(bRow + 1, bCol);
+				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				// black southEast
+				target = getTileIndex(wRow - 1, wCol);
+				targetPath = getTileIndex(bRow - 1, bCol);
+				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+			}
+
+		}
+		// east for black and west for white
+		else if (wCol > bCol && wRow == bRow) {
+			// east jump for white
+			Integer target = getTileIndex(bRow, bCol - 1);
+			// check no walls between white and black, and between black and target
+			if (adj[wIndex].contains(bIndex) && adj[bIndex].contains(target) && target != null) {
+				adj[wIndex].add(target);
+			}
+			// regular jump move is blocked by one or more walls, find diagonal jumps
+			else {
+				// white southWest
+				target = getTileIndex(bRow + 1, bCol);
+				Integer targetPath = getTileIndex(wRow + 1, wCol);
+				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				// white northWest
+				target = getTileIndex(bRow - 1, bCol);
+				targetPath = getTileIndex(wRow - 1, wCol);
+				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+			}
+			// west jump for black
+			target = getTileIndex(wRow, wCol + 1);
+			if (adj[bIndex].contains(wIndex) && adj[wIndex].contains(target) && target != null) {
+				adj[bIndex].add(target);
+			}
+			// regular jump move is blocked by one or more walls, find diagonal jumps
+			else {
+				// black northWest
+				target = getTileIndex(wRow + 1, wCol);
+				Integer targetPath = getTileIndex(bRow + 1, bCol);
+				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				// black southWest
+				target = getTileIndex(wRow - 1, wCol);
+				targetPath = getTileIndex(bRow - 1, bCol);
+				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+			}
+		}
+	}
+
+	private void addDiagonalJumpMove(Integer playerIndex, Integer target, Integer targetPath, Integer opponentIndex) {
+		// L shaped path to target around the opponent
+		if (adj[playerIndex].contains(targetPath) && adj[target].contains(targetPath) && adj[target].contains(opponentIndex)) {
+			adj[playerIndex].add(target);
+		}
+		// L shaped path to target through the opponent
+		if (adj[playerIndex].contains(opponentIndex) && adj[target].contains(opponentIndex)) {
+			adj[playerIndex].add(target);
+		}
+	}
+
+	private void resetEdges() {
+		// Then, create all the edges
+		for (int i = 1; i < 10; i++) {
+			for (int j = 1; j < 10; j++) {
+				Integer currentTile = getTileIndex(i, j);
+				// get the indices of adjacent tiles
+				Integer northTile = getTileIndex(i - 1, j);
+				Integer eastTile = getTileIndex(i, j + 1);
+				Integer southTile = getTileIndex(i + 1, j);
+				Integer westTile = getTileIndex(i, j - 1);
+
+				adj[currentTile] = new LinkedList<Integer>();
+				;
+				// add tiles to the adjacency list of current tile (tiles will be null for
+				// edge cases like borders and corners)
+				if (northTile != null) {
+					adj[currentTile].add(northTile);
+				}
+				if (eastTile != null) {
+					adj[currentTile].add(eastTile);
+				}
+				if (southTile != null) {
+					adj[currentTile].add(southTile);
+				}
+				if (westTile != null) {
+					adj[currentTile].add(westTile);
+				}
+			}
+		}
 	}
 }
