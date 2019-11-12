@@ -92,11 +92,9 @@ public class MoveJumpPawnStepDefinitions {
 		Player p = gp.getPlayerToMove();
 		PlayerPosition pos;
 		if (p.hasGameAsWhite()) { // then the other player is black (because the current player has changed at this point)
-			//pos = gp.getBlackPosition(); // change back when updated to switch players
-			pos = gp.getWhitePosition();
+			pos = gp.getBlackPosition(); // change back when updated to switch players
 		} else {
-			//pos = gp.getWhitePosition();
-			pos = gp.getBlackPosition();
+			pos = gp.getWhitePosition();
 		}
 		assertEquals((int)row,pos.getTile().getRow());
 		assertEquals((int)col,pos.getTile().getColumn());

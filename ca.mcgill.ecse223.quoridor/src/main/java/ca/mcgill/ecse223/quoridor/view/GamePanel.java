@@ -30,13 +30,13 @@ import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO.PlayerColor;
 import ca.mcgill.ecse223.quoridor.to.PlayerStatsTO;
+import ca.mcgill.ecse223.quoridor.to.TileTO;
 import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
 public class GamePanel extends JPanel {
 	private static final long serialVersionUID = -4426310869335015542L;
 
-
-	//Panels
+	// Panels
 	private JPanel controlUIPanel;
 	private JPanel gameBoardPanel;
 	private JPanel dashboardPanel;
@@ -72,6 +72,8 @@ public class GamePanel extends JPanel {
 	private final Color boardBorderColor = new Color(134, 89, 45);
 	// Timer thread to refresh time
 	private Timer timer;
+
+	private boolean pawnMoveSelected = false;
 
 	public GamePanel() {
 		initComponents();
@@ -206,7 +208,7 @@ public class GamePanel extends JPanel {
 	// ------------------------
 
 	public void refreshData() {
-
+		pawnMoveSelected = false;
 		PlayerStatsTO playerStats = QuoridorController.getPlayerStats();
 		if (playerStats != null) {
 			playerLabel.setText("Player: " + playerStats.getName());
@@ -284,6 +286,7 @@ public class GamePanel extends JPanel {
 	}
 
 	private void refreshPlayePositions() {
+		hideAllPawns();
 		List<PlayerPositionTO> playerPositions = QuoridorController.getPlayerPositions();
 		for (PlayerPositionTO p : playerPositions) {
 			int row = p.getRow();
@@ -313,7 +316,6 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-
 	// ------------------------
 	// Action Methods
 	// ------------------------
@@ -334,6 +336,7 @@ public class GamePanel extends JPanel {
 			returnToMenu();
 		}
 	}
+
 	/**
 	 * Currently loads a gamePosition given from the menu panel
 	 */
@@ -371,7 +374,7 @@ public class GamePanel extends JPanel {
 				JOptionPane.showMessageDialog(this.getParent(), "Sorry filename is not valid");
 				return;
 			} else {
-				fileName+=".dat";
+				fileName += ".dat";
 				if (QuoridorController.checkFileExists(fileName, false)) {
 					int overWriteOption = JOptionPane.showConfirmDialog(this.getParent(),
 							"File already exists, are you sure you want to overwrite?");
@@ -380,7 +383,7 @@ public class GamePanel extends JPanel {
 					} else {
 						return;
 					}
-				} else { 
+				} else {
 					QuoridorController.writePositionFile(fileName, false);
 				}
 			}
@@ -466,6 +469,41 @@ public class GamePanel extends JPanel {
 		refreshData();
 	}
 
+	private void squareButtonActionPerformed(ActionEvent evt) {
+		List<TileTO> adjTiles = QuoridorController.getAdjTiles();
+		if (!pawnMoveSelected) {
+			pawnMoveSelected = true;
+			for (TileTO adjTile : adjTiles) {
+				JButton tile = getTileSquare(adjTile.getRow(), adjTile.getCol());
+				tile.setBackground(wallCandidateColor);
+			}
+			System.out.println("armed");
+		} else {
+			int rowToMove = Integer.parseInt(String.valueOf(evt.getActionCommand().charAt(0)));
+			int colToMOve = Integer.parseInt(String.valueOf(evt.getActionCommand().charAt(2)));
+			JButton tile = getTileSquare(rowToMove, colToMOve);
+			if (tile.getBackground().equals(wallCandidateColor)) {
+				pawnMoveSelected = false;
+				PlayerPositionTO currentPos = QuoridorController.getCurrentPlayerPosition();
+				int currentRow = currentPos.getRow();
+				int currentCol = currentPos.getColumn();
+				if (currentRow < rowToMove) {
+					QuoridorController.movePawn("down");
+					// down
+				} else if (currentRow > rowToMove) {
+					// up
+					QuoridorController.movePawn("up");
+				} else if (currentCol < colToMOve) {
+					// right
+					QuoridorController.movePawn("right");
+				} else if (currentCol > colToMOve) {
+					QuoridorController.movePawn("left");
+				}
+				refreshData();
+			}
+		}
+	}
+
 	// ------------------------
 	// UI Utility Methods
 	// ------------------------
@@ -503,8 +541,10 @@ public class GamePanel extends JPanel {
 		return wall;
 
 	}
+
 	/**
 	 * enables or disables all player controls except switch player
+	 * 
 	 * @param enabled
 	 */
 	private void setEnabledMoves(boolean enabled) {
@@ -532,6 +572,7 @@ public class GamePanel extends JPanel {
 		col = 2 * col - 1;
 		int index = col * BOARD_SIZE + row;
 		JButton tile = (JButton) gameBoardPanel.getComponent(index);
+		tile.setBackground(tileColor);
 		if (c.equals(whitePawnColor)) {
 			tile.getComponent(0).setVisible(visible);
 			tile.repaint();
@@ -539,6 +580,23 @@ public class GamePanel extends JPanel {
 			tile.getComponent(1).setVisible(visible);
 			tile.repaint();
 		}
+	}
+
+	private void hideAllPawns() {
+		for (int i = 1; i < 10; i++) {
+			for (int j = 1; j < 10; j++) {
+				showPawn(i, j, PlayerColor.Black, false);
+				showPawn(i, j, PlayerColor.White, false);
+			}
+		}
+
+	}
+
+	private JButton getTileSquare(int row, int col) {
+		row = 2 * row - 1;
+		col = 2 * col - 1;
+		int index = col * BOARD_SIZE + row;
+		return (JButton) gameBoardPanel.getComponent(index);
 	}
 
 	/**
@@ -610,6 +668,7 @@ public class GamePanel extends JPanel {
 
 	/**
 	 * Checks if a wall candidate exits at {row} {dir} in either direction
+	 * 
 	 * @param row
 	 * @param col
 	 * @return
@@ -680,6 +739,13 @@ public class GamePanel extends JPanel {
 					blackPawn.setAlignmentX(CENTER_ALIGNMENT);
 					blackPawn.setAlignmentY(CENTER_ALIGNMENT);
 					square.add(blackPawn);
+
+					square.setActionCommand(((j - 1) / 2 + 1) + "," + ((i - 1) / 2 + 1));
+					square.addActionListener(new java.awt.event.ActionListener() {
+						public void actionPerformed(java.awt.event.ActionEvent evt) {
+							squareButtonActionPerformed(evt);
+						}
+					});
 				}
 				// Make the outline of the board black
 				if (j == 0 || j == BOARD_SIZE - 1 || i == 0 || i == BOARD_SIZE - 1) {

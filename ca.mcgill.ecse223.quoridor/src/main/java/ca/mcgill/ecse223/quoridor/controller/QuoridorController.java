@@ -33,6 +33,7 @@ import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO.PlayerColor;
 import ca.mcgill.ecse223.quoridor.to.PlayerStatsTO;
+import ca.mcgill.ecse223.quoridor.to.TileTO;
 import ca.mcgill.ecse223.quoridor.to.UserTO;
 import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
@@ -41,12 +42,15 @@ public class QuoridorController {
 	public static final String TEST_SAVED_GAMES_FOLDER = "src\\test\\resources\\";
 	public static final String SAVED_GAMES_FOLDER = "savedgames\\";
 
+	private static Timer timer = new Timer();
+	private static TimerTask timerTask;
+
+	private static PawnBehavior whiteBehavior;
+	private static PawnBehavior blackBehavior;
+
 	public QuoridorController() {
 
 	}
-
-	private static Timer timer = new Timer();
-	private static TimerTask timerTask;
 
 	// ------------------------
 	// Remi
@@ -323,7 +327,7 @@ public class QuoridorController {
 		// Create a graph representation of the board
 		BoardGraph bg = new BoardGraph();
 		bg.syncWallEdges();
-		
+
 		// check if the path exists
 		boolean whitePath = bg.pathExists(whiteRow, whiteCol, whiteDest);
 		boolean blackPath = bg.pathExists(blackRow, blackCol, blackDest);
@@ -559,6 +563,41 @@ public class QuoridorController {
 			return new WallMoveTO(wm.getTargetTile().getRow(), wm.getTargetTile().getColumn(), wm.getWallDirection());
 		}
 		return null;
+	}
+
+	public static List<TileTO> getAdjTiles() {
+		List<TileTO> adjTiles = new ArrayList<TileTO>();
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		PlayerPosition pos;
+		if (p.hasGameAsWhite()) {
+			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
+		} else {
+			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
+		}
+		int row = pos.getTile().getRow();
+		int col = pos.getTile().getColumn();
+		BoardGraph bg = new BoardGraph();
+		bg.syncWallEdges();
+		List<Integer> adjTileNodes = bg.getAdjacentNodes(row, col);
+		for (Integer adjTileNode : adjTileNodes) {
+			int adjRow = adjTileNode / 9 + 1;
+			int adjCol = adjTileNode % 9 + 1;
+			TileTO tileTO = new TileTO(adjRow, adjCol);
+			adjTiles.add(tileTO);
+		}
+		return adjTiles;
+
+	}
+
+	public static PlayerPositionTO getCurrentPlayerPosition() {
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		PlayerPosition pos;
+		if (p.hasGameAsWhite()) {
+			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
+		} else {
+			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
+		}
+		return new  PlayerPositionTO(pos.getTile().getRow(), pos.getTile().getColumn(), null);
 	}
 
 	/*
@@ -1180,18 +1219,52 @@ public class QuoridorController {
 	// Team
 	// ------------------------
 	public static void movePawn(Player p, String side) {
-		PawnBehavior pb = new PawnBehavior();
-		pb.setPlayer(p);
-		pb.setCurrentGame(QuoridorApplication.getQuoridor().getCurrentGame());
-		pb.startGame();
-		if (side.equals("right")) {
-			pb.moveRight();
-		} else if (side.equals("left")){
-			pb.moveLeft();
-		}else if (side.equals("up")){
-			pb.moveUp();
-		}else if (side.equals("down")){
-			pb.moveDown();
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		PawnBehavior pawnBehavior = null;
+		// Initiate the pawn machines if it's the first move (or if game is out of sync
+		// -- necessary for testing)
+		if (whiteBehavior == null || !whiteBehavior.getCurrentGame().equals(game) || blackBehavior == null
+				|| !blackBehavior.getCurrentGame().equals(game)) {
+			initPawnMachines();
 		}
+
+		// Select the pawn machine for player moving
+		if (p.hasGameAsWhite()) {
+			pawnBehavior = whiteBehavior;
+		} else if (p.hasGameAsBlack()) {
+			pawnBehavior = blackBehavior;
+		}
+
+		// Call actions of state machine
+		if (side.equals("right")) {
+			pawnBehavior.moveRight();
+		} else if (side.equals("left")) {
+			pawnBehavior.moveLeft();
+		} else if (side.equals("up")) {
+			pawnBehavior.moveUp();
+		} else if (side.equals("down")) {
+			pawnBehavior.moveDown();
+		}
+		confirmMove();
+	}
+
+	private static void initPawnMachines() {
+		Player white = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
+		Player black = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+
+		whiteBehavior = new PawnBehavior();
+		whiteBehavior.setCurrentGame(game);
+		whiteBehavior.setPlayer(white);
+		whiteBehavior.startGame();
+
+		blackBehavior = new PawnBehavior();
+		blackBehavior.setCurrentGame(game);
+		blackBehavior.setPlayer(black);
+		blackBehavior.startGame();
+	}
+
+	public static void movePawn(String side) {
+		movePawn(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(), side);
 	}
 }

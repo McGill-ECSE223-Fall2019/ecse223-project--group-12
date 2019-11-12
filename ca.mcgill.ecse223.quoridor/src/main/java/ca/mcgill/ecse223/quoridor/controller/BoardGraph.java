@@ -135,6 +135,10 @@ public class BoardGraph {
 		}
 		return false;
 	}
+	public LinkedList<Integer> getAdjacentNodes(int row, int col) {
+		int tileIndex = getTileIndex(row, col);
+		return adj[tileIndex];
+	}
 	/**
 	 * Checks if a path exists to the destination
 	 *

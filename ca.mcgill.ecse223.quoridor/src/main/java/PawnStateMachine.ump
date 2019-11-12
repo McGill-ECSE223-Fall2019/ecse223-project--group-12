@@ -10,8 +10,11 @@ class PawnBehavior {
     pawnSM {
     	Playing {
 			Setup {
+				startGame[ getCurrentPawnRow() == 1 ] -> AtNorthEdge;
 				startGame[ getCurrentPawnColumn() == 9 ] -> AtEastEdge;
-				startGame[ getCurrentPawnColumn() <= 8 ] -> InMiddle;		
+				startGame[ getCurrentPawnRow() == 9 ] -> AtSouthEdge;
+				startGame[ getCurrentPawnColumn() == 9 ] -> AtWestEdge;
+				startGame[ getCurrentPawnColumn() <= 8 &&  getCurrentPawnColumn() >= 1 && getCurrentPawnRow() <= 8 &&  getCurrentPawnRow() >= 1] -> InMiddle;	
 			}
 			InMiddle{
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
@@ -29,21 +32,56 @@ class PawnBehavior {
 			}
 			AtNorthEdge{
 				moveUp / { illegalMove(); } -> AtNorthEdge;
+				
+				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
+				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 8 ]-> /{movePawn(MoveDirection.East);} AtNorthEdge;
+				
+				moveDown [ isLegalStep(MoveDirection.South) ]-> /{movePawn(MoveDirection.South);} InMiddle;
+				
+				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() == 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
+				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() > 2 ]-> /{movePawn(MoveDirection.West);} AtNorthEdge;
+					
 			}
 			AtEastEdge {
 				moveRight / { illegalMove(); } -> AtEastEdge;
+				
+				moveLeft [ isLegalStep(MoveDirection.West) ]-> /{movePawn(MoveDirection.West);} InMiddle;	
+				
+				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
+				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() > 2 ]-> /{movePawn(MoveDirection.North);} AtEastEdge;
+				
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() == 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} AtEastEdge;		
+				
 			}
 			AtSouthEdge{
 				moveDown / { illegalMove(); } -> AtSouthEdge;
+				
+				moveUp [ isLegalStep(MoveDirection.North) ]-> /{movePawn(MoveDirection.North);} InMiddle;
+				
+				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
+				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 8 ]-> /{movePawn(MoveDirection.East);} AtSouthEdge;
+				
+				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() == 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
+				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() > 2 ]-> /{movePawn(MoveDirection.West);} AtSouthEdge;
+					
 			}
 			AtWestEdge{
 				moveLeft / { illegalMove(); } -> AtWestEdge;
+				
+				moveRight [ isLegalStep(MoveDirection.East) ]-> /{movePawn(MoveDirection.East);} InMiddle;
+
+				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
+				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() > 2 ]-> /{movePawn(MoveDirection.North);} AtWestEdge;
+					
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() == 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} AtWestEdge;
+				
 			}
 		}
 	}
     // Returns the current row number of the pawn
     int getCurrentPawnRow() {
-    	Player player  = currentGame.getCurrentPosition().getPlayerToMove();
 		if (player.hasGameAsWhite()) {
 			return currentGame.getCurrentPosition().getWhitePosition().getTile().getRow();
 		} else {
@@ -52,7 +90,6 @@ class PawnBehavior {
 	}
     // Returns the current column number of the pawn
     int getCurrentPawnColumn() {
-    	Player player  = currentGame.getCurrentPosition().getPlayerToMove();
 		if (player.hasGameAsWhite()) {
 			return currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
 		} else {

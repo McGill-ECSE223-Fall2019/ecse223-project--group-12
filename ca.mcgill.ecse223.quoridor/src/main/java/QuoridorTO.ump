@@ -23,3 +23,8 @@ class PlayerStatsTO{
 	int remainingWalls;
 	moveMode;
 }
+
+class TileTO {
+	int row;
+	int col;
+}
