@@ -471,6 +471,9 @@ public class GamePanel extends JPanel {
 	}
 
 	private void anyTileButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.removeCandidateWall();
+		refreshWallMoveCandidate();
+		grabWallButton.setText("Grab Wall");
 		List<TileTO> adjTiles = QuoridorController.getAdjTiles();
 		if (!pawnMoveSelected) {
 			pawnMoveSelected = true;

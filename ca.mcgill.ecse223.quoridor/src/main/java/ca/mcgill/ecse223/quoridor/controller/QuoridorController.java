@@ -61,8 +61,7 @@ public class QuoridorController {
 	 * Create a new game with Initializing GameStatus
 	 * 
 	 * @author Remi Carriere
-	 * @throws InvalidInputException
-	 *             if the game is already running
+	 * @throws InvalidInputException if the game is already running
 	 */
 	public static void initializeGame() throws InvalidInputException {
 		if (QuoridorApplication.getQuoridor().getCurrentGame() == null) {
@@ -90,10 +89,15 @@ public class QuoridorController {
 	 * Creates a new user
 	 * 
 	 * @author Remi Carriere
-	 * @param name
-	 *            The name of the user
-	 * @throws ca.mcgill.ecse223.quoridor.controller.InvalidInputException
-	 *             if the user already exists or the username is invalid
+	 * @param name The name of the user
+	 * @throws ca.mcgill.ecse223.quoridor.controller.InvalidInputException if the
+	 *                                                                     user
+	 *                                                                     already
+	 *                                                                     exists or
+	 *                                                                     the
+	 *                                                                     username
+	 *                                                                     is
+	 *                                                                     invalid
 	 */
 	public static void createUser(String name) throws InvalidInputException {
 		if (name.trim().length() == 0 || name == null || name.length() < 3) {
@@ -110,10 +114,8 @@ public class QuoridorController {
 	 * Sets the remainingTime of each player to totalTime
 	 * 
 	 * @author Remi Carriere
-	 * @param totalTime
-	 *            The desired thinking time
-	 * @throws InvalidInputException
-	 *             if the time set is less than 0
+	 * @param totalTime The desired thinking time
+	 * @throws InvalidInputException if the time set is less than 0
 	 */
 	public static void setTotalThinkingTime(Time totalTime) throws InvalidInputException {
 		// check if time is more than 0 seconds
@@ -134,13 +136,10 @@ public class QuoridorController {
 	 * 
 	 * @author Remi Carriere
 	 * 
-	 * @param minutes
-	 *            integer representing minutes (2 digits)
-	 * @param seconds
-	 *            integer representing seconds(2 digits)
-	 * @throws InvalidInputException
-	 *             if the time set is less than 0, and if seconds or minutes is null
-	 *             or not 2 digits each
+	 * @param minutes integer representing minutes (2 digits)
+	 * @param seconds integer representing seconds(2 digits)
+	 * @throws InvalidInputException if the time set is less than 0, and if seconds
+	 *                               or minutes is null or not 2 digits each
 	 * 
 	 */
 	public static void setTotalThinkingTime(Integer minutes, Integer seconds) throws InvalidInputException {
@@ -185,8 +184,7 @@ public class QuoridorController {
 	 * current position
 	 * 
 	 * @author Remi Carriere
-	 * @param gamePosition
-	 *            The game position to verify
+	 * @param gamePosition The game position to verify
 	 * @return true if the position is valid, false otherwise
 	 */
 	public static boolean validatePosition(GamePosition gamePosition) {
@@ -263,10 +261,8 @@ public class QuoridorController {
 	 * 
 	 * @author Remi Carriere
 	 * 
-	 * @param row
-	 *            The row of the tile for the player position
-	 * @param col
-	 *            The column of the tile for the player position
+	 * @param row The row of the tile for the player position
+	 * @param col The column of the tile for the player position
 	 * @return true if the current position is valid and the new supplied pawn
 	 *         position is valid, false otherwise
 	 */
@@ -341,10 +337,8 @@ public class QuoridorController {
 	 * Sets the given user as the white player, and adds the walls for the player
 	 * 
 	 * @author Remi Carriere
-	 * @param user
-	 *            The selected user
-	 * @throws InvalidInputException
-	 *             if the input user is null
+	 * @param user The selected user
+	 * @throws InvalidInputException if the input user is null
 	 */
 	public static void setWhitePlayerInGame(User user) throws InvalidInputException {
 		if (user != null) {
@@ -364,10 +358,8 @@ public class QuoridorController {
 	 * Sets the given user as the white player, and adds the walls for the player
 	 * 
 	 * @author Remi Carriere
-	 * @param userName
-	 *            The name of the user
-	 * @throws InvalidInputException
-	 *             if the input user does not exist
+	 * @param userName The name of the user
+	 * @throws InvalidInputException if the input user does not exist
 	 */
 	public static void setWhitePlayerInGame(String userName) throws InvalidInputException {
 		User user = getUserByName(userName);
@@ -379,10 +371,8 @@ public class QuoridorController {
 	 * Sets the given user as the black player, and adds the walls for the player
 	 * 
 	 * @author Remi Carriere
-	 * @param user
-	 *            The selected user
-	 * @throws InvalidInputException
-	 *             if the input user is null
+	 * @param user The selected user
+	 * @throws InvalidInputException if the input user is null
 	 */
 	public static void setBlackPlayerInGame(User user) throws InvalidInputException {
 		if (user != null) {
@@ -402,10 +392,8 @@ public class QuoridorController {
 	 * Sets the given user as the black player, and adds the walls for the player
 	 * 
 	 * @author Remi Carriere
-	 * @param userName
-	 *            The name of the user
-	 * @throws InvalidInputException
-	 *             if the input user does not exist
+	 * @param userName The name of the user
+	 * @throws InvalidInputException if the input user does not exist
 	 */
 	public static void setBlackPlayerInGame(String userName) throws InvalidInputException {
 		User user = getUserByName(userName);
@@ -416,8 +404,7 @@ public class QuoridorController {
 	 * Creates new user, and sets the user as the white player
 	 * 
 	 * @author Remi Carriere
-	 * @param name
-	 *            Name of the user
+	 * @param name Name of the user
 	 * @throws InvalidInputException
 	 * 
 	 */
@@ -430,8 +417,7 @@ public class QuoridorController {
 	 * Creates new user, and sets the user as the black player
 	 * 
 	 * @author Remi Carriere
-	 * @param name
-	 *            Name of the user
+	 * @param name Name of the user
 	 * @throws InvalidInputException
 	 */
 	public static void setNewUserAsBlack(String name) throws InvalidInputException {
@@ -446,7 +432,16 @@ public class QuoridorController {
 	 * @author Remi Carriere
 	 */
 	public static void removeCandidateWall() {
-		QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(null);
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate() != null) {
+			Wall wall = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().getWallPlaced();
+			if (wall.getOwner().hasGameAsWhite()) {
+				QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().addWhiteWallsInStock(wall);
+			} else {
+				QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().addBlackWallsInStock(wall);
+			}
+			QuoridorApplication.getQuoridor().getCurrentGame().setWallMoveCandidate(null);
+			wall.getMove().delete();
+		}
 	}
 
 	/*
@@ -598,7 +593,7 @@ public class QuoridorController {
 		} else {
 			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
 		}
-		return new  PlayerPositionTO(pos.getTile().getRow(), pos.getTile().getColumn(), null);
+		return new PlayerPositionTO(pos.getTile().getRow(), pos.getTile().getColumn(), null);
 	}
 
 	/*
@@ -676,8 +671,7 @@ public class QuoridorController {
 	 * d game position into the current game position
 	 * 
 	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
-	 * @param fullPath
-	 *            of the saved file
+	 * @param fullPath of the saved file
 	 * @return True if load was successful, false is unable to load
 	 */
 	public static boolean loadPosition(String fileName, boolean test) {
@@ -1246,26 +1240,28 @@ public class QuoridorController {
 			pawnBehavior.moveLeft();
 			return b;
 		} else if (side.equals("up")) {
-			boolean b = (pawnBehavior.isLegalStep(MoveDirection.North) || pawnBehavior.isLegalJump(MoveDirection.North));
+			boolean b = (pawnBehavior.isLegalStep(MoveDirection.North)
+					|| pawnBehavior.isLegalJump(MoveDirection.North));
 			pawnBehavior.moveUp();
 			return b;
 		} else if (side.equals("down")) {
-			boolean b = (pawnBehavior.isLegalStep(MoveDirection.South) || pawnBehavior.isLegalJump(MoveDirection.South));
+			boolean b = (pawnBehavior.isLegalStep(MoveDirection.South)
+					|| pawnBehavior.isLegalJump(MoveDirection.South));
 			pawnBehavior.moveDown();
 			return b;
 		} else if (side.equals("downleft")) {
 			boolean b = pawnBehavior.isLegalJump(MoveDirection.SouthWest);
 			pawnBehavior.moveDownLeft();
 			return b;
-		}else if (side.equals("downright")) {
+		} else if (side.equals("downright")) {
 			boolean b = pawnBehavior.isLegalJump(MoveDirection.SouthEast);
 			pawnBehavior.moveDownRight();
 			return b;
-		}else if (side.equals("upright")) {
-			boolean b =pawnBehavior.isLegalJump(MoveDirection.NorthEast);
+		} else if (side.equals("upright")) {
+			boolean b = pawnBehavior.isLegalJump(MoveDirection.NorthEast);
 			pawnBehavior.moveUpRight();
 			return b;
-		}else if (side.equals("upleft")) {
+		} else if (side.equals("upleft")) {
 			boolean b = pawnBehavior.isLegalJump(MoveDirection.NorthWest);
 			pawnBehavior.moveUpLeft();
 			return b;
