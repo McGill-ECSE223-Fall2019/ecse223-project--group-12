@@ -1238,17 +1238,37 @@ public class QuoridorController {
 
 		// Call actions of state machine
 		if (side.equals("right")) {
+			boolean b = (pawnBehavior.isLegalStep(MoveDirection.East) || pawnBehavior.isLegalJump(MoveDirection.East));
 			pawnBehavior.moveRight();
-			return pawnBehavior.isLegalStep(MoveDirection.East);
+			return b;
 		} else if (side.equals("left")) {
+			boolean b = (pawnBehavior.isLegalStep(MoveDirection.West) || pawnBehavior.isLegalJump(MoveDirection.West));
 			pawnBehavior.moveLeft();
-			return pawnBehavior.isLegalStep(MoveDirection.West);
+			return b;
 		} else if (side.equals("up")) {
+			boolean b = (pawnBehavior.isLegalStep(MoveDirection.North) || pawnBehavior.isLegalJump(MoveDirection.North));
 			pawnBehavior.moveUp();
-			return pawnBehavior.isLegalStep(MoveDirection.North);
+			return b;
 		} else if (side.equals("down")) {
+			boolean b = (pawnBehavior.isLegalStep(MoveDirection.South) || pawnBehavior.isLegalJump(MoveDirection.South));
 			pawnBehavior.moveDown();
-			return pawnBehavior.isLegalStep(MoveDirection.South);
+			return b;
+		} else if (side.equals("downleft")) {
+			boolean b = pawnBehavior.isLegalJump(MoveDirection.SouthWest);
+			pawnBehavior.moveDownLeft();
+			return b;
+		}else if (side.equals("downright")) {
+			boolean b = pawnBehavior.isLegalJump(MoveDirection.SouthEast);
+			pawnBehavior.moveDownRight();
+			return b;
+		}else if (side.equals("upright")) {
+			boolean b =pawnBehavior.isLegalJump(MoveDirection.NorthEast);
+			pawnBehavior.moveUpRight();
+			return b;
+		}else if (side.equals("upleft")) {
+			boolean b = pawnBehavior.isLegalJump(MoveDirection.NorthWest);
+			pawnBehavior.moveUpLeft();
+			return b;
 		}
 		return false;
 	}

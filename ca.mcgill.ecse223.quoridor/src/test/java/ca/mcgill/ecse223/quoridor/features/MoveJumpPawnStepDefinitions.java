@@ -47,36 +47,35 @@ public class MoveJumpPawnStepDefinitions {
 		Tile tile = TestUtil.getTile(row, col);
 		PlayerPosition position = new PlayerPosition(p, tile);
 		if (p.hasGameAsWhite()) { // then the other player is black
-			gp.setBlackPosition(position); 
+			gp.setBlackPosition(position);
 		} else {
 			gp.setWhitePosition(position);
 		}
 
 	}
-	
+
 	@Given("There are no {string} walls {string} from the player")
 	public void there_are_no_walls_from_the_player(String dir, String side) {
-		//TODO: Not necessary to pass tests  (with current test cases)
+		// TODO: Not necessary to pass tests (with current test cases)
 	}
-	
+
 	@Given("The opponent is not {string} from the player")
 	public void the_opponent_is_not_from_the_player(String string) {
-		//TODO: Not necessary to pass tests  (with current test cases)
+		// TODO: Not necessary to pass tests (with current test cases)
 	}
 
 	@Given("My opponent is not {string} from the player")
 	public void my_opponent_is_not_from_the_player(String string) {
-		//TODO: Not necessary to pass tests  (with current test cases)
+		// TODO: Not necessary to pass tests (with current test cases)
 	}
 
-	
 	@When("Player {string} initiates to move {string}")
 	public void player_initiates_to_move(String color, String side) {
 		try {
-		Player p = TestUtil.getPlayerByColor(color);
-		moveSuccess = QuoridorController.movePawn(p, side);
-		} catch ( InvalidMoveException  e) {
-			moveSuccess =false;
+			Player p = TestUtil.getPlayerByColor(color);
+			moveSuccess = QuoridorController.movePawn(p, side);
+		} catch (InvalidMoveException e) {
+			moveSuccess = false;
 		}
 	}
 
@@ -84,7 +83,6 @@ public class MoveJumpPawnStepDefinitions {
 	public void the_move_shall_be(String side, String status) {
 		boolean expected = status.equals("success");
 		assertEquals(expected, moveSuccess);
-//		assertEquals(status, error);
 	}
 
 	@Then("Player's new position shall be {int}:{int}")
@@ -92,18 +90,18 @@ public class MoveJumpPawnStepDefinitions {
 		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Player p = gp.getPlayerToMove();
 		PlayerPosition pos;
-		
-		if (p.hasGameAsWhite() && moveSuccess) { // then the other player is black (because the current player has changed at this point)
+
+		if (p.hasGameAsWhite() && moveSuccess) { // success means player was switched, get black pos
 			pos = gp.getBlackPosition();
 		} else if (p.hasGameAsBlack() && moveSuccess) {
 			pos = gp.getWhitePosition();
-		} else if (p.hasGameAsWhite()) { // the move was illegal so the player did not change
+		} else if (p.hasGameAsWhite()) { // the move was illegal so the player did not change, get white pos
 			pos = gp.getWhitePosition();
-		}else  {
+		} else {
 			pos = gp.getBlackPosition();
 		}
-		assertEquals((int)row,pos.getTile().getRow());
-		assertEquals((int)col,pos.getTile().getColumn());
+		assertEquals((int) row, pos.getTile().getRow());
+		assertEquals((int) col, pos.getTile().getColumn());
 	}
 
 	@Then("The next player to move shall become {string}")
@@ -125,7 +123,7 @@ public class MoveJumpPawnStepDefinitions {
 		if (p.hasGameAsWhite()) {
 			gp.addWhiteWallsOnBoard(wall);
 			gp.removeWhiteWallsInStock(wall);
-		} else{
+		} else {
 			gp.addBlackWallsOnBoard(wall);
 			gp.removeBlackWallsInStock(wall);
 		}
@@ -133,7 +131,7 @@ public class MoveJumpPawnStepDefinitions {
 
 	@Given("There are no {string} walls {string} from the player nearby")
 	public void there_are_no_walls_from_the_player_nearby(String string, String string2) {
-		throw new cucumber.api.PendingException();
+		// TODO: Not necessary to pass tests (with current test cases)
 	}
-	
+
 }

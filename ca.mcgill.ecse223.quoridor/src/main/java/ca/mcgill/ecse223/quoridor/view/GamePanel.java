@@ -25,6 +25,7 @@ import javax.swing.Timer;
 import javax.swing.border.LineBorder;
 
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
+import ca.mcgill.ecse223.quoridor.controller.InvalidMoveException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
@@ -486,17 +487,41 @@ public class GamePanel extends JPanel {
 				PlayerPositionTO currentPos = QuoridorController.getCurrentPlayerPosition();
 				int currentRow = currentPos.getRow();
 				int currentCol = currentPos.getColumn();
-				if (currentRow < rowToMove) {
-					QuoridorController.movePawn("down");
-					// down
-				} else if (currentRow > rowToMove) {
-					// up
-					QuoridorController.movePawn("up");
-				} else if (currentCol < colToMOve) {
+				// Down
+				try {
+					if (currentRow < rowToMove && currentCol == colToMOve) {
+						QuoridorController.movePawn("down");
+					}
+					// Up
+					else if (currentRow > rowToMove && currentCol == colToMOve) {
+						QuoridorController.movePawn("up");
+					}
 					// right
-					QuoridorController.movePawn("right");
-				} else if (currentCol > colToMOve) {
-					QuoridorController.movePawn("left");
+					else if (currentCol < colToMOve && currentRow == rowToMove) {
+						QuoridorController.movePawn("right");
+					}
+					// left
+					else if (currentCol > colToMOve && currentRow == rowToMove) {
+						QuoridorController.movePawn("left");
+					}
+					// downleft
+					else if (currentCol > colToMOve && currentRow < rowToMove) {
+						QuoridorController.movePawn("downleft");
+					}
+					// downright
+					else if (currentCol < colToMOve && currentRow < rowToMove) {
+						QuoridorController.movePawn("downright");
+					}
+					// upright
+					else if (currentCol < colToMOve && currentRow > rowToMove) {
+						QuoridorController.movePawn("upright");
+					}
+					// upleft
+					else if (currentCol > colToMOve && currentRow > rowToMove) {
+						QuoridorController.movePawn("upleft");
+					}
+				} catch (InvalidMoveException e) {
+					refreshData();
 				}
 				refreshData();
 			}

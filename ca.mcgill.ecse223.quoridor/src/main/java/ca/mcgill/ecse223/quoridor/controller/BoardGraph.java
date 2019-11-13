@@ -28,7 +28,9 @@ public class BoardGraph {
 	// ------------------------
 	// CONSTRUCTOR
 	// ------------------------
-
+	/**
+	 * Creates A BoardGraph object of 81 tiles with default edges
+	 */
 	@SuppressWarnings("unchecked")
 	public BoardGraph() {
 		adj = new LinkedList[tileNodes];
@@ -116,8 +118,8 @@ public class BoardGraph {
 	}
 
 	/**
-	 * Removes all edges based on current walls, after calling this method on the
-	 * graph, we can find possible step moves, jumpMoves and paths
+	 * Adds all possible jump moves based on current gamePosition as edges in the
+	 * graph
 	 */
 	public void syncJumpMoves() {
 		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
@@ -138,11 +140,14 @@ public class BoardGraph {
 			syncWallEdges();
 			return; // No jump moves possible
 		}
-		syncNonDiagJumpMoves();
+		syncAllJumpMoves();
 		syncStepMoves();
 		syncWallEdges();
 	}
 
+	/**
+	 * Removes illegal step moves (Player overlap)
+	 */
 	public void syncStepMoves() {
 		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Tile whiteTile = gamePosition.getWhitePosition().getTile();
@@ -178,6 +183,13 @@ public class BoardGraph {
 		return false;
 	}
 
+	/**
+	 * Returns a list of adjacent tiles (See QuriodorController.getAdjTiles())
+	 * 
+	 * @param row
+	 * @param col
+	 * @return
+	 */
 	public LinkedList<Integer> getAdjacentNodes(int row, int col) {
 		int tileIndex = getTileIndex(row, col);
 		return adj[tileIndex];
@@ -248,7 +260,10 @@ public class BoardGraph {
 		return null;
 	}
 
-	private void syncNonDiagJumpMoves() {
+	/**
+	 * Syncs the graph edges all possible jump moves
+	 */
+	private void syncAllJumpMoves() {
 		GamePosition gamePosition = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		int wRow = gamePosition.getWhitePosition().getTile().getRow();
 		int wCol = gamePosition.getWhitePosition().getTile().getColumn();
@@ -270,12 +285,10 @@ public class BoardGraph {
 			else {
 				// white northwest
 				target = getTileIndex(bRow, wCol - 1);
-				Integer targetPath = getTileIndex(wRow, wCol - 1);
-				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				addDiagonalJumpMove(wIndex, target, bIndex);
 				// white northEast
 				target = getTileIndex(bRow, wCol + 1);
-				targetPath = getTileIndex(wRow, wCol + 1);
-				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				addDiagonalJumpMove(wIndex, target, bIndex);
 			}
 
 			// south jump for black
@@ -287,12 +300,10 @@ public class BoardGraph {
 			else {
 				// black southwest
 				target = getTileIndex(wRow, wCol - 1);
-				Integer targetPath = getTileIndex(bRow, bCol - 1);
-				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				addDiagonalJumpMove(bIndex, target, wIndex);
 				// Black southEast
 				target = getTileIndex(wRow, wCol + 1);
-				targetPath = getTileIndex(bRow, bCol + 1);
-				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				addDiagonalJumpMove(bIndex, target, wIndex);
 			}
 		}
 		// north for black / south for white
@@ -305,12 +316,10 @@ public class BoardGraph {
 			} else {
 				// white southwest
 				target = getTileIndex(bRow, wCol - 1);
-				Integer targetPath = getTileIndex(wRow, wCol - 1);
-				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				addDiagonalJumpMove(wIndex, target, bIndex);
 				// white southEast
 				target = getTileIndex(bRow, wCol + 1);
-				targetPath = getTileIndex(wRow, wCol + 1);
-				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				addDiagonalJumpMove(wIndex, target, bIndex);
 			}
 			// north jump for black
 			target = getTileIndex(wRow - 1, wCol);
@@ -321,12 +330,10 @@ public class BoardGraph {
 			else {
 				// black Northwest
 				target = getTileIndex(wRow, wCol - 1);
-				Integer targetPath = getTileIndex(bRow, bCol - 1);
-				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				addDiagonalJumpMove(bIndex, target, wIndex);
 				// Black northEast
 				target = getTileIndex(wRow, wCol + 1);
-				targetPath = getTileIndex(bRow, bCol + 1);
-				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				addDiagonalJumpMove(bIndex, target, wIndex);
 			}
 		}
 		// east for white and west for black
@@ -341,12 +348,10 @@ public class BoardGraph {
 			else {
 				// white southEast
 				target = getTileIndex(bRow + 1, bCol);
-				Integer targetPath = getTileIndex(wRow + 1, wCol);
-				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				addDiagonalJumpMove(wIndex, target, bIndex);
 				// white northEast
 				target = getTileIndex(bRow - 1, bCol);
-				targetPath = getTileIndex(wRow - 1, wCol);
-				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				addDiagonalJumpMove(wIndex, target, bIndex);
 			}
 			// west jump for black
 			target = getTileIndex(wRow, wCol - 1);
@@ -357,12 +362,10 @@ public class BoardGraph {
 			else {
 				// black northEast
 				target = getTileIndex(wRow + 1, wCol);
-				Integer targetPath = getTileIndex(bRow + 1, bCol);
-				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				addDiagonalJumpMove(bIndex, target, wIndex);
 				// black southEast
 				target = getTileIndex(wRow - 1, wCol);
-				targetPath = getTileIndex(bRow - 1, bCol);
-				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				addDiagonalJumpMove(bIndex, target, wIndex);
 			}
 
 		}
@@ -378,12 +381,10 @@ public class BoardGraph {
 			else {
 				// white southWest
 				target = getTileIndex(bRow + 1, bCol);
-				Integer targetPath = getTileIndex(wRow + 1, wCol);
-				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				addDiagonalJumpMove(wIndex, target, bIndex);
 				// white northWest
 				target = getTileIndex(bRow - 1, bCol);
-				targetPath = getTileIndex(wRow - 1, wCol);
-				addDiagonalJumpMove(wIndex, target, targetPath, bIndex);
+				addDiagonalJumpMove(wIndex, target, bIndex);
 			}
 			// west jump for black
 			target = getTileIndex(wRow, wCol + 1);
@@ -394,27 +395,34 @@ public class BoardGraph {
 			else {
 				// black northWest
 				target = getTileIndex(wRow + 1, wCol);
-				Integer targetPath = getTileIndex(bRow + 1, bCol);
-				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				addDiagonalJumpMove(bIndex, target, wIndex);
 				// black southWest
 				target = getTileIndex(wRow - 1, wCol);
-				targetPath = getTileIndex(bRow - 1, bCol);
-				addDiagonalJumpMove(bIndex, target, targetPath, wIndex);
+				addDiagonalJumpMove(bIndex, target, wIndex);
 			}
 		}
 	}
 
-	private void addDiagonalJumpMove(Integer playerIndex, Integer target, Integer targetPath, Integer opponentIndex) {
-		// L shaped path to target around the opponent
-		if (adj[playerIndex].contains(targetPath) && adj[target].contains(targetPath) && adj[target].contains(opponentIndex)) {
-			adj[playerIndex].add(target);
-		}
+	/**
+	 * Adds possible jump moves for specified player and target.
+	 * 
+	 * @param playerIndex
+	 *            position of player
+	 * @param target
+	 *            position of target
+	 * @param opponentIndex
+	 *            position of opponent
+	 */
+	private void addDiagonalJumpMove(Integer playerIndex, Integer target, Integer opponentIndex) {
 		// L shaped path to target through the opponent
-		if (adj[playerIndex].contains(opponentIndex) && adj[target].contains(opponentIndex)) {
+		if (target !=null && adj[playerIndex].contains(opponentIndex) && adj[target].contains(opponentIndex)) {
 			adj[playerIndex].add(target);
 		}
 	}
 
+	/**
+	 * Resets all the edges of the board to default
+	 */
 	private void resetEdges() {
 		// Then, create all the edges
 		for (int i = 1; i < 10; i++) {
