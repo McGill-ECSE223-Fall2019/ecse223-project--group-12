@@ -654,7 +654,7 @@ public class QuoridorController {
 	 * @param col
 	 * @return
 	 */
-	private static Tile getTile(int row, int col) {
+	public static Tile getTile(int row, int col) {
 		Iterator<Tile> itr = QuoridorApplication.getQuoridor().getBoard().getTiles().iterator();
 		while (itr.hasNext()) {
 			Tile t = itr.next();

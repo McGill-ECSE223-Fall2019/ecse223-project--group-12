@@ -9,6 +9,7 @@ class PawnBehavior {
     0..1 -> 0..1 Player player;
     pawnSM {
     	Playing {
+    		endGame -> GameOver;
 			Setup {
 				startGame[ getCurrentPawnRow() == 1 ] -> AtNorthEdge;
 				startGame[ getCurrentPawnColumn() == 9 ] -> AtEastEdge;
@@ -133,6 +134,9 @@ class PawnBehavior {
 					
 				moveDownRight [ isLegalJump(MoveDirection.SouthEast) && getCurrentPawnRow() == 8]-> /{jumpPawn(MoveDirection.SouthEast);} AtSouthEdge;
 				moveDownRight [ isLegalJump(MoveDirection.SouthEast) && getCurrentPawnRow() < 8]-> /{jumpPawn(MoveDirection.SouthEast);} InMiddle;
+			}
+			GameOver{
+			
 			}
 		}
 	}
@@ -261,7 +265,7 @@ class PawnBehavior {
 			newCol = col + 1;
 		}
 		
-		Tile targetTile = getTile(newRow, newCol);
+		Tile targetTile = QuoridorController.getTile(newRow, newCol);
  	 	if (player.hasGameAsWhite()) {
 			PlayerPosition newPos = new PlayerPosition(player, targetTile);
 			gp.setWhitePosition(newPos);
@@ -290,33 +294,23 @@ class PawnBehavior {
 		}
 		QuoridorController.confirmMove();
  	 }
- 	Tile getTile(int row, int col) {
-		Iterator<Tile> itr = currentGame.getQuoridor().getBoard().getTiles().iterator();
-		while (itr.hasNext()) {
-			Tile t = itr.next();
-			if (t.getRow() == row && t.getColumn() == col) {
-				return t;
-			}
-		}
-		return null;
-	}
 	Tile getTargetTile(Tile currentTile, MoveDirection dir){
 		if (dir == MoveDirection.East){
 			int newRow = currentTile.getRow();
 			int newCol = currentTile.getColumn() +1;
-			return getTile(newRow, newCol);
+			return QuoridorController.getTile(newRow, newCol);
 		} else if (dir == MoveDirection.West){
 			int newRow = currentTile.getRow();
 			int newCol = currentTile.getColumn() -1;
-			return getTile(newRow, newCol);
+			return QuoridorController.getTile(newRow, newCol);
 		} else if (dir == MoveDirection.South){
 			int newRow = currentTile.getRow() + 1;
 			int newCol = currentTile.getColumn();
-			return getTile(newRow, newCol);
+			return QuoridorController.getTile(newRow, newCol);
 		} else if (dir == MoveDirection.North){
 			int newRow = currentTile.getRow() - 1;
 			int newCol = currentTile.getColumn();
-			return getTile(newRow, newCol);
+			return QuoridorController.getTile(newRow, newCol);
 		}
 		return null;
 	}
