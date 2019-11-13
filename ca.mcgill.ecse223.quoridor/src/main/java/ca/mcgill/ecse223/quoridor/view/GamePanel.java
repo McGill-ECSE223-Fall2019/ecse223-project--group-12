@@ -476,6 +476,8 @@ public class GamePanel extends JPanel {
 		grabWallButton.setText("Grab Wall");
 		List<TileTO> adjTiles = QuoridorController.getAdjTiles();
 		if (!pawnMoveSelected) {
+			QuoridorController.switchMoveMode();
+			refreshData();
 			pawnMoveSelected = true;
 			for (TileTO adjTile : adjTiles) {
 				JButton tile = getTileSquare(adjTile.getRow(), adjTile.getCol());

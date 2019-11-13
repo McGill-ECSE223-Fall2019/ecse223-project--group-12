@@ -443,6 +443,10 @@ public class QuoridorController {
 			wall.getMove().delete();
 		}
 	}
+	
+	public static void switchMoveMode() {
+		QuoridorApplication.getQuoridor().getCurrentGame().setMoveMode(MoveMode.PlayerMove);
+	}
 
 	/*
 	 * Query Methods
