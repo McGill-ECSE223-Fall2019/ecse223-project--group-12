@@ -48,23 +48,23 @@ class PawnBehavior {
 				
 				// Down-Left
 				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnRow() < 8 && getCurrentPawnColumn() > 2]-> /{jumpPawn(MoveDirection.SouthWest);} InMiddle;	
-				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnRow() >= 8 && getCurrentPawnColumn() != 2]-> /{jumpPawn(MoveDirection.SouthWest);} AtSouthEdge;
-				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnColumn() <= 2]-> /{jumpPawn(MoveDirection.SouthWest);} AtWestEdge;
+				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnRow() >= 8]-> /{jumpPawn(MoveDirection.SouthWest);} AtSouthEdge;
+				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnColumn() <= 2 && getCurrentPawnRow() != 8]-> /{jumpPawn(MoveDirection.SouthWest);} AtWestEdge;
 				
 				// Down-Right
 				moveDownRight [ isLegalJump(MoveDirection.SouthEast)  && getCurrentPawnRow() < 8  && getCurrentPawnColumn() < 8]-> /{jumpPawn(MoveDirection.SouthEast);} InMiddle;
-				moveDownRight [ isLegalJump(MoveDirection.SouthEast)  && getCurrentPawnRow() >= 8 && getCurrentPawnColumn() != 8]-> /{jumpPawn(MoveDirection.SouthEast);} AtSouthEdge;
-				moveDownRight [ isLegalJump(MoveDirection.SouthEast)  && getCurrentPawnColumn() >= 8 ]-> /{jumpPawn(MoveDirection.SouthEast);} AtEastEdge;
+				moveDownRight [ isLegalJump(MoveDirection.SouthEast)  && getCurrentPawnRow() >= 8 ]-> /{jumpPawn(MoveDirection.SouthEast);} AtSouthEdge;
+				moveDownRight [ isLegalJump(MoveDirection.SouthEast)  && getCurrentPawnColumn() >= 8 && getCurrentPawnRow() != 8 ]-> /{jumpPawn(MoveDirection.SouthEast);} AtEastEdge;
 				
 				// Up-Right
 				moveUpRight [ isLegalJump(MoveDirection.NorthEast) && getCurrentPawnRow() > 2  && getCurrentPawnColumn() < 8]-> /{jumpPawn(MoveDirection.NorthEast);} InMiddle;
-				moveUpRight [ isLegalJump(MoveDirection.NorthEast) && getCurrentPawnRow() <= 2  && getCurrentPawnColumn() != 8 ]-> /{jumpPawn(MoveDirection.NorthEast);} AtNorthEdge;
-				moveUpRight [ isLegalJump(MoveDirection.NorthEast) && getCurrentPawnColumn() >= 8]-> /{jumpPawn(MoveDirection.NorthEast);} AtEastEdge;
+				moveUpRight [ isLegalJump(MoveDirection.NorthEast) && getCurrentPawnRow() <= 2 ]-> /{jumpPawn(MoveDirection.NorthEast);} AtNorthEdge;
+				moveUpRight [ isLegalJump(MoveDirection.NorthEast) && getCurrentPawnColumn() >= 8 && getCurrentPawnRow() != 2]-> /{jumpPawn(MoveDirection.NorthEast);} AtEastEdge;
 				
 				// Up-Left
 				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnRow() > 2  && getCurrentPawnColumn() > 2]-> /{jumpPawn(MoveDirection.NorthWest);} InMiddle;
-				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnRow() <= 2  && getCurrentPawnColumn() != 2]-> /{jumpPawn(MoveDirection.NorthWest);} AtNorthEdge;
-				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnColumn() <= 2]-> /{jumpPawn(MoveDirection.NorthWest);} AtWestEdge;
+				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnRow() <= 2 ]-> /{jumpPawn(MoveDirection.NorthWest);} AtNorthEdge;
+				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnColumn() <= 2  && getCurrentPawnRow() != 2]-> /{jumpPawn(MoveDirection.NorthWest);} AtWestEdge;
 							
 			}
 			AtNorthEdge{	
