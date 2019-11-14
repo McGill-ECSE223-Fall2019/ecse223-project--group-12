@@ -28,6 +28,7 @@ import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.InvalidMoveException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
+import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO.PlayerColor;
 import ca.mcgill.ecse223.quoridor.to.PlayerStatsTO;
@@ -223,6 +224,16 @@ public class GamePanel extends JPanel {
 		refreshPlayePositions();
 
 		invalidMoveLabel.setText("");
+		
+		if(QuoridorController.getGameStatus() == GameStatus.WhiteWon) {
+			JOptionPane.showMessageDialog(this.getParent(), "White Won!");
+			QuoridorController.destroyGame();
+			returnToMenu();
+		} else if(QuoridorController.getGameStatus() == GameStatus.BlackWon) {
+			JOptionPane.showMessageDialog(this.getParent(), "Black Won!");
+			QuoridorController.destroyGame();
+			returnToMenu();
+		}
 
 	}
 

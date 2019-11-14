@@ -9,6 +9,7 @@ public class QuoridorApplication {
 	
 	public static void main(String[] args) {
 		// start UI
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new QuoridorFrame().setVisible(true);          

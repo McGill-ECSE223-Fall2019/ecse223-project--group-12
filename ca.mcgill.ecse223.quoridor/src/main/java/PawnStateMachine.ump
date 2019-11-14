@@ -4,6 +4,7 @@ class PawnBehavior {
 	depend ca.mcgill.ecse223.quoridor.model.Tile;
 	depend ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 	depend ca.mcgill.ecse223.quoridor.model.GamePosition;
+	depend ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 	depend java.util.*;
     0..1 -> 0..1 Game currentGame;
     0..1 -> 0..1 Player player;
@@ -11,135 +12,193 @@ class PawnBehavior {
     	Playing {
     		endGame -> GameOver;
 			Setup {
-				startGame[ getCurrentPawnRow() == 1 ] -> AtNorthEdge;
-				startGame[ getCurrentPawnColumn() == 9 ] -> AtEastEdge;
-				startGame[ getCurrentPawnRow() == 9 ] -> AtSouthEdge;
-				startGame[ getCurrentPawnColumn() == 1 ] -> AtWestEdge;
-				startGame[ getCurrentPawnColumn() <= 8 &&  getCurrentPawnColumn() >= 1 && getCurrentPawnRow() <= 8 &&  getCurrentPawnRow() >= 1] -> InMiddle;	
+				// Set the initial state based on position
+				// Note the corners of the board are not accounted for state-wise, the guard takes care of this. We select south or north borders in corners since those can be winning positions
+				startGame[ getCurrentPawnRow() == 1 && getCurrentGame().getGameStatus() == GameStatus.Running] -> AtNorthEdge;
+				startGame[ getCurrentPawnColumn() == 9 && getCurrentGame().getGameStatus() == GameStatus.Running &&  getCurrentPawnRow() != 1 && getCurrentPawnRow() != 9] -> AtEastEdge;
+				startGame[ getCurrentPawnRow() == 9 && getCurrentGame().getGameStatus() == GameStatus.Running] -> AtSouthEdge;
+				startGame[ getCurrentPawnColumn() == 1 && getCurrentGame().getGameStatus() == GameStatus.Running&&  getCurrentPawnRow() != 1 && getCurrentPawnRow() != 9] -> AtWestEdge;
+				startGame[ getCurrentPawnColumn() <= 8 &&  getCurrentPawnColumn() >= 2 && getCurrentPawnRow() <= 8 &&  getCurrentPawnRow() >= 2 && getCurrentGame().getGameStatus() == GameStatus.Running] -> InMiddle;	
 			}
 			InMiddle{
-				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
+				// UP
+				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() <= 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() > 2 ]-> /{movePawn(MoveDirection.North);} InMiddle;
-				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() == 3] -> /{jumpPawn(MoveDirection.North);} AtNorthEdge;
-				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() > 3] -> /{jumpPawn(MoveDirection.North);} InMiddle;		
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() > 3] -> /{jumpPawn(MoveDirection.North);} InMiddle;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() <= 3] -> /{jumpPawn(MoveDirection.North);} AtNorthEdge;	
 				
-				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
+				
+				// Right
+				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() >= 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
 				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 8 ]-> /{movePawn(MoveDirection.East);} InMiddle;
 				moveRight [!isLegalStep(MoveDirection.East) && isLegalJump(MoveDirection.East) && getCurrentPawnColumn() < 7] -> /{jumpPawn(MoveDirection.East);} InMiddle;
-				moveRight [!isLegalStep(MoveDirection.East) && isLegalJump(MoveDirection.East) && getCurrentPawnColumn() == 7] -> /{jumpPawn(MoveDirection.East);} AtEastEdge;
+				moveRight [!isLegalStep(MoveDirection.East) && isLegalJump(MoveDirection.East) && getCurrentPawnColumn() >= 7] -> /{jumpPawn(MoveDirection.East);} AtEastEdge;
 				
-				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() == 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
+				// Down
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() >= 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
 				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} InMiddle;
-				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South) && getCurrentPawnRow() == 7] -> /{jumpPawn(MoveDirection.South);} AtSouthEdge;
 				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South) && getCurrentPawnRow() < 7] -> /{jumpPawn(MoveDirection.South);} InMiddle;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South) && getCurrentPawnRow() >= 7] -> /{jumpPawn(MoveDirection.South);} AtSouthEdge;
 				
-				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() == 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
+				// Left
+				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() <= 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
 				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() > 2 ]-> /{movePawn(MoveDirection.West);} InMiddle;
 				moveLeft [!isLegalStep(MoveDirection.West) && isLegalJump(MoveDirection.West) && getCurrentPawnColumn() > 3] -> /{jumpPawn(MoveDirection.West);} InMiddle;
-				moveLeft [!isLegalStep(MoveDirection.West) && isLegalJump(MoveDirection.West) && getCurrentPawnColumn() == 3] -> /{jumpPawn(MoveDirection.West);} AtWestEdge;
+				moveLeft [!isLegalStep(MoveDirection.West) && isLegalJump(MoveDirection.West) && getCurrentPawnColumn() <= 3] -> /{jumpPawn(MoveDirection.West);} AtWestEdge;
 				
-				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) ]-> /{jumpPawn(MoveDirection.SouthWest);} InMiddle;
-				moveDownRight [ isLegalJump(MoveDirection.SouthEast) ]-> /{jumpPawn(MoveDirection.SouthEast);} InMiddle;
-				moveUpRight [ isLegalJump(MoveDirection.NorthEast) ]-> /{jumpPawn(MoveDirection.NorthEast);} InMiddle;
-				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) ]-> /{jumpPawn(MoveDirection.NorthWest);} InMiddle;
+				// Down-Left
+				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnRow() < 8 && getCurrentPawnColumn() > 2]-> /{jumpPawn(MoveDirection.SouthWest);} InMiddle;	
+				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnRow() >= 8 && getCurrentPawnColumn() != 2]-> /{jumpPawn(MoveDirection.SouthWest);} AtSouthEdge;
+				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnColumn() <= 2]-> /{jumpPawn(MoveDirection.SouthWest);} AtWestEdge;
+				
+				// Down-Right
+				moveDownRight [ isLegalJump(MoveDirection.SouthEast)  && getCurrentPawnRow() < 8  && getCurrentPawnColumn() < 8]-> /{jumpPawn(MoveDirection.SouthEast);} InMiddle;
+				moveDownRight [ isLegalJump(MoveDirection.SouthEast)  && getCurrentPawnRow() >= 8 && getCurrentPawnColumn() != 8]-> /{jumpPawn(MoveDirection.SouthEast);} AtSouthEdge;
+				moveDownRight [ isLegalJump(MoveDirection.SouthEast)  && getCurrentPawnColumn() >= 8 ]-> /{jumpPawn(MoveDirection.SouthEast);} AtEastEdge;
+				
+				// Up-Right
+				moveUpRight [ isLegalJump(MoveDirection.NorthEast) && getCurrentPawnRow() > 2  && getCurrentPawnColumn() < 8]-> /{jumpPawn(MoveDirection.NorthEast);} InMiddle;
+				moveUpRight [ isLegalJump(MoveDirection.NorthEast) && getCurrentPawnRow() <= 2  && getCurrentPawnColumn() != 8 ]-> /{jumpPawn(MoveDirection.NorthEast);} AtNorthEdge;
+				moveUpRight [ isLegalJump(MoveDirection.NorthEast) && getCurrentPawnColumn() >= 8]-> /{jumpPawn(MoveDirection.NorthEast);} AtEastEdge;
+				
+				// Up-Left
+				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnRow() > 2  && getCurrentPawnColumn() > 2]-> /{jumpPawn(MoveDirection.NorthWest);} InMiddle;
+				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnRow() <= 2  && getCurrentPawnColumn() != 2]-> /{jumpPawn(MoveDirection.NorthWest);} AtNorthEdge;
+				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnColumn() <= 2]-> /{jumpPawn(MoveDirection.NorthWest);} AtWestEdge;
 							
 			}
-			AtNorthEdge{
+			AtNorthEdge{	
+				// Check if game was won
+				entry  /{checkWinningMove();}
+				
+				// illegal moves
 				moveUp / { illegalMove(); } -> AtNorthEdge;
 				moveUpRight / { illegalMove(); } -> AtNorthEdge;
 				moveUpLeft / { illegalMove(); } -> AtNorthEdge;
 				
+				// Moves away from edge
 				moveDown [ isLegalStep(MoveDirection.South) ]-> /{movePawn(MoveDirection.South);} InMiddle;
 				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South)] -> /{jumpPawn(MoveDirection.South);} InMiddle;
 				
-				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
+				// Possible Moves Along the Edge
+				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() >= 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
 				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 8 ]-> /{movePawn(MoveDirection.East);} AtNorthEdge;
 				moveRight [!isLegalStep(MoveDirection.East) && isLegalJump(MoveDirection.East) ] -> /{jumpPawn(MoveDirection.East);} AtNorthEdge;
 				
-				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() == 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
+				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() <= 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
 				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() > 2 ]-> /{movePawn(MoveDirection.West);} AtNorthEdge;
 				moveLeft [!isLegalStep(MoveDirection.West) && isLegalJump(MoveDirection.West) ] -> /{jumpPawn(MoveDirection.West);} AtNorthEdge;
 				
-				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnColumn() == 2 ]-> /{jumpPawn(MoveDirection.SouthWest);} AtWestEdge;
+				// Possible Digonal moves
+				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnColumn() <= 2 ]-> /{jumpPawn(MoveDirection.SouthWest);} AtWestEdge;
 				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnColumn() > 2 ]-> /{jumpPawn(MoveDirection.SouthWest);} InMiddle;
 				
-				moveDownRight [ isLegalJump(MoveDirection.SouthEast) && getCurrentPawnColumn() == 8]-> /{jumpPawn(MoveDirection.SouthEast);} AtEastEdge;
+				moveDownRight [ isLegalJump(MoveDirection.SouthEast) && getCurrentPawnColumn() >= 8]-> /{jumpPawn(MoveDirection.SouthEast);} AtEastEdge;
 				moveDownRight [ isLegalJump(MoveDirection.SouthEast) && getCurrentPawnColumn() < 8]-> /{jumpPawn(MoveDirection.SouthEast);} InMiddle;
 					
 			}
 			AtEastEdge {
+				// illegal moves
 				moveRight / { illegalMove(); } -> AtEastEdge;
 				moveDownRight / { illegalMove(); } -> AtEastEdge;
 				moveUpRight / { illegalMove(); } -> AtEastEdge;
 				
+				// Moves away from edge
 				moveLeft [ isLegalStep(MoveDirection.West) ]-> /{movePawn(MoveDirection.West);} InMiddle;
 				moveLeft [!isLegalStep(MoveDirection.West) && isLegalJump(MoveDirection.West) ] -> /{jumpPawn(MoveDirection.West);} InMiddle;	
 				
-				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
+				// Possible Moves Along the Edge
+				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() <= 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() > 2 ]-> /{movePawn(MoveDirection.North);} AtEastEdge;
-				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North)] -> /{jumpPawn(MoveDirection.North);} AtEastEdge;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() > 3] -> /{jumpPawn(MoveDirection.North);} AtEastEdge;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() <= 2] -> /{jumpPawn(MoveDirection.North);} AtNorthEdge;
 				
-				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() == 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() >= 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
 				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} AtEastEdge;
-				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South)] -> /{jumpPawn(MoveDirection.South);} AtEastEdge;
-					
-				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnRow() == 8 ]-> /{jumpPawn(MoveDirection.SouthWest);} AtSouthEdge;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South) && getCurrentPawnRow() >= 7] -> /{jumpPawn(MoveDirection.South);} AtSouthEdge;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South) && getCurrentPawnRow() < 7] -> /{jumpPawn(MoveDirection.South);} AtEastEdge;
+				
+				// Possible Digonal moves	
+				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnRow() >= 8 ]-> /{jumpPawn(MoveDirection.SouthWest);} AtSouthEdge;
 				moveDownLeft [ isLegalJump(MoveDirection.SouthWest) && getCurrentPawnRow() < 8 ]-> /{jumpPawn(MoveDirection.SouthWest);} InMiddle;
 				
-				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnRow() == 2 ]-> /{jumpPawn(MoveDirection.NorthWest);} AtNorthEdge;
+				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnRow() <= 2 ]-> /{jumpPawn(MoveDirection.NorthWest);} AtNorthEdge;
 				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnRow() > 2 ]-> /{jumpPawn(MoveDirection.NorthWest);} InMiddle;
 				
 			}
 			AtSouthEdge{
+				// Check if game was won
+				entry  /{checkWinningMove();}
+				
+				// illegal moves
 				moveDown / { illegalMove(); } -> AtSouthEdge;
 				moveDownLeft / { illegalMove(); } -> AtSouthEdge;
 				moveDownRight / { illegalMove(); } -> AtSouthEdge;
 				
+				// Moves away from edge
 				moveUp [ isLegalStep(MoveDirection.North) ]-> /{movePawn(MoveDirection.North);} InMiddle;
 				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North)] -> /{jumpPawn(MoveDirection.North);} InMiddle;
 				
-				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() == 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
+				// Possible Moves Along the Edge
+				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() >= 8 ] -> /{movePawn(MoveDirection.East);} AtEastEdge;
 				moveRight [ isLegalStep(MoveDirection.East) && getCurrentPawnColumn() < 8 ]-> /{movePawn(MoveDirection.East);} AtSouthEdge;
 				moveRight [!isLegalStep(MoveDirection.East) && isLegalJump(MoveDirection.East) ] -> /{jumpPawn(MoveDirection.East);} AtSouthEdge;
 				
-				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() == 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
+				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() <= 2 ] -> /{movePawn(MoveDirection.West);} AtWestEdge;
 				moveLeft [ isLegalStep(MoveDirection.West) && getCurrentPawnColumn() > 2 ]-> /{movePawn(MoveDirection.West);} AtSouthEdge;
 				moveLeft [!isLegalStep(MoveDirection.West) && isLegalJump(MoveDirection.West) ] -> /{jumpPawn(MoveDirection.West);} AtSouthEdge;
 				
-				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnColumn() == 2 ]-> /{jumpPawn(MoveDirection.NorthWest);} AtWestEdge;
+				// Possible Digonal moves	
+				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnColumn() <= 2 ]-> /{jumpPawn(MoveDirection.NorthWest);} AtWestEdge;
 				moveUpLeft [ isLegalJump(MoveDirection.NorthWest) && getCurrentPawnColumn() > 2 ]-> /{jumpPawn(MoveDirection.NorthWest);} InMiddle;
 				
-				moveUpRight [ isLegalJump(MoveDirection.NorthEast)  && getCurrentPawnColumn() == 8 ]-> /{jumpPawn(MoveDirection.NorthEast);} AtEastEdge;
+				moveUpRight [ isLegalJump(MoveDirection.NorthEast)  && getCurrentPawnColumn() >= 8 ]-> /{jumpPawn(MoveDirection.NorthEast);} AtEastEdge;
 				moveUpRight [ isLegalJump(MoveDirection.NorthEast)  && getCurrentPawnColumn() < 8 ]-> /{jumpPawn(MoveDirection.NorthEast);} InMiddle;
 					
 			}
 			AtWestEdge{
+				// illegal moves
 				moveLeft / { illegalMove(); } -> AtWestEdge;
 				moveUpLeft / { illegalMove(); } -> AtSouthEdge;
 				moveDownLeft / { illegalMove(); } -> AtSouthEdge;
 				
+				// Moves away from edge
 				moveRight [ isLegalStep(MoveDirection.East) ]-> /{movePawn(MoveDirection.East);} InMiddle;
 				moveRight [!isLegalStep(MoveDirection.East) && isLegalJump(MoveDirection.East) ] -> /{jumpPawn(MoveDirection.East);} InMiddle;
 
-				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() == 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
+				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() <= 2 ] -> /{movePawn(MoveDirection.North);} AtNorthEdge;
 				moveUp [ isLegalStep(MoveDirection.North) && getCurrentPawnRow() > 2 ]-> /{movePawn(MoveDirection.North);} AtWestEdge;
-				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North)] -> /{jumpPawn(MoveDirection.North);} AtWestEdge;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() <= 3 ] -> /{jumpPawn(MoveDirection.North);} AtNorthEdge;
+				moveUp [!isLegalStep(MoveDirection.North) && isLegalJump(MoveDirection.North) && getCurrentPawnRow() > 3] -> /{jumpPawn(MoveDirection.North);} AtWestEdge;
 					
-				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() == 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
+				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() >= 8 ] -> /{movePawn(MoveDirection.South);} AtSouthEdge;
 				moveDown [ isLegalStep(MoveDirection.South) && getCurrentPawnRow() < 8 ]-> /{movePawn(MoveDirection.South);} AtWestEdge;
-				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South)] -> /{jumpPawn(MoveDirection.South);} AtWestEdge;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South) && getCurrentPawnRow() >= 7] -> /{jumpPawn(MoveDirection.South);} AtSouthEdge;
+				moveDown [!isLegalStep(MoveDirection.South) && isLegalJump(MoveDirection.South) && getCurrentPawnRow() < 8 ] -> /{jumpPawn(MoveDirection.South);} AtWestEdge;
 				
-				moveUpRight [ isLegalJump(MoveDirection.NorthEast)  && getCurrentPawnRow() == 2 ]-> /{jumpPawn(MoveDirection.NorthEast);} AtNorthEdge;
+				// Possible Digonal moves	
+				moveUpRight [ isLegalJump(MoveDirection.NorthEast)  && getCurrentPawnRow() <= 2 ]-> /{jumpPawn(MoveDirection.NorthEast);} AtNorthEdge;
 				moveUpRight [ isLegalJump(MoveDirection.NorthEast)  && getCurrentPawnRow() > 2 ]-> /{jumpPawn(MoveDirection.NorthEast);} InMiddle;
 					
-				moveDownRight [ isLegalJump(MoveDirection.SouthEast) && getCurrentPawnRow() == 8]-> /{jumpPawn(MoveDirection.SouthEast);} AtSouthEdge;
+				moveDownRight [ isLegalJump(MoveDirection.SouthEast) && getCurrentPawnRow() >= 8]-> /{jumpPawn(MoveDirection.SouthEast);} AtSouthEdge;
 				moveDownRight [ isLegalJump(MoveDirection.SouthEast) && getCurrentPawnRow() < 8]-> /{jumpPawn(MoveDirection.SouthEast);} InMiddle;
-			}
-			GameOver{
-			
-			}
+			}	
+		}
+		GameOver{
+			entry  /{setWinner();}
 		}
 	}
+	
+	void checkWinningMove(){
+		if (player.hasGameAsWhite() && currentGame.getCurrentPosition().getWhitePosition().getTile().getRow() == 1) {
+			currentGame.setGameStatus(GameStatus.WhiteWon);
+		} else  if (player.hasGameAsBlack() && currentGame.getCurrentPosition().getBlackPosition().getTile().getRow() == 9) {
+			currentGame.setGameStatus(GameStatus.BlackWon);
+		}
+	}
+	void setWinner(){
+	}
+	
     // Returns the current row number of the pawn
     int getCurrentPawnRow() {
 		if (player.hasGameAsWhite()) {
@@ -155,6 +214,22 @@ class PawnBehavior {
 		} else {
 			return currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
 		}
+	}
+	boolean isWhiteWinningMove() {
+		System.out.println("white");
+		if (player.hasGameAsWhite()) {
+		System.out.println("white");
+			return true;
+		} 
+		return false;
+	}
+	boolean isBlackWinningMove() {
+		if (player.hasGameAsBlack()) {
+		System.out.println("black");
+			return true;
+		} 
+		return false;
+		
 	}
     // Returns if it is legal to step in the given direction
     boolean isLegalStep(MoveDirection dir) {
@@ -180,6 +255,7 @@ class PawnBehavior {
 		bg.syncWallEdges();
 		bg.syncStepMoves();
 		if(bg.isAdjacent(row,col,newRow,newCol)){
+			System.out.println(this.getPawnSMPlaying() +"  legal step, row: " + row +"col: " +col + "  " + dir + " to row:" +newRow + " col:" +newCol);
 			return true;
 		}else{
 			return false;
@@ -187,6 +263,7 @@ class PawnBehavior {
     }
     // Returns if it is legal to jump in the given direction
     boolean isLegalJump(MoveDirection dir) {
+    	
         int row = getCurrentPawnRow();
     	int col = getCurrentPawnColumn();
     	int newRow = row; // initial values to be updated
@@ -222,14 +299,16 @@ class PawnBehavior {
     	BoardGraph bg = new BoardGraph();
 		bg.syncJumpMoves();
 		if(bg.isAdjacent(row,col,newRow,newCol)){
+			System.out.println(this.getPawnSMPlaying() +"  legal jump, row:" + row +" col: " +col + "  " + dir + " to row:" +newRow + " col:" +newCol);
 			return true;
 		}else{
 			return false;
 		}
     }
     // Action to be called when an illegal move is attempted
-    void illegalMove() throws InvalidMoveException{
-    	throw new InvalidMoveException("Illegal move!");
+    void illegalMove(){
+    	// We cant throw an exception here since doing so would set the current state to null
+    	// throw new InvalidMoveException("Illegal move!");
  	 }
  	 void jumpPawn(MoveDirection dir){
  	  	GamePosition gp = currentGame.getCurrentPosition();
