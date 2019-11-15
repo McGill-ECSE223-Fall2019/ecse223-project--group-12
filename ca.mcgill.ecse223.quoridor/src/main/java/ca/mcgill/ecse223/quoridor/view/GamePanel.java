@@ -87,6 +87,8 @@ public class GamePanel extends JPanel {
 	private boolean togglePath = false;
 
 	List<TileTO> pathAnimation;
+	List<TileTO> traversalAnimation;
+	int colrindex = 255;
 
 	public GamePanel() {
 		initComponents();
@@ -143,10 +145,21 @@ public class GamePanel extends JPanel {
 			public void actionPerformed(ActionEvent evt) {
 
 				if (paintDelay.isRunning() && pathAnimation != null && !pathAnimation.isEmpty()) {
-					TileTO adjTile = pathAnimation.get(0);
-					JButton tile = getTileSquare(adjTile.getRow(), adjTile.getCol());
-					tile.setBackground(wallCandidateColor);
-					pathAnimation.remove(0);
+					if (!traversalAnimation.isEmpty()) {
+						if (colrindex > 5) {
+							colrindex -= 5;
+						}
+						TileTO adjTile = traversalAnimation.get(0);
+						JButton tile = getTileSquare(adjTile.getRow(), adjTile.getCol());
+						tile.setBackground(new Color(52, colrindex, 235));
+						traversalAnimation.remove(0);
+					} else {
+
+						TileTO adjTile = pathAnimation.get(0);
+						JButton tile = getTileSquare(adjTile.getRow(), adjTile.getCol());
+						tile.setBackground(wallCandidateColor);
+						pathAnimation.remove(0);
+					}
 				}
 			}
 		});
@@ -586,9 +599,11 @@ public class GamePanel extends JPanel {
 	private void togglePathActionPerformed() {
 		if (!togglePath) {
 			pathAnimation = QuoridorController.getPath();
+			traversalAnimation = QuoridorController.getVisited();
+			colrindex = 255;
 			refreshData();
 			paintDelay.start();
-			togglePath =true;
+			togglePath = true;
 		} else {
 			paintDelay.stop();
 			refreshData();

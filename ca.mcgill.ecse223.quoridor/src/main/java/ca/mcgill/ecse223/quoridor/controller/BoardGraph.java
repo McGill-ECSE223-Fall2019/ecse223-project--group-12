@@ -311,6 +311,65 @@ public class BoardGraph {
 		// no path was found, return false
 		return null;
 	}
+	
+	/**
+	 * Checks if a path exists to the destination
+	 *
+	 * @param startRow
+	 *            row position of player
+	 * @param startCol
+	 *            row position of player
+	 * @param destination
+	 *            the winning position for player (1 or 9 for two player)
+	 * @return
+	 */
+	public List<Integer> getTraversalOrder(int startRow, int startCol, int destination) {
+		int currentNode = getTileIndex(startRow, startCol);
+		
+		List<Integer> visitedOrder = new ArrayList<Integer>();
+		
+		
+		// Mark the tile nodes as unvisited (initialized to false)
+		boolean visited[] = new boolean[tileNodes];
+		// Create a queue for BFS
+		Queue<List<Integer>> queue = new LinkedList<>();
+		// Mark the source tile node as visited and add it to queue
+		visited[currentNode] = true;
+		
+		List<Integer> path = new ArrayList<Integer>();
+		path.add(currentNode);
+		queue.add(path);
+		
+		//queue.add(currentNode);
+		while (queue.size() != 0) {
+			path = queue.poll();
+			currentNode = path.get(path.size()-1);
+			visitedOrder.add(currentNode);
+			// Dequeue a tile node
+			//currentNode = queue.poll();
+			// Check if the source tile node is a winning position
+			for (int i = 1; i < 10; i++) {
+				if (currentNode == getTileIndex(destination, i)) {
+					System.out.println(path.toString());
+					return visitedOrder;
+				}
+			}
+			// iterate through adjacent tiles at source tile node
+			Iterator<Integer> adjTiles = adj[currentNode].listIterator();
+			while (adjTiles.hasNext()) {
+				Integer adjTile = adjTiles.next();
+				// visit the tile node and add it to the queue if it has not been visited
+				if (!visited[adjTile]) {
+					visited[adjTile] = true;
+					List<Integer> pathToNextNode = new ArrayList<Integer>(path);
+					pathToNextNode.add(adjTile);
+					queue.add(pathToNextNode);
+				}
+			}
+		}
+		// no path was found, return false
+		return null;
+	}
 
 	// ------------------------
 	// PRIVATE HELPER METHODS

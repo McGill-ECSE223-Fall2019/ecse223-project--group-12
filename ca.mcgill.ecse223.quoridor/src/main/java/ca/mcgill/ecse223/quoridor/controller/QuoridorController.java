@@ -629,6 +629,32 @@ public class QuoridorController {
 		return adjTiles;
 
 	}
+	public static List<TileTO> getVisited() {
+		List<TileTO> adjTiles = new ArrayList<TileTO>();
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		PlayerPosition pos;
+		Integer dest;
+		if (p.hasGameAsWhite()) {
+			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
+			dest = 1;
+		} else {
+			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
+			dest = 9;
+		}
+		int row = pos.getTile().getRow();
+		int col = pos.getTile().getColumn();
+		BoardGraph bg = new BoardGraph();
+		bg.syncJumpMoves();
+		List<Integer> adjTileNodes = bg.getTraversalOrder(row, col, dest);
+		for (Integer adjTileNode : adjTileNodes) {
+			int adjRow = adjTileNode / 9 + 1;
+			int adjCol = adjTileNode % 9 + 1;
+			TileTO tileTO = new TileTO(adjRow, adjCol);
+			adjTiles.add(tileTO);
+		}
+		return adjTiles;
+
+	}
 
 	public static PlayerPositionTO getCurrentPlayerPosition() {
 		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
