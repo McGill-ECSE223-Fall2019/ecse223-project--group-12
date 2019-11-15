@@ -328,10 +328,9 @@ public class QuoridorController {
 		// Create a graph representation of the board
 		BoardGraph bg = new BoardGraph();
 		bg.syncWallEdges();
-
 		// check if the path exists
-		boolean whitePath = bg.pathExists(whiteRow, whiteCol, whiteDest);
-		boolean blackPath = bg.pathExists(blackRow, blackCol, blackDest);
+		boolean whitePath = (bg.getBFSPath(whiteRow, whiteCol, whiteDest) != null);
+		boolean blackPath = (bg.getBFSPath(blackRow, blackCol, blackDest) != null);
 		boolean[] result = { whitePath, blackPath };
 		return result;
 	}
@@ -579,83 +578,68 @@ public class QuoridorController {
 		return null;
 	}
 
+	/**
+	 * Gets a list of tile that are adjacent (including jump moves) to the current
+	 * player
+	 * 
+	 * @return
+	 */
 	public static List<TileTO> getAdjTiles() {
 		List<TileTO> adjTiles = new ArrayList<TileTO>();
-		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
-		PlayerPosition pos;
-		if (p.hasGameAsWhite()) {
-			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
-		} else {
-			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
-		}
-		int row = pos.getTile().getRow();
-		int col = pos.getTile().getColumn();
+		Integer[] position = getCurrentPosition();
+		int row = position[0];
+		int col = position[1];
 		BoardGraph bg = new BoardGraph();
 		bg.syncJumpMoves();
 		List<Integer> adjTileNodes = bg.getAdjacentNodes(row, col);
-		for (Integer adjTileNode : adjTileNodes) {
-			int adjRow = adjTileNode / 9 + 1;
-			int adjCol = adjTileNode % 9 + 1;
-			TileTO tileTO = new TileTO(adjRow, adjCol);
-			adjTiles.add(tileTO);
-		}
+		adjTiles = toTileTO(adjTileNodes);
 		return adjTiles;
 
 	}
-	
+
+	/**
+	 * Gets the shortest path between the current players position and his
+	 * destination
+	 * 
+	 * @return
+	 */
 	public static List<TileTO> getPath() {
-		List<TileTO> adjTiles = new ArrayList<TileTO>();
-		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
-		PlayerPosition pos;
-		Integer dest;
-		if (p.hasGameAsWhite()) {
-			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
-			dest = 1;
-		} else {
-			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
-			dest = 9;
-		}
-		int row = pos.getTile().getRow();
-		int col = pos.getTile().getColumn();
+		List<TileTO> path = new ArrayList<TileTO>();
+		Integer[] position = getCurrentPosition();
+		Integer dest = position[2];
+		int row = position[0];
+		int col = position[1];
 		BoardGraph bg = new BoardGraph();
 		bg.syncJumpMoves();
-		List<Integer> adjTileNodes = bg.getPath(row, col, dest);
-		for (Integer adjTileNode : adjTileNodes) {
-			int adjRow = adjTileNode / 9 + 1;
-			int adjCol = adjTileNode % 9 + 1;
-			TileTO tileTO = new TileTO(adjRow, adjCol);
-			adjTiles.add(tileTO);
-		}
-		return adjTiles;
+		List<Integer> pathNodes = bg.getBFSPath(row, col, dest).get(0);
+		path = toTileTO(pathNodes);
+		return path;
 
 	}
+
+	/**
+	 * Gets the order of the visited nodes for a BFS traversal (For animation)
+	 * 
+	 * @return
+	 */
 	public static List<TileTO> getVisited() {
-		List<TileTO> adjTiles = new ArrayList<TileTO>();
-		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
-		PlayerPosition pos;
-		Integer dest;
-		if (p.hasGameAsWhite()) {
-			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
-			dest = 1;
-		} else {
-			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
-			dest = 9;
-		}
-		int row = pos.getTile().getRow();
-		int col = pos.getTile().getColumn();
+		List<TileTO> visitedTiles = new ArrayList<TileTO>();
+		Integer[] position = getCurrentPosition();
+		Integer dest = position[2];
+		int row = position[0];
+		int col = position[1];
 		BoardGraph bg = new BoardGraph();
 		bg.syncJumpMoves();
-		List<Integer> adjTileNodes = bg.getTraversalOrder(row, col, dest);
-		for (Integer adjTileNode : adjTileNodes) {
-			int adjRow = adjTileNode / 9 + 1;
-			int adjCol = adjTileNode % 9 + 1;
-			TileTO tileTO = new TileTO(adjRow, adjCol);
-			adjTiles.add(tileTO);
-		}
-		return adjTiles;
-
+		List<Integer> visitedNodes = bg.getBFSPath(row, col, dest).get(1);
+		visitedTiles = toTileTO(visitedNodes);
+		return visitedTiles;
 	}
 
+	/**
+	 * Gets the position of the current Player
+	 * 
+	 * @return
+	 */
 	public static PlayerPositionTO getCurrentPlayerPosition() {
 		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
 		PlayerPosition pos;
@@ -730,6 +714,47 @@ public class QuoridorController {
 		}
 		throw new java.lang.IllegalArgumentException("tile does not exist:  row=" + row + " col=" + col);
 
+	}
+
+	/**
+	 * Gets the current position of the player represented as an array
+	 * 
+	 * @return an array containing the player position: {row, column, destination}
+	 */
+	private static Integer[] getCurrentPosition() {
+		PlayerPosition pos;
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+
+		Integer dest;
+		if (p.hasGameAsWhite()) {
+			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition();
+			dest = 1;
+		} else {
+			pos = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition();
+			dest = 9;
+		}
+		int row = pos.getTile().getRow();
+		int col = pos.getTile().getColumn();
+
+		Integer[] position = { row, col, dest };
+		return position;
+	}
+
+	/**
+	 * Converts a list of TileNodes to a list of TIleTOs
+	 * 
+	 * @param tileNodes
+	 * @return
+	 */
+	private static List<TileTO> toTileTO(List<Integer> tileNodes) {
+		List<TileTO> tiles = new ArrayList<TileTO>();
+		for (Integer tileNode : tileNodes) {
+			int adjRow = tileNode / 9 + 1;
+			int adjCol = tileNode % 9 + 1;
+			TileTO tileTO = new TileTO(adjRow, adjCol);
+			tiles.add(tileTO);
+		}
+		return tiles;
 	}
 
 	// ------------------------
@@ -1366,9 +1391,9 @@ public class QuoridorController {
 	public static void movePawn(String side) {
 		movePawn(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(), side);
 	}
+
 	public static GameStatus getGameStatus() {
 		return QuoridorApplication.getQuoridor().getCurrentGame().getGameStatus();
 	}
-	
 
 }
