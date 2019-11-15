@@ -520,6 +520,14 @@ public class QuoridorController {
 		playerPositions.add(black);
 		return playerPositions;
 	}
+	/**
+	 * Gets the current Status of the game
+	 * @author Remi Carriere
+	 * @return
+	 */
+	public static GameStatus getGameStatus() {
+		return QuoridorApplication.getQuoridor().getCurrentGame().getGameStatus();
+	}
 
 	/**
 	 * Gets a list of all Users of the Quoridor Application so that players can
@@ -581,7 +589,7 @@ public class QuoridorController {
 	/**
 	 * Gets a list of tile that are adjacent (including jump moves) to the current
 	 * player
-	 * 
+	 * @author Remi Carriere
 	 * @return
 	 */
 	public static List<TileTO> getAdjTiles() {
@@ -600,7 +608,7 @@ public class QuoridorController {
 	/**
 	 * Gets the shortest path between the current players position and his
 	 * destination
-	 * 
+	 * @author Remi Carriere
 	 * @return
 	 */
 	public static List<TileTO> getPath() {
@@ -619,7 +627,7 @@ public class QuoridorController {
 
 	/**
 	 * Gets the order of the visited nodes for a BFS traversal (For animation)
-	 * 
+	 * @author Remi Carriere
 	 * @return
 	 */
 	public static List<TileTO> getVisited() {
@@ -637,7 +645,7 @@ public class QuoridorController {
 
 	/**
 	 * Gets the position of the current Player
-	 * 
+	 * @author Remi Carriere
 	 * @return
 	 */
 	public static PlayerPositionTO getCurrentPlayerPosition() {
@@ -718,7 +726,7 @@ public class QuoridorController {
 
 	/**
 	 * Gets the current position of the player represented as an array
-	 * 
+	 * @author Remi Carriere
 	 * @return an array containing the player position: {row, column, destination}
 	 */
 	private static Integer[] getCurrentPosition() {
@@ -742,7 +750,7 @@ public class QuoridorController {
 
 	/**
 	 * Converts a list of TileNodes to a list of TIleTOs
-	 * 
+	 * @author Remi Carriere
 	 * @param tileNodes
 	 * @return
 	 */
@@ -1310,6 +1318,13 @@ public class QuoridorController {
 	// ------------------------
 	// Team
 	// ------------------------
+	
+	/**
+	 * Moves A specified player in the specified direction (including possible jump moves)
+	 * @param p
+	 * @param side
+	 * @return
+	 */
 	public static boolean movePawn(Player p, String side) {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		GameStatus gameStatus = game.getGameStatus();
@@ -1371,7 +1386,21 @@ public class QuoridorController {
 		pawnBehavior.endGame();
 		return false;
 	}
-
+	/**
+	 * Moves the current player in the specified direction (including possible jump moves)
+	 * @param side
+	 */
+	public static void movePawn(String side) {
+		movePawn(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(), side);
+	}
+	
+	/*
+	 * Private Helper Methods
+	 */
+	
+	/**
+	 * Starts the Pawn State Machines
+	 */
 	private static void initPawnMachines() {
 		Player white = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
 		Player black = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer();
@@ -1388,12 +1417,8 @@ public class QuoridorController {
 		blackBehavior.startGame();
 	}
 
-	public static void movePawn(String side) {
-		movePawn(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(), side);
-	}
+	
 
-	public static GameStatus getGameStatus() {
-		return QuoridorApplication.getQuoridor().getCurrentGame().getGameStatus();
-	}
+	
 
 }
