@@ -520,8 +520,10 @@ public class QuoridorController {
 		playerPositions.add(black);
 		return playerPositions;
 	}
+
 	/**
 	 * Gets the current Status of the game
+	 * 
 	 * @author Remi Carriere
 	 * @return
 	 */
@@ -589,6 +591,7 @@ public class QuoridorController {
 	/**
 	 * Gets a list of tile that are adjacent (including jump moves) to the current
 	 * player
+	 * 
 	 * @author Remi Carriere
 	 * @return
 	 */
@@ -608,6 +611,7 @@ public class QuoridorController {
 	/**
 	 * Gets the shortest path between the current players position and his
 	 * destination
+	 * 
 	 * @author Remi Carriere
 	 * @return
 	 */
@@ -627,6 +631,7 @@ public class QuoridorController {
 
 	/**
 	 * Gets the order of the visited nodes for a BFS traversal (For animation)
+	 * 
 	 * @author Remi Carriere
 	 * @return
 	 */
@@ -645,6 +650,7 @@ public class QuoridorController {
 
 	/**
 	 * Gets the position of the current Player
+	 * 
 	 * @author Remi Carriere
 	 * @return
 	 */
@@ -726,6 +732,7 @@ public class QuoridorController {
 
 	/**
 	 * Gets the current position of the player represented as an array
+	 * 
 	 * @author Remi Carriere
 	 * @return an array containing the player position: {row, column, destination}
 	 */
@@ -750,6 +757,7 @@ public class QuoridorController {
 
 	/**
 	 * Converts a list of TileNodes to a list of TIleTOs
+	 * 
 	 * @author Remi Carriere
 	 * @param tileNodes
 	 * @return
@@ -1205,9 +1213,11 @@ public class QuoridorController {
 
 			gp.removeBlackWallsInStock(w); // remove garbbed wall from stock
 		}
-		WallMove wm = new WallMove(0, 0, p, tile, g, Direction.Vertical, w);
-		g.setWallMoveCandidate(wm);
-		g.setMoveMode(MoveMode.WallMove);
+		if (!p.getRemainingTime().equals(Time.valueOf("00:00:00"))) {
+			WallMove wm = new WallMove(0, 0, p, tile, g, Direction.Vertical, w);
+			g.setWallMoveCandidate(wm);
+			g.setMoveMode(MoveMode.WallMove);
+		}
 	}
 
 	/**
@@ -1224,7 +1234,8 @@ public class QuoridorController {
 		Wall wall = wallMove.getWallPlaced();
 		Player p = gp.getPlayerToMove();
 		boolean[] pathsExist = validatePath();
-		if (validatePosition() && pathsExist[0] && pathsExist[1]) { // check if wall move is valid
+		if (validatePosition() && pathsExist[0] && pathsExist[1]
+				&& !p.getRemainingTime().equals(Time.valueOf("00:00:00"))) { // check if wall move is valid
 			if (p.hasGameAsWhite()) {
 				gp.addWhiteWallsOnBoard(wall);
 			} else if (p.hasGameAsBlack()) {
@@ -1274,7 +1285,8 @@ public class QuoridorController {
 
 	public static void moveWall(String side) throws InvalidInputException {
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
-		if (wm != null) {
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		if (wm != null && !p.getRemainingTime().equals(Time.valueOf("00:00:00"))) {
 			if (side.contains("up")) {
 				int urow = wm.getTargetTile().getRow() - 1;
 				int ucol = wm.getTargetTile().getColumn();
@@ -1318,9 +1330,11 @@ public class QuoridorController {
 	// ------------------------
 	// Team
 	// ------------------------
-	
+
 	/**
-	 * Moves A specified player in the specified direction (including possible jump moves)
+	 * Moves A specified player in the specified direction (including possible jump
+	 * moves)
+	 * 
 	 * @param p
 	 * @param side
 	 * @return
@@ -1344,7 +1358,7 @@ public class QuoridorController {
 		}
 
 		// Call actions of state machine
-		if (gameStatus == GameStatus.Running) {
+		if (gameStatus == GameStatus.Running && !p.getRemainingTime().equals(Time.valueOf("00:00:00"))) {
 			if (side.equals("right")) {
 				boolean b = (pawnBehavior.isLegalStep(MoveDirection.East)
 						|| pawnBehavior.isLegalJump(MoveDirection.East));
@@ -1386,18 +1400,21 @@ public class QuoridorController {
 		pawnBehavior.endGame();
 		return false;
 	}
+
 	/**
-	 * Moves the current player in the specified direction (including possible jump moves)
+	 * Moves the current player in the specified direction (including possible jump
+	 * moves)
+	 * 
 	 * @param side
 	 */
 	public static void movePawn(String side) {
 		movePawn(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(), side);
 	}
-	
+
 	/*
 	 * Private Helper Methods
 	 */
-	
+
 	/**
 	 * Starts the Pawn State Machines
 	 */
@@ -1416,9 +1433,5 @@ public class QuoridorController {
 		blackBehavior.setPlayer(black);
 		blackBehavior.startGame();
 	}
-
-	
-
-	
 
 }
