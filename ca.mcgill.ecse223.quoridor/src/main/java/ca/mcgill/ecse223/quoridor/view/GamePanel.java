@@ -9,16 +9,22 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.Time;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.OverlayLayout;
 import javax.swing.Timer;
@@ -75,7 +81,12 @@ public class GamePanel extends JPanel {
 	// Timer thread to refresh time
 	private Timer timer;
 
+	private Timer paintDelay;
+
 	private boolean pawnMoveSelected = false;
+	private boolean togglePath = false;
+
+	List<TileTO> pathAnimation;
 
 	public GamePanel() {
 		initComponents();
@@ -123,6 +134,19 @@ public class GamePanel extends JPanel {
 			public void actionPerformed(ActionEvent evt) {
 				if (timer.isRunning()) {
 					refreshTime();
+				}
+			}
+		});
+
+		paintDelay = new Timer(70, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+
+				if (paintDelay.isRunning() && pathAnimation != null && !pathAnimation.isEmpty()) {
+					TileTO adjTile = pathAnimation.get(0);
+					JButton tile = getTileSquare(adjTile.getRow(), adjTile.getCol());
+					tile.setBackground(wallCandidateColor);
+					pathAnimation.remove(0);
 				}
 			}
 		});
@@ -203,6 +227,20 @@ public class GamePanel extends JPanel {
 				rotateWallButtonButtonActionPerformed(evt);
 			}
 		});
+		// Key action Listeners
+		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
+		InputMap inputMap = this.getInputMap(condition);
+		ActionMap actionMap = this.getActionMap();
+		String p = "p";
+		inputMap.put(KeyStroke.getKeyStroke('p'), p);
+		actionMap.put(p, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				togglePathActionPerformed();
+			}
+		});
 	}
 
 	// ------------------------
@@ -211,6 +249,7 @@ public class GamePanel extends JPanel {
 
 	public void refreshData() {
 		pawnMoveSelected = false;
+		togglePath = false;
 		PlayerStatsTO playerStats = QuoridorController.getPlayerStats();
 		if (playerStats != null) {
 			playerLabel.setText("Player: " + playerStats.getName());
@@ -224,12 +263,12 @@ public class GamePanel extends JPanel {
 		refreshPlayePositions();
 
 		invalidMoveLabel.setText("");
-		
-		if(QuoridorController.getGameStatus() == GameStatus.WhiteWon) {
+
+		if (QuoridorController.getGameStatus() == GameStatus.WhiteWon) {
 			JOptionPane.showMessageDialog(this.getParent(), "White Won!");
 			QuoridorController.destroyGame();
 			returnToMenu();
-		} else if(QuoridorController.getGameStatus() == GameStatus.BlackWon) {
+		} else if (QuoridorController.getGameStatus() == GameStatus.BlackWon) {
 			JOptionPane.showMessageDialog(this.getParent(), "Black Won!");
 			QuoridorController.destroyGame();
 			returnToMenu();
@@ -541,6 +580,18 @@ public class GamePanel extends JPanel {
 				}
 				refreshData();
 			}
+		}
+	}
+
+	private void togglePathActionPerformed() {
+		if (!togglePath) {
+			pathAnimation = QuoridorController.getPath();
+			refreshData();
+			paintDelay.start();
+			togglePath =true;
+		} else {
+			paintDelay.stop();
+			refreshData();
 		}
 	}
 

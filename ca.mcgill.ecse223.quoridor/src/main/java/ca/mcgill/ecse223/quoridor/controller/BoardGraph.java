@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
@@ -208,19 +210,31 @@ public class BoardGraph {
 	 */
 	public boolean pathExists(int startRow, int startCol, int destination) {
 		int currentNode = getTileIndex(startRow, startCol);
+		
+		
+		
+		
 		// Mark the tile nodes as unvisited (initialized to false)
 		boolean visited[] = new boolean[tileNodes];
 		// Create a queue for BFS
-		LinkedList<Integer> queue = new LinkedList<Integer>();
+		Queue<List<Integer>> queue = new LinkedList<>();
 		// Mark the source tile node as visited and add it to queue
 		visited[currentNode] = true;
-		queue.add(currentNode);
+		
+		List<Integer> path = new ArrayList<Integer>();
+		path.add(currentNode);
+		queue.add(path);
+		
+		//queue.add(currentNode);
 		while (queue.size() != 0) {
+			path = queue.poll();
+			currentNode = path.get(path.size()-1);
 			// Dequeue a tile node
-			currentNode = queue.poll();
+			//currentNode = queue.poll();
 			// Check if the source tile node is a winning position
 			for (int i = 1; i < 10; i++) {
 				if (currentNode == getTileIndex(destination, i)) {
+					System.out.println(path.toString());
 					return true;
 				}
 			}
@@ -231,12 +245,71 @@ public class BoardGraph {
 				// visit the tile node and add it to the queue if it has not been visited
 				if (!visited[adjTile]) {
 					visited[adjTile] = true;
-					queue.add(adjTile);
+					List<Integer> pathToNextNode = new ArrayList<Integer>(path);
+					pathToNextNode.add(adjTile);
+					queue.add(pathToNextNode);
 				}
 			}
 		}
 		// no path was found, return false
 		return false;
+	}
+	
+	/**
+	 * Checks if a path exists to the destination
+	 *
+	 * @param startRow
+	 *            row position of player
+	 * @param startCol
+	 *            row position of player
+	 * @param destination
+	 *            the winning position for player (1 or 9 for two player)
+	 * @return
+	 */
+	public List<Integer> getPath(int startRow, int startCol, int destination) {
+		int currentNode = getTileIndex(startRow, startCol);
+		
+		
+		
+		
+		// Mark the tile nodes as unvisited (initialized to false)
+		boolean visited[] = new boolean[tileNodes];
+		// Create a queue for BFS
+		Queue<List<Integer>> queue = new LinkedList<>();
+		// Mark the source tile node as visited and add it to queue
+		visited[currentNode] = true;
+		
+		List<Integer> path = new ArrayList<Integer>();
+		path.add(currentNode);
+		queue.add(path);
+		
+		//queue.add(currentNode);
+		while (queue.size() != 0) {
+			path = queue.poll();
+			currentNode = path.get(path.size()-1);
+			// Dequeue a tile node
+			//currentNode = queue.poll();
+			// Check if the source tile node is a winning position
+			for (int i = 1; i < 10; i++) {
+				if (currentNode == getTileIndex(destination, i)) {
+					return path;
+				}
+			}
+			// iterate through adjacent tiles at source tile node
+			Iterator<Integer> adjTiles = adj[currentNode].listIterator();
+			while (adjTiles.hasNext()) {
+				Integer adjTile = adjTiles.next();
+				// visit the tile node and add it to the queue if it has not been visited
+				if (!visited[adjTile]) {
+					visited[adjTile] = true;
+					List<Integer> pathToNextNode = new ArrayList<Integer>(path);
+					pathToNextNode.add(adjTile);
+					queue.add(pathToNextNode);
+				}
+			}
+		}
+		// no path was found, return false
+		return null;
 	}
 
 	// ------------------------
