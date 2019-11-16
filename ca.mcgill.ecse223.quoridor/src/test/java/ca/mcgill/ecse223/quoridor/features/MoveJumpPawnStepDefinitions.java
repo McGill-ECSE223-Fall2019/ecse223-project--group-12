@@ -56,18 +56,45 @@ public class MoveJumpPawnStepDefinitions {
 
 	@Given("There are no {string} walls {string} from the player")
 	public void there_are_no_walls_from_the_player(String dir, String side) {
-		// TODO: Not necessary to pass tests (with current test cases)
+		Game G = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition GP = G.getCurrentPosition();
+		Tile playerTile;
+		if (GP.getPlayerToMove() == G.getBlackPlayer()) {
+			playerTile = GP.getBlackPosition().getTile();
+		}else {
+			playerTile = GP.getWhitePosition().getTile();
+		}
+		Wall existedWall = TestUtil.checkWallExistence(dir, side, playerTile);
+		if (existedWall != null) {
+			Direction dirnew;
+			if (dir.equals("vertical")) {
+				dirnew = Direction.Horizontal;
+			}else {
+				dirnew = Direction.Vertical;
+			}
+			existedWall.getMove().setWallDirection(dirnew);
+		}
 	}
 
 	@Given("The opponent is not {string} from the player")
-	public void the_opponent_is_not_from_the_player(String string) {
-		// TODO: Not necessary to pass tests (with current test cases)
+	public void the_opponent_is_not_from_the_player(String side) {
+		Game G = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition GP = G.getCurrentPosition();
+		PlayerPosition opponentPosition;
+		Tile playerTile;
+		if (GP.getPlayerToMove() == G.getBlackPlayer()) {
+			playerTile = GP.getBlackPosition().getTile();
+			opponentPosition = GP.getWhitePosition();
+		}else {
+			playerTile = GP.getWhitePosition().getTile();
+			opponentPosition = GP.getBlackPosition();
+		}
+		Boolean exist = TestUtil.checkOpponentExistence(side, playerTile);
+		if (exist) {
+			opponentPosition.setTile(TestUtil.getTile(0, 0));
+		}
 	}
 
-	@Given("My opponent is not {string} from the player")
-	public void my_opponent_is_not_from_the_player(String string) {
-		// TODO: Not necessary to pass tests (with current test cases)
-	}
 
 	@When("Player {string} initiates to move {string}")
 	public void player_initiates_to_move(String color, String side) {
@@ -130,8 +157,25 @@ public class MoveJumpPawnStepDefinitions {
 	}
 
 	@Given("There are no {string} walls {string} from the player nearby")
-	public void there_are_no_walls_from_the_player_nearby(String string, String string2) {
-		// TODO: Not necessary to pass tests (with current test cases)
+	public void there_are_no_walls_from_the_player_nearby(String dir, String side) {
+		Game G = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition GP = G.getCurrentPosition();
+		Tile playerTile;
+		if (GP.getPlayerToMove() == G.getBlackPlayer()) {
+			playerTile = GP.getBlackPosition().getTile();
+		}else {
+			playerTile = GP.getWhitePosition().getTile();
+		}
+		Wall existedWall = TestUtil.checkWallExistence(dir, side, playerTile);
+		if (existedWall != null) {
+			Direction dirnew;
+			if (dir.equals("vertical")) {
+				dirnew = Direction.Horizontal;
+			}else {
+				dirnew = Direction.Vertical;
+			}
+			existedWall.getMove().setWallDirection(dirnew);
+		}
 	}
 
 }

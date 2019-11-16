@@ -169,6 +169,80 @@ public class TestUtil {
 			throw new java.lang.IllegalArgumentException("Invalid direction: " + dir);
 		}
 	}
+	public static boolean checkOpponentExistence(String side,Tile playerTile) {
+		GamePosition GP = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		Tile oppoTile;
+		if (GP.getPlayerToMove() == QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer()) {
+			oppoTile = GP.getWhitePosition().getTile();
+		}else {
+			oppoTile = GP.getBlackPosition().getTile();
+		}
+		Tile targetTile = findTile(side,playerTile);
+		if (targetTile == null) {
+			return false;
+		} else {
+			return oppoTile == targetTile;
+		}
+	}
+	/**
+	 * return if the side of player have wall with specific direction
+	 * @param dir
+	 * @param side
+	 * @param playerTile the tile that player stand on
+	 * @return  return wall if it exist otherwise return null
+	 * @author Weige qian
+	 * 
+	 */
+	public static Wall checkWallExistence(String dir,String side,Tile playerTile) {
+		GamePosition GP = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		List<Wall> blackWalls = GP.getBlackWallsOnBoard();
+		List<Wall> whiteWalls = GP.getWhiteWallsOnBoard();
+		Tile targetTile = findTile(side,playerTile);
+		if (targetTile == null) {
+			return null;
+		} else {
+			for (Wall wall:blackWalls) {
+				Tile tile = wall.getMove().getTargetTile();
+				if (tile == targetTile && wall.getMove().getWallDirection() == getDirection(dir)) {
+					return wall;
+				}
+			}
+			for (Wall wall:whiteWalls) {
+				Tile tile = wall.getMove().getTargetTile();
+				if (tile == targetTile && wall.getMove().getWallDirection() == getDirection(dir)) {
+					return wall;
+				}
+			}
+		}
+		return null;
+		
+	}
+	/**
+	 * return the target tile depend on the side
+	 * @param side
+	 * @param playerTile
+	 * @author Weige qian
+	 * @return 
+	 */
+	public static Tile findTile(String side,Tile playerTile) {
+		try {
+			switch (side) {
+				case "left":
+					return getTile(playerTile.getRow(),playerTile.getColumn() - 1);
+				case "right":
+					return getTile(playerTile.getRow(),playerTile.getColumn() + 1);
+				case "up":
+					return getTile(playerTile.getRow() + 1,playerTile.getColumn());
+				case "down":
+					return getTile(playerTile.getRow() - 1,playerTile.getColumn());
+				default:
+					throw new java.lang.IllegalArgumentException("Invalid side: " + side);
+			
+			}
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
 
 	/**
 	 * Gets a user of quoridor by username
