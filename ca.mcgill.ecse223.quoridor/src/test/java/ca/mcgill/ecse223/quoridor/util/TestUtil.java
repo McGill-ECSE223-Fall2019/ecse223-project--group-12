@@ -243,6 +243,33 @@ public class TestUtil {
 			return null;
 		}
 	}
+	
+	/**
+	 * return the target tile depend on the side
+	 * @param side
+	 * @param playerTile
+	 * @author Weige qian
+	 * @return 
+	 */
+	public static Tile findTileNotSideOfPlayer(String side,Tile playerTile) {
+		try {
+			switch (side) {
+				case "left":
+					return getTile(playerTile.getRow(),playerTile.getColumn() + 1); //return right
+				case "right":
+					return getTile(playerTile.getRow(),playerTile.getColumn() - 1); //return left
+				case "up":
+					return getTile(playerTile.getRow() - 1,playerTile.getColumn()); // return down
+				case "down":
+					return getTile(playerTile.getRow() + 1,playerTile.getColumn()); //return up
+				default:
+					throw new java.lang.IllegalArgumentException("Invalid side: " + side);
+			
+			}
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
 
 	/**
 	 * Gets a user of quoridor by username

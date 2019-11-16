@@ -26,7 +26,11 @@ import io.cucumber.java.en.When;
 public class MoveJumpPawnStepDefinitions {
 
 	private boolean moveSuccess = false;
-
+	
+	/**
+	 * 
+	 * @author Remi Carriere
+	 */
 	@Given("The player is located at {int}:{int}")
 	public void the_player_is_located_at(Integer row, Integer col) {
 		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
@@ -39,7 +43,11 @@ public class MoveJumpPawnStepDefinitions {
 			gp.setBlackPosition(position);
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @author Remi Carriere
+	 */
 	@Given("The opponent is located at {int}:{int}")
 	public void the_opponent_is_located_at(Integer row, Integer col) {
 		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
@@ -53,7 +61,10 @@ public class MoveJumpPawnStepDefinitions {
 		}
 
 	}
-
+	
+	/**
+	 * @author Weige Qian
+	 */
 	@Given("There are no {string} walls {string} from the player")
 	public void there_are_no_walls_from_the_player(String dir, String side) {
 		Game G = QuoridorApplication.getQuoridor().getCurrentGame();
@@ -61,21 +72,25 @@ public class MoveJumpPawnStepDefinitions {
 		Tile playerTile;
 		if (GP.getPlayerToMove() == G.getBlackPlayer()) {
 			playerTile = GP.getBlackPosition().getTile();
-		}else {
+		} else {
 			playerTile = GP.getWhitePosition().getTile();
 		}
 		Wall existedWall = TestUtil.checkWallExistence(dir, side, playerTile);
 		if (existedWall != null) {
-			Direction dirnew;
-			if (dir.equals("vertical")) {
-				dirnew = Direction.Horizontal;
-			}else {
-				dirnew = Direction.Vertical;
+			if (existedWall.getOwner().hasGameAsWhite()) {
+				QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+						.addWhiteWallsInStock(existedWall);
+			} else {
+				QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+						.addBlackWallsInStock(existedWall);
 			}
-			existedWall.getMove().setWallDirection(dirnew);
+			existedWall.getMove().delete();
 		}
 	}
 
+	/**
+	 * @author Weige Qian
+	 */
 	@Given("The opponent is not {string} from the player")
 	public void the_opponent_is_not_from_the_player(String side) {
 		Game G = QuoridorApplication.getQuoridor().getCurrentGame();
@@ -85,17 +100,21 @@ public class MoveJumpPawnStepDefinitions {
 		if (GP.getPlayerToMove() == G.getBlackPlayer()) {
 			playerTile = GP.getBlackPosition().getTile();
 			opponentPosition = GP.getWhitePosition();
-		}else {
+		} else {
 			playerTile = GP.getWhitePosition().getTile();
 			opponentPosition = GP.getBlackPosition();
 		}
 		Boolean exist = TestUtil.checkOpponentExistence(side, playerTile);
 		if (exist) {
-			opponentPosition.setTile(TestUtil.getTile(0, 0));
+			Tile notSideOfPlayer = TestUtil.findTileNotSideOfPlayer(side, playerTile);
+			opponentPosition.setTile(notSideOfPlayer);
 		}
 	}
 
-
+	/**
+	 * 
+	 * @author Remi Carriere
+	 */
 	@When("Player {string} initiates to move {string}")
 	public void player_initiates_to_move(String color, String side) {
 		try {
@@ -106,12 +125,20 @@ public class MoveJumpPawnStepDefinitions {
 		}
 	}
 
+	/**
+	 * 
+	 * @author Remi Carriere
+	 */
 	@Then("The move {string} shall be {string}")
 	public void the_move_shall_be(String side, String status) {
 		boolean expected = status.equals("success");
 		assertEquals(expected, moveSuccess);
 	}
 
+	/**
+	 * 
+	 * @author Remi Carriere
+	 */
 	@Then("Player's new position shall be {int}:{int}")
 	public void player_s_new_position_shall_be(Integer row, Integer col) {
 		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
@@ -131,6 +158,10 @@ public class MoveJumpPawnStepDefinitions {
 		assertEquals((int) col, pos.getTile().getColumn());
 	}
 
+	/**
+	 * 
+	 * @author Remi Carriere
+	 */
 	@Then("The next player to move shall become {string}")
 	public void the_next_player_to_move_shall_become(String color) {
 		Player playerToMove = TestUtil.getCurrentPlayer();
@@ -138,6 +169,10 @@ public class MoveJumpPawnStepDefinitions {
 		assertEquals(expected, playerToMove);
 	}
 
+	/**
+	 * 
+	 * @author Remi Carriere
+	 */
 	@Given("There is a {string} wall at {int}:{int}")
 	public void there_is_a_wall_at(String dir, Integer row, Integer col) {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
@@ -155,26 +190,32 @@ public class MoveJumpPawnStepDefinitions {
 			gp.removeBlackWallsInStock(wall);
 		}
 	}
-
+	
+	/**
+	 * @author Weige Qian
+	 */
 	@Given("There are no {string} walls {string} from the player nearby")
 	public void there_are_no_walls_from_the_player_nearby(String dir, String side) {
-		Game G = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition GP = G.getCurrentPosition();
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = g.getCurrentPosition();
+		Player currentPlayer = gp.getPlayerToMove();
 		Tile playerTile;
-		if (GP.getPlayerToMove() == G.getBlackPlayer()) {
-			playerTile = GP.getBlackPosition().getTile();
-		}else {
-			playerTile = GP.getWhitePosition().getTile();
+		// Get the opponents position
+		if (currentPlayer.hasGameAsWhite()) {
+			playerTile = gp.getBlackPosition().getTile(); //
+		} else {
+			playerTile = gp.getWhitePosition().getTile();
 		}
 		Wall existedWall = TestUtil.checkWallExistence(dir, side, playerTile);
 		if (existedWall != null) {
-			Direction dirnew;
-			if (dir.equals("vertical")) {
-				dirnew = Direction.Horizontal;
-			}else {
-				dirnew = Direction.Vertical;
+			if (existedWall.getOwner().hasGameAsWhite()) {
+				QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+						.addWhiteWallsInStock(existedWall);
+			} else {
+				QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition()
+						.addBlackWallsInStock(existedWall);
 			}
-			existedWall.getMove().setWallDirection(dirnew);
+			existedWall.getMove().delete();
 		}
 	}
 
