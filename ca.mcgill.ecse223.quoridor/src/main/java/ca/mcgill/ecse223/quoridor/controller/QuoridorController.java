@@ -1283,11 +1283,11 @@ public class QuoridorController {
 	 * @throws InvalidInputException
 	 */
 
-	public static void moveWall(String side) throws InvalidInputException {
+	public static void moveWall(Side side) throws InvalidInputException {
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
 		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
 		if (wm != null && !p.getRemainingTime().equals(Time.valueOf("00:00:00"))) {
-			if (side.contains("up")) {
+			if (side.equals(Side.up)) {
 				int urow = wm.getTargetTile().getRow() - 1;
 				int ucol = wm.getTargetTile().getColumn();
 				if (urow > 0) {
@@ -1296,7 +1296,7 @@ public class QuoridorController {
 				} else {
 					throw new InvalidInputException("Reaching Top Boundary!");
 				}
-			} else if (side.contains("down")) {
+			} else if (side.equals(Side.down)) {
 				int drow = wm.getTargetTile().getRow() + 1;
 				int dcol = wm.getTargetTile().getColumn();
 				if (drow < 9) {
@@ -1305,7 +1305,7 @@ public class QuoridorController {
 				} else {
 					throw new InvalidInputException("Reaching Bottom Boundary!");
 				}
-			} else if (side.contains("left")) {
+			} else if (side.equals(Side.left)) {
 				int lrow = wm.getTargetTile().getRow();
 				int lcol = wm.getTargetTile().getColumn() - 1;
 				if (lcol > 0) {
@@ -1314,7 +1314,7 @@ public class QuoridorController {
 				} else {
 					throw new InvalidInputException("Reaching Left Boundary!");
 				}
-			} else if (side.contains("right")) {
+			} else if (side.equals(Side.right)) {
 				int rrow = wm.getTargetTile().getRow();
 				int rcol = wm.getTargetTile().getColumn() + 1;
 				if (rcol < 9) {
@@ -1330,6 +1330,14 @@ public class QuoridorController {
 	// ------------------------
 	// Team
 	// ------------------------
+	
+	/**
+	 * Enumeration for side and movement directions
+	 */
+	public enum Side
+	{
+		right, left, up, down, downleft, downright, upright, upleft;
+	}
 
 	/**
 	 * Moves A specified player in the specified direction (including possible jump
@@ -1341,7 +1349,8 @@ public class QuoridorController {
 	 * The desired direction to move
 	 * @return
 	 */
-	public static boolean movePawn(Player p, String side) {
+	
+	public static boolean movePawn(Player p, Side side) {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		GameStatus gameStatus = game.getGameStatus();
 		PawnBehavior pawnBehavior = null;
@@ -1361,39 +1370,39 @@ public class QuoridorController {
 
 		// Call actions of state machine
 		if (gameStatus == GameStatus.Running && !p.getRemainingTime().equals(Time.valueOf("00:00:00"))) {
-			if (side.equals("right")) {
+			if (side.equals(Side.right)) {
 				boolean b = (pawnBehavior.isLegalStep(MoveDirection.East)
 						|| pawnBehavior.isLegalJump(MoveDirection.East));
 				pawnBehavior.moveRight();
 				return b;
-			} else if (side.equals("left")) {
+			} else if (side.equals(Side.left)) {
 				boolean b = (pawnBehavior.isLegalStep(MoveDirection.West)
 						|| pawnBehavior.isLegalJump(MoveDirection.West));
 				pawnBehavior.moveLeft();
 				return b;
-			} else if (side.equals("up")) {
+			} else if (side.equals(Side.up)) {
 				boolean b = (pawnBehavior.isLegalStep(MoveDirection.North)
 						|| pawnBehavior.isLegalJump(MoveDirection.North));
 				pawnBehavior.moveUp();
 				return b;
-			} else if (side.equals("down")) {
+			} else if (side.equals(Side.down)) {
 				boolean b = (pawnBehavior.isLegalStep(MoveDirection.South)
 						|| pawnBehavior.isLegalJump(MoveDirection.South));
 				pawnBehavior.moveDown();
 				return b;
-			} else if (side.equals("downleft")) {
+			} else if (side.equals(Side.downleft)) {
 				boolean b = pawnBehavior.isLegalJump(MoveDirection.SouthWest);
 				pawnBehavior.moveDownLeft();
 				return b;
-			} else if (side.equals("downright")) {
+			} else if (side.equals(Side.downright)) {
 				boolean b = pawnBehavior.isLegalJump(MoveDirection.SouthEast);
 				pawnBehavior.moveDownRight();
 				return b;
-			} else if (side.equals("upright")) {
+			} else if (side.equals(Side.upright)) {
 				boolean b = pawnBehavior.isLegalJump(MoveDirection.NorthEast);
 				pawnBehavior.moveUpRight();
 				return b;
-			} else if (side.equals("upleft")) {
+			} else if (side.equals(Side.upleft)) {
 				boolean b = pawnBehavior.isLegalJump(MoveDirection.NorthWest);
 				pawnBehavior.moveUpLeft();
 				return b;
@@ -1410,7 +1419,7 @@ public class QuoridorController {
 	 * @param side
 	 *            The desired direction to move
 	 */
-	public static void movePawn(String side) {
+	public static void movePawn(Side side) {
 		movePawn(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(), side);
 	}
 

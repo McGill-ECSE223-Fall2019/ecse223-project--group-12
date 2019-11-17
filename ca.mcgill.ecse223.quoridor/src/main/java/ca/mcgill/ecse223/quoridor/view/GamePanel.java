@@ -33,6 +33,7 @@ import javax.swing.border.LineBorder;
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.InvalidMoveException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
+import ca.mcgill.ecse223.quoridor.controller.QuoridorController.Side;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
@@ -468,7 +469,7 @@ public class GamePanel extends JPanel {
 
 	private void upButtonButtonActionPerformed(ActionEvent evt) {
 		try {
-			QuoridorController.moveWall("up");
+			QuoridorController.moveWall(Side.up);
 			refreshData();
 		} catch (InvalidInputException e) {
 			invalidMoveLabel.setText(e.getMessage());
@@ -477,7 +478,7 @@ public class GamePanel extends JPanel {
 
 	private void downButtonButtonActionPerformed(ActionEvent evt) {
 		try {
-			QuoridorController.moveWall("down");
+			QuoridorController.moveWall(Side.down);
 			refreshData();
 		} catch (InvalidInputException e) {
 			invalidMoveLabel.setText(e.getMessage());
@@ -486,7 +487,7 @@ public class GamePanel extends JPanel {
 
 	private void leftButtonButtonActionPerformed(ActionEvent evt) {
 		try {
-			QuoridorController.moveWall("left");
+			QuoridorController.moveWall(Side.left);
 			refreshData();
 		} catch (InvalidInputException e) {
 			invalidMoveLabel.setText(e.getMessage());
@@ -495,7 +496,7 @@ public class GamePanel extends JPanel {
 
 	private void rightButtonButtonActionPerformed(ActionEvent evt) {
 		try {
-			QuoridorController.moveWall("right");
+			QuoridorController.moveWall(Side.right);
 			refreshData();
 		} catch (InvalidInputException e) {
 			invalidMoveLabel.setText(e.getMessage());
@@ -558,35 +559,35 @@ public class GamePanel extends JPanel {
 				// Down
 				try {
 					if (currentRow < rowToMove && currentCol == colToMOve) {
-						QuoridorController.movePawn("down");
+						QuoridorController.movePawn(Side.down);
 					}
 					// Up
 					else if (currentRow > rowToMove && currentCol == colToMOve) {
-						QuoridorController.movePawn("up");
+						QuoridorController.movePawn(Side.up);
 					}
 					// right
 					else if (currentCol < colToMOve && currentRow == rowToMove) {
-						QuoridorController.movePawn("right");
+						QuoridorController.movePawn(Side.right);
 					}
 					// left
 					else if (currentCol > colToMOve && currentRow == rowToMove) {
-						QuoridorController.movePawn("left");
+						QuoridorController.movePawn(Side.left);
 					}
 					// downleft
 					else if (currentCol > colToMOve && currentRow < rowToMove) {
-						QuoridorController.movePawn("downleft");
+						QuoridorController.movePawn(Side.downleft);
 					}
 					// downright
 					else if (currentCol < colToMOve && currentRow < rowToMove) {
-						QuoridorController.movePawn("downright");
+						QuoridorController.movePawn(Side.downright);
 					}
 					// upright
 					else if (currentCol < colToMOve && currentRow > rowToMove) {
-						QuoridorController.movePawn("upright");
+						QuoridorController.movePawn(Side.upright);
 					}
 					// upleft
 					else if (currentCol > colToMOve && currentRow > rowToMove) {
-						QuoridorController.movePawn("upleft");
+						QuoridorController.movePawn(Side.upleft);
 					}
 				} catch (InvalidMoveException e) {
 					refreshData();

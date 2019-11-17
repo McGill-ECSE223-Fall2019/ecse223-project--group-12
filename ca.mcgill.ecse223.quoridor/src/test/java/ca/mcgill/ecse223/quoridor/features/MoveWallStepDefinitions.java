@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
+import ca.mcgill.ecse223.quoridor.controller.QuoridorController.Side;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Player;
@@ -75,7 +76,7 @@ public class MoveWallStepDefinitions {
 	@When("I try to move the wall {string}")
 	public void i_try_to_move_the_wall(String side) throws InvalidInputException {
 		try {
-			QuoridorController.moveWall(side);
+			QuoridorController.moveWall(Enum.valueOf(Side.class, side));
 		} catch (InvalidInputException e) {
 			errorMessage = e.getMessage();
 		}

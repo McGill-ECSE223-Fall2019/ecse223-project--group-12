@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.InvalidMoveException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
+import ca.mcgill.ecse223.quoridor.controller.QuoridorController.Side;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
@@ -119,7 +120,7 @@ public class MoveJumpPawnStepDefinitions {
 	public void player_initiates_to_move(String color, String side) {
 		try {
 			Player p = TestUtil.getPlayerByColor(color);
-			moveSuccess = QuoridorController.movePawn(p, side);
+			moveSuccess = QuoridorController.movePawn(p, Enum.valueOf(Side.class, side));
 		} catch (InvalidMoveException e) {
 			moveSuccess = false;
 		}
