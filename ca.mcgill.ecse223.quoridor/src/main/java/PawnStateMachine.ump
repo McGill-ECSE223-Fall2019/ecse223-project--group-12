@@ -307,7 +307,6 @@ class PawnBehavior {
 		bg.syncWallEdges();
 		bg.syncStepMoves();
 		if(bg.isAdjacent(row,col,newRow,newCol)){
-			System.out.println(this.getPawnSMPlaying() +"  legal step, row: " + row +"col: " +col + "  " + dir + " to row:" +newRow + " col:" +newCol);
 			return true;
 		}else{
 			return false;
@@ -338,7 +337,6 @@ class PawnBehavior {
     	BoardGraph bg = new BoardGraph();
 		bg.syncJumpMoves();
 		if(bg.isAdjacent(row,col,newRow,newCol)){
-			System.out.println(this.getPawnSMPlaying() +"  legal jump, row:" + row +" col: " +col + "  " + dir + " to row:" +newRow + " col:" +newCol);
 			return true;
 		}else{
 			return false;
