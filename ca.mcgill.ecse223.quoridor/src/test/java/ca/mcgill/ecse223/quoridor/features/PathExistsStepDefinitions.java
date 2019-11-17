@@ -16,7 +16,11 @@ import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
+/**
+ * 
+ * @author Remi Carriere
+ *
+ */
 public class PathExistsStepDefinitions {
 	private boolean[] pathExists = new boolean[2];
 

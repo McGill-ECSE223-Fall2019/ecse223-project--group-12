@@ -2,12 +2,17 @@
 /*This code was generated using the UMPLE 1.29.0.4181.a593105a9 modeling language!*/
 
 package ca.mcgill.ecse223.quoridor.controller;
-import ca.mcgill.ecse223.quoridor.model.Tile;
-import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
-import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import java.util.List;
+
+import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
-import java.util.*;
-import ca.mcgill.ecse223.quoridor.model.*;
+import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.JumpMove;
+import ca.mcgill.ecse223.quoridor.model.Move;
+import ca.mcgill.ecse223.quoridor.model.Player;
+import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
+import ca.mcgill.ecse223.quoridor.model.StepMove;
+import ca.mcgill.ecse223.quoridor.model.Tile;
 
 // line 3 "../../../../../PawnStateMachine.ump"
 public class PawnBehavior
@@ -1215,7 +1220,17 @@ public class PawnBehavior
     player = null;
   }
 
-  // line 193 "../../../../../PawnStateMachine.ump"
+
+  /**
+   * 
+   * 
+   * Changes the game status of the game when a player is in a winning position (Will be modified in future deliverables)
+   * 
+   * @author Remi Carriere
+   * 
+   * 
+   */
+  // line 201 "../../../../../PawnStateMachine.ump"
   public void checkWinningMove(){
     if (player.hasGameAsWhite() && currentGame.getCurrentPosition().getWhitePosition().getTile().getRow() == 1) {
 			currentGame.setGameStatus(GameStatus.WhiteWon);
@@ -1224,16 +1239,30 @@ public class PawnBehavior
 		}
   }
 
-  // line 200 "../../../../../PawnStateMachine.ump"
+
+  /**
+   * 
+   * 
+   * For future deliverable
+   * 
+   */
+  // line 214 "../../../../../PawnStateMachine.ump"
   public void setWinner(){
     
   }
 
 
   /**
-   * Returns the current row number of the pawn
+   * 
+   * 
+   * Gets the row of the player
+   * 
+   * @author Remi Carriere
+   * 
+   * @return
+   * The row of the player
    */
-  // line 204 "../../../../../PawnStateMachine.ump"
+  // line 226 "../../../../../PawnStateMachine.ump"
   public int getCurrentPawnRow(){
     if (player.hasGameAsWhite()) {
 			return currentGame.getCurrentPosition().getWhitePosition().getTile().getRow();
@@ -1244,9 +1273,16 @@ public class PawnBehavior
 
 
   /**
-   * Returns the current column number of the pawn
+   * 
+   * 
+   * Gets the column of the player
+   * 
+   * @author Remi Carriere
+   * 
+   * @return
+   * The column of the player
    */
-  // line 212 "../../../../../PawnStateMachine.ump"
+  // line 243 "../../../../../PawnStateMachine.ump"
   public int getCurrentPawnColumn(){
     if (player.hasGameAsWhite()) {
 			return currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
@@ -1255,7 +1291,19 @@ public class PawnBehavior
 		}
   }
 
-  // line 219 "../../../../../PawnStateMachine.ump"
+
+  /**
+   * 
+   * 
+   * Verifies if white won the game
+   * 
+   * @author Remi Carriere
+   * 
+   * @return
+   * True if white won, false otherwise
+   * 
+   */
+  // line 261 "../../../../../PawnStateMachine.ump"
   public boolean isWhiteWinningMove(){
     System.out.println("white");
 		if (player.hasGameAsWhite()) {
@@ -1265,7 +1313,19 @@ public class PawnBehavior
 		return false;
   }
 
-  // line 227 "../../../../../PawnStateMachine.ump"
+
+  /**
+   * 
+   * 
+   * Verifies if black won the game
+   * 
+   * @author Remi Carriere
+   * 
+   * @return
+   * True if black won, false otherwise
+   * 
+   */
+  // line 280 "../../../../../PawnStateMachine.ump"
   public boolean isBlackWinningMove(){
     if (player.hasGameAsBlack()) {
 		System.out.println("black");
@@ -1276,28 +1336,26 @@ public class PawnBehavior
 
 
   /**
-   * Returns if it is legal to step in the given direction
+   * 
+   * 
+   * Verifies if a step move in the given direction is legal
+   * 
+   * @author Remi Carriere
+   * 
+   * @param dir
+   * Direction to move
+   * 
+   * @return
+   * True if the move is legal, false otherwise
+   * 
    */
-  // line 236 "../../../../../PawnStateMachine.ump"
+  // line 301 "../../../../../PawnStateMachine.ump"
   public boolean isLegalStep(MoveDirection dir){
     int row = getCurrentPawnRow();
     	int col = getCurrentPawnColumn();
-    	int newRow = row; // initial values to be updated
-    	int newCol = col;
-    	// Check direction
-    	if (dir == MoveDirection.East ){
-    		newRow = row;
-    		newCol = col +1;
-    	} else if (dir == MoveDirection.West){
-			newRow = row;
-			newCol = col -1;
-		} else if (dir == MoveDirection.South){
-			newRow = row + 1;
-			newCol = col;
-		} else if (dir == MoveDirection.North){
-			newRow = row - 1;
-			newCol = col;
-		}
+    	int[] tileIndex = getStepTargetTileIndex(dir);
+ 	  	int newRow = tileIndex[0];
+ 	  	int newCol =  tileIndex[1];
     	BoardGraph bg = new BoardGraph();
 		bg.syncWallEdges();
 		bg.syncStepMoves();
@@ -1311,41 +1369,26 @@ public class PawnBehavior
 
 
   /**
-   * Returns if it is legal to jump in the given direction
+   * 
+   * 
+   * Verifies if a jump move in the given direction is legal
+   * 
+   * @author Remi Carriere
+   * 
+   * @param dir
+   * Direction to move
+   * 
+   * @return
+   * True if the move is legal, false otherwise
+   * 
    */
-  // line 267 "../../../../../PawnStateMachine.ump"
+  // line 332 "../../../../../PawnStateMachine.ump"
   public boolean isLegalJump(MoveDirection dir){
     int row = getCurrentPawnRow();
     	int col = getCurrentPawnColumn();
-    	int newRow = row; // initial values to be updated
-    	int newCol = col;
-    	// Check direction
-    	if (dir == MoveDirection.East ){
-    		newRow = row;
-    		newCol = col + 2;
-    	} else if (dir == MoveDirection.West){
-			newRow = row;
-			newCol = col - 2;
-		} else if (dir == MoveDirection.South){
-			newRow = row + 2;
-			newCol = col;
-		} else if (dir == MoveDirection.North){
-			newRow = row - 2;
-			newCol = col;
-		} else if (dir == MoveDirection.SouthWest){
-			newRow = row + 1;
-			newCol = col - 1;
-		}else if (dir == MoveDirection.SouthEast){
-			newRow = row + 1;
-			newCol = col + 1;
-		}
-		else if (dir == MoveDirection.NorthWest){
-			newRow = row - 1;
-			newCol = col - 1;
-		}else if (dir == MoveDirection.NorthEast){
-			newRow = row - 1;
-			newCol = col + 1;
-		}
+    	int[] tileIndex = getJumpTargetTileIndex(dir);
+ 	  	int newRow = tileIndex[0];
+ 	  	int newCol =  tileIndex[1];
 		
     	BoardGraph bg = new BoardGraph();
 		bg.syncJumpMoves();
@@ -1359,50 +1402,43 @@ public class PawnBehavior
 
 
   /**
+   * 
+   * 
    * Action to be called when an illegal move is attempted
+   * 
+   * @author Remi Carriere
+   * 
    */
-  // line 310 "../../../../../PawnStateMachine.ump"
+  // line 356 "../../../../../PawnStateMachine.ump"
   public void illegalMove(){
-    // We cant throw an exception here since doing so would set the current state to null
+    // We cant throw an exception here since doing so would set the current state to null and crash the state machine. Alse, the UI does not allow a user to
+    	// input a legal move, so users don't need to be warned.
     	// throw new InvalidMoveException("Illegal move!");
   }
 
-  // line 314 "../../../../../PawnStateMachine.ump"
+
+  /**
+   * 
+   * 
+   * Performs a jump move for the current player in specified direction
+   * 
+   * @author Remi Carriere
+   * 
+   * @param dir
+   * Direction to move
+   * 
+   */
+  // line 372 "../../../../../PawnStateMachine.ump"
   public void jumpPawn(MoveDirection dir){
     GamePosition gp = currentGame.getCurrentPosition();
- 	  	int row = getCurrentPawnRow();
-    	int col = getCurrentPawnColumn();
-    	int newRow = row; // initial values to be updated
-    	int newCol = col;
-    	// Check direction
-    	if (dir == MoveDirection.East ){
-    		newRow = row;
-    		newCol = col + 2;
-    	} else if (dir == MoveDirection.West){
-			newRow = row;
-			newCol = col - 2;
-		} else if (dir == MoveDirection.South){
-			newRow = row + 2;
-			newCol = col;
-		} else if (dir == MoveDirection.North){
-			newRow = row - 2;
-			newCol = col;
-		} else if (dir == MoveDirection.SouthWest){
-			newRow = row + 1;
-			newCol = col - 1;
-		}else if (dir == MoveDirection.SouthEast){
-			newRow = row + 1;
-			newCol = col + 1;
-		}
-		else if (dir == MoveDirection.NorthWest){
-			newRow = row - 1;
-			newCol = col - 1;
-		}else if (dir == MoveDirection.NorthEast){
-			newRow = row - 1;
-			newCol = col + 1;
-		}
-		
+ 	  	
+ 	  	//Get the target tile
+ 	  	int[] tileIndex = getJumpTargetTileIndex(dir);
+ 	  	int newRow = tileIndex[0];
+ 	  	int newCol =  tileIndex[1];
 		Tile targetTile = QuoridorController.getTile(newRow, newCol);
+		
+		// Update position of player
  	 	if (player.hasGameAsWhite()) {
 			PlayerPosition newPos = new PlayerPosition(player, targetTile);
 			gp.setWhitePosition(newPos);
@@ -1410,30 +1446,98 @@ public class PawnBehavior
 			PlayerPosition newPos = new PlayerPosition(player, targetTile);
 			gp.setBlackPosition(newPos);	
 		}
+		
+		// Add the move to the game
+		List<Move> moves =  currentGame.getMoves();
+		int roundNumber;
+		int moveNumber;
+		Move lastMove = null;
+		if(currentGame.getMoves().isEmpty()) {
+			roundNumber =  0;
+			moveNumber = 0;
+		} else {
+			lastMove = moves.get(moves.size()-1);
+			roundNumber = lastMove.getRoundNumber() +1;
+			moveNumber = lastMove.getMoveNumber() +1;
+		}
+		JumpMove Move = new JumpMove(moveNumber, roundNumber, player, targetTile, currentGame);
+		if (lastMove != null) {
+			lastMove.setNextMove(Move);
+			Move.setPrevMove(lastMove);
+		}
+		// Confirm the move
 		QuoridorController.confirmMove();
   }
 
-  // line 359 "../../../../../PawnStateMachine.ump"
+
+  /**
+   * 
+   * 
+   * Performs a step move for the current player in specified direction
+   * 
+   * @author Remi Carriere
+   * 
+   * @param dir
+   * Direction to move
+   * 
+   */
+  // line 422 "../../../../../PawnStateMachine.ump"
   public void movePawn(MoveDirection dir){
     GamePosition gp = currentGame.getCurrentPosition();
- 	 	
+ 	 	Tile targetTile = null;
+ 	 	// Update the player position
  	 	if (player.hasGameAsWhite()) {
 			PlayerPosition currentPosition = gp.getWhitePosition();
 			Tile currentTile = currentPosition.getTile();
-			Tile newTile = getTargetTile(currentTile, dir);
-			PlayerPosition newPos = new PlayerPosition(player, newTile);
+			targetTile = getTargetTile(currentTile, dir);
+			PlayerPosition newPos = new PlayerPosition(player, targetTile);
 			gp.setWhitePosition(newPos);
 		} else {		
 			PlayerPosition currentPosition = gp.getBlackPosition();
 			Tile currentTile = currentPosition.getTile();
-			Tile newTile = getTargetTile(currentTile, dir);
-			PlayerPosition newPos = new PlayerPosition(player, newTile);
+			targetTile = getTargetTile(currentTile, dir);
+			PlayerPosition newPos = new PlayerPosition(player, targetTile);
 			gp.setBlackPosition(newPos);	
 		}
+		// Add the move to the game
+		List<Move> moves =  currentGame.getMoves();
+		int roundNumber;
+		int moveNumber;
+		Move lastMove = null;
+		if(currentGame.getMoves().isEmpty()) {
+			roundNumber =  0;
+			moveNumber = 0;
+		} else {
+			lastMove = moves.get(moves.size()-1);
+			roundNumber = lastMove.getRoundNumber() +1;
+			moveNumber = lastMove.getMoveNumber() +1;
+		}
+		StepMove Move = new StepMove(moveNumber, roundNumber, player, targetTile, currentGame);
+		if (lastMove != null) {
+			lastMove.setNextMove(Move);
+			Move.setPrevMove(lastMove);
+		}
+		// Confirm the move
 		QuoridorController.confirmMove();
   }
 
-  // line 377 "../../../../../PawnStateMachine.ump"
+
+  /**
+   * 
+   * 
+   * Gets the target tile for a step move based on current tile and move direction
+   * 
+   * @author Remi Carriere
+   * @param currentTile
+   * tile of current player
+   * @param dir
+   * Direction to move
+   * 
+   * @return
+   * The target tile for the move
+   * 
+   */
+  // line 474 "../../../../../PawnStateMachine.ump"
   public Tile getTargetTile(Tile currentTile, MoveDirection dir){
     if (dir == MoveDirection.East){
 			int newRow = currentTile.getRow();
@@ -1454,12 +1558,101 @@ public class PawnBehavior
 		}
 		return null;
   }
+
+
+  /**
+   * 
+   * 
+   * Gets the target tile row and col for jump moves based on move direction
+   * 
+   * @author Remi Carriere
+   * @param dir
+   * Direction to move
+   * 
+   * @return
+   * an array containing [targetRow, targetCol]
+   * 
+   */
+  // line 507 "../../../../../PawnStateMachine.ump"
+  public int[] getJumpTargetTileIndex(MoveDirection dir){
+    int row = getCurrentPawnRow();
+    	int col = getCurrentPawnColumn();
+    	int newRow = row; // initial values to be updated
+    	int newCol = col;
+    	// Check direction
+    	if (dir == MoveDirection.East ){
+    		newRow = row;
+    		newCol = col + 2;
+    	} else if (dir == MoveDirection.West){
+			newRow = row;
+			newCol = col - 2;
+		} else if (dir == MoveDirection.South){
+			newRow = row + 2;
+			newCol = col;
+		} else if (dir == MoveDirection.North){
+			newRow = row - 2;
+			newCol = col;
+		} else if (dir == MoveDirection.SouthWest){
+			newRow = row + 1;
+			newCol = col - 1;
+		}else if (dir == MoveDirection.SouthEast){
+			newRow = row + 1;
+			newCol = col + 1;
+		}
+		else if (dir == MoveDirection.NorthWest){
+			newRow = row - 1;
+			newCol = col - 1;
+		}else if (dir == MoveDirection.NorthEast){
+			newRow = row - 1;
+			newCol = col + 1;
+		}
+		int[] tileIndex = {newRow, newCol};
+		return tileIndex;
+  }
+
+
+  /**
+   * 
+   * 
+   * Gets the target tile row and cole for step moves based on move direction
+   * 
+   * @author Remi Carriere
+   * @param dir
+   * Direction to move
+   * 
+   * @return
+   * an array containing [targetRow, targetCol]
+   * 
+   */
+  // line 555 "../../../../../PawnStateMachine.ump"
+  public int[] getStepTargetTileIndex(MoveDirection dir){
+    int row = getCurrentPawnRow();
+    	int col = getCurrentPawnColumn();
+    	int newRow = row; // initial values to be updated
+    	int newCol = col;
+    	// Check direction
+    	if (dir == MoveDirection.East ){
+    		newRow = row;
+    		newCol = col + 1;
+    	} else if (dir == MoveDirection.West){
+			newRow = row;
+			newCol = col - 1;
+		} else if (dir == MoveDirection.South){
+			newRow = row + 1;
+			newCol = col;
+		} else if (dir == MoveDirection.North){
+			newRow = row - 1;
+			newCol = col;
+		}
+		int[] tileIndex = {newRow, newCol};
+		return tileIndex;
+  }
   
   //------------------------
   // DEVELOPER CODE - PROVIDED AS-IS
   //------------------------
   
-  // line 398 "../../../../../PawnStateMachine.ump"
+  // line 580 "../../../../../PawnStateMachine.ump"
   enum MoveDirection 
   {
     East, South, West, North, SouthWest, SouthEast, NorthWest, NorthEast;
