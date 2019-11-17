@@ -1330,12 +1330,11 @@ public class QuoridorController {
 	// ------------------------
 	// Team
 	// ------------------------
-	
+
 	/**
 	 * Enumeration for side and movement directions
 	 */
-	public enum Side
-	{
+	public enum Side {
 		right, left, up, down, downleft, downright, upright, upleft;
 	}
 
@@ -1344,12 +1343,12 @@ public class QuoridorController {
 	 * moves)
 	 * 
 	 * @param p
-	 * The player to move
+	 *            The player to move
 	 * @param side
-	 * The desired direction to move
-	 * @return
+	 *            The desired direction to move
+	 * @return True if the move was legal false otherwise
 	 */
-	
+
 	public static boolean movePawn(Player p, Side side) {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		GameStatus gameStatus = game.getGameStatus();
