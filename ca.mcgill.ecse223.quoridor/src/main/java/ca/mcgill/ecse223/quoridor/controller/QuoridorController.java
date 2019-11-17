@@ -1336,7 +1336,9 @@ public class QuoridorController {
 	 * moves)
 	 * 
 	 * @param p
+	 * The player to move
 	 * @param side
+	 * The desired direction to move
 	 * @return
 	 */
 	public static boolean movePawn(Player p, String side) {
@@ -1406,6 +1408,7 @@ public class QuoridorController {
 	 * moves)
 	 * 
 	 * @param side
+	 *            The desired direction to move
 	 */
 	public static void movePawn(String side) {
 		movePawn(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(), side);

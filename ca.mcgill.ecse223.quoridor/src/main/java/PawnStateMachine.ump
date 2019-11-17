@@ -189,6 +189,14 @@ class PawnBehavior {
 		}
 	}
 	
+	/**
+ 	 *
+	 * Changes the game status of the game when a player is in a winning position (Will be modified in future deliverables)
+	 *
+	 * @author Remi Carriere
+	 *
+	 * 
+	 */
 	void checkWinningMove(){
 		if (player.hasGameAsWhite() && currentGame.getCurrentPosition().getWhitePosition().getTile().getRow() == 1) {
 			currentGame.setGameStatus(GameStatus.WhiteWon);
@@ -196,10 +204,24 @@ class PawnBehavior {
 			currentGame.setGameStatus(GameStatus.BlackWon);
 		}
 	}
+	
+	/**
+ 	 *
+	 * For future deliverable
+	 * 
+	 */
 	void setWinner(){
 	}
 	
-    // Returns the current row number of the pawn
+   	/**
+ 	 *
+	 * Gets the row of the player
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @return
+	 * The row of the player
+	 */
     int getCurrentPawnRow() {
 		if (player.hasGameAsWhite()) {
 			return currentGame.getCurrentPosition().getWhitePosition().getTile().getRow();
@@ -207,7 +229,16 @@ class PawnBehavior {
 			return currentGame.getCurrentPosition().getBlackPosition().getTile().getRow();
 		}
 	}
-    // Returns the current column number of the pawn
+	
+    	/**
+ 	 *
+	 * Gets the column of the player
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @return
+	 * The column of the player
+	 */
     int getCurrentPawnColumn() {
 		if (player.hasGameAsWhite()) {
 			return currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
@@ -215,6 +246,17 @@ class PawnBehavior {
 			return currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
 		}
 	}
+	
+	/**
+ 	 *
+	 * Verifies if white won the game
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @return
+	 * True if white won, false otherwise
+	 * 
+	 */
 	boolean isWhiteWinningMove() {
 		System.out.println("white");
 		if (player.hasGameAsWhite()) {
@@ -223,6 +265,17 @@ class PawnBehavior {
 		} 
 		return false;
 	}
+	
+	 /**
+ 	 *
+	 * Verifies if black won the game
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @return
+	 * True if black won, false otherwise
+	 * 
+	 */
 	boolean isBlackWinningMove() {
 		if (player.hasGameAsBlack()) {
 		System.out.println("black");
@@ -231,7 +284,19 @@ class PawnBehavior {
 		return false;
 		
 	}
-    // Returns if it is legal to step in the given direction
+     /**
+ 	 *
+	 * Verifies if a step move in the given direction is legal
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @param dir
+	 *	Direction to move
+	 *
+	 * @return
+	 * True if the move is legal, false otherwise
+	 * 
+	 */
     boolean isLegalStep(MoveDirection dir) {
     	int row = getCurrentPawnRow();
     	int col = getCurrentPawnColumn();
@@ -261,7 +326,20 @@ class PawnBehavior {
 			return false;
 		}
     }
-    // Returns if it is legal to jump in the given direction
+    
+     /**
+ 	 *
+	 * Verifies if a jump move in the given direction is legal
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @param dir
+	 *	Direction to move
+	 *
+	 * @return
+	 * True if the move is legal, false otherwise
+	 * 
+	 */
     boolean isLegalJump(MoveDirection dir) {
     	
         int row = getCurrentPawnRow();
@@ -305,11 +383,30 @@ class PawnBehavior {
 			return false;
 		}
     }
-    // Action to be called when an illegal move is attempted
+
+     /**
+ 	 *
+	 * Action to be called when an illegal move is attempted
+	 *
+	 * @author Remi Carriere
+	 * 
+	 */
     void illegalMove(){
-    	// We cant throw an exception here since doing so would set the current state to null
+    	// We cant throw an exception here since doing so would set the current state to null and crash the state machine. Alse, the UI does not allow a user to
+    	// input a legal move, so users don't need to be warned.
     	// throw new InvalidMoveException("Illegal move!");
  	 }
+ 	 
+ 	 /**
+ 	 *
+	 * Performs a jump move for the current player in specified direction
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @param dir
+	 *	Direction to move
+	 * 
+	 */
  	 void jumpPawn(MoveDirection dir){
  	  	GamePosition gp = currentGame.getCurrentPosition();
  	  	int row = getCurrentPawnRow();
@@ -355,6 +452,16 @@ class PawnBehavior {
 		QuoridorController.confirmMove();
  	 }
  	 
+ 	  /**
+ 	 *
+	 * Performs a step move for the current player in specified direction
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @param dir
+	 *	Direction to move
+	 * 
+	 */
  	 void movePawn(MoveDirection dir){
  	 	GamePosition gp = currentGame.getCurrentPosition();
  	 	
@@ -373,6 +480,20 @@ class PawnBehavior {
 		}
 		QuoridorController.confirmMove();
  	 }
+ 	 /**
+ 	 *
+	 * Gets the tatbet tile for a move based on current tile and move direction
+	 *
+	 * @author Remi Carriere
+	 * @param currentTile
+	 * tile of current player
+	 * @param dir
+	 *	Direction to move
+	 *
+	 * @return
+	 * The target tile for the move
+	 * 
+	 */
 	Tile getTargetTile(Tile currentTile, MoveDirection dir){
 		if (dir == MoveDirection.East){
 			int newRow = currentTile.getRow();
