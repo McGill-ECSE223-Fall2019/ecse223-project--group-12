@@ -3,9 +3,7 @@
 
 package ca.mcgill.ecse223.quoridor.model;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 // line 34 "../../../../../QuoridorGame.ump"
 public class Player

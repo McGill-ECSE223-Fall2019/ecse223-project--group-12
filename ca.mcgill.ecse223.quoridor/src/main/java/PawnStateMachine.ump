@@ -204,49 +204,6 @@ class PawnBehavior {
 			currentGame.setGameStatus(GameStatus.BlackWon);
 		}
 	}
-	
-	/**
- 	 *
-	 * For future deliverable
-	 * 
-	 */
-	void setWinner(){
-	}
-	
-   	/**
- 	 *
-	 * Gets the row of the player
-	 *
-	 * @author Remi Carriere
-	 *
-	 * @return
-	 * The row of the player
-	 */
-    int getCurrentPawnRow() {
-		if (player.hasGameAsWhite()) {
-			return currentGame.getCurrentPosition().getWhitePosition().getTile().getRow();
-		} else {
-			return currentGame.getCurrentPosition().getBlackPosition().getTile().getRow();
-		}
-	}
-	
-    	/**
- 	 *
-	 * Gets the column of the player
-	 *
-	 * @author Remi Carriere
-	 *
-	 * @return
-	 * The column of the player
-	 */
-    int getCurrentPawnColumn() {
-		if (player.hasGameAsWhite()) {
-			return currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
-		} else {
-			return currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
-		}
-	}
-	
 	/**
  	 *
 	 * Verifies if white won the game
@@ -266,7 +223,41 @@ class PawnBehavior {
 		return false;
 	}
 	
-	 /**
+   	/**
+ 	 *
+	 * Gets the row of the player
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @return
+	 * The row of the player
+	 */
+    int getCurrentPawnRow() {
+		if (player.hasGameAsWhite()) {
+			return currentGame.getCurrentPosition().getWhitePosition().getTile().getRow();
+		} else {
+			return currentGame.getCurrentPosition().getBlackPosition().getTile().getRow();
+		}
+	}
+	
+    /**
+ 	 *
+	 * Gets the column of the player
+	 *
+	 * @author Remi Carriere
+	 *
+	 * @return
+	 * The column of the player
+	 */
+    int getCurrentPawnColumn() {
+		if (player.hasGameAsWhite()) {
+			return currentGame.getCurrentPosition().getWhitePosition().getTile().getColumn();
+		} else {
+			return currentGame.getCurrentPosition().getBlackPosition().getTile().getColumn();
+		}
+	}
+	
+	/**
  	 *
 	 * Verifies if black won the game
 	 *
@@ -284,7 +275,7 @@ class PawnBehavior {
 		return false;
 		
 	}
-     /**
+    /**
  	 *
 	 * Verifies if a step move in the given direction is legal
 	 *
@@ -313,7 +304,7 @@ class PawnBehavior {
 		}
     }
     
-     /**
+    /**
  	 *
 	 * Verifies if a jump move in the given direction is legal
 	 *
@@ -342,21 +333,8 @@ class PawnBehavior {
 			return false;
 		}
     }
-
-     /**
- 	 *
-	 * Action to be called when an illegal move is attempted
-	 *
-	 * @author Remi Carriere
-	 * 
-	 */
-    void illegalMove(){
-    	// We cant throw an exception here since doing so would set the current state to null and crash the state machine. Alse, the UI does not allow a user to
-    	// input a legal move, so users don't need to be warned.
-    	// throw new InvalidMoveException("Illegal move!");
- 	 }
  	 
- 	 /**
+ 	/**
  	 *
 	 * Performs a jump move for the current player in specified direction
 	 *
@@ -406,7 +384,7 @@ class PawnBehavior {
 		QuoridorController.confirmMove();
  	 }
  	 
- 	  /**
+ 	/**
  	 *
 	 * Performs a step move for the current player in specified direction
 	 *
@@ -418,18 +396,16 @@ class PawnBehavior {
 	 */
  	 void movePawn(MoveDirection dir){
  	 	GamePosition gp = currentGame.getCurrentPosition();
- 	 	Tile targetTile = null;
+ 	 	//Get the target tile
+ 	  	int[] tileIndex = getStepTargetTileIndex(dir);
+ 	  	int newRow = tileIndex[0];
+ 	  	int newCol =  tileIndex[1];
+		Tile targetTile = QuoridorController.getTile(newRow, newCol);
  	 	// Update the player position
  	 	if (player.hasGameAsWhite()) {
-			PlayerPosition currentPosition = gp.getWhitePosition();
-			Tile currentTile = currentPosition.getTile();
-			targetTile = getTargetTile(currentTile, dir);
 			PlayerPosition newPos = new PlayerPosition(player, targetTile);
 			gp.setWhitePosition(newPos);
 		} else {		
-			PlayerPosition currentPosition = gp.getBlackPosition();
-			Tile currentTile = currentPosition.getTile();
-			targetTile = getTargetTile(currentTile, dir);
 			PlayerPosition newPos = new PlayerPosition(player, targetTile);
 			gp.setBlackPosition(newPos);	
 		}
@@ -454,42 +430,8 @@ class PawnBehavior {
 		// Confirm the move
 		QuoridorController.confirmMove();
  	 }
- 	 /**
- 	 *
-	 * Gets the target tile for a step move based on current tile and move direction
-	 *
-	 * @author Remi Carriere
-	 * @param currentTile
-	 * tile of current player
-	 * @param dir
-	 *	Direction to move
-	 *
-	 * @return
-	 * The target tile for the move
-	 * 
-	 */
-	Tile getTargetTile(Tile currentTile, MoveDirection dir){
-		if (dir == MoveDirection.East){
-			int newRow = currentTile.getRow();
-			int newCol = currentTile.getColumn() +1;
-			return QuoridorController.getTile(newRow, newCol);
-		} else if (dir == MoveDirection.West){
-			int newRow = currentTile.getRow();
-			int newCol = currentTile.getColumn() -1;
-			return QuoridorController.getTile(newRow, newCol);
-		} else if (dir == MoveDirection.South){
-			int newRow = currentTile.getRow() + 1;
-			int newCol = currentTile.getColumn();
-			return QuoridorController.getTile(newRow, newCol);
-		} else if (dir == MoveDirection.North){
-			int newRow = currentTile.getRow() - 1;
-			int newCol = currentTile.getColumn();
-			return QuoridorController.getTile(newRow, newCol);
-		}
-		return null;
-	}
 	
-	 /**
+	/**
  	 *
 	 * Gets the target tile row and col for jump moves based on move direction
 	 *
@@ -537,7 +479,7 @@ class PawnBehavior {
 		return tileIndex;
 	}
 	
-		 /**
+	/**
  	 *
 	 * Gets the target tile row and cole for step moves based on move direction
 	 *
@@ -571,6 +513,27 @@ class PawnBehavior {
 		int[] tileIndex = {newRow, newCol};
 		return tileIndex;
 	}
+	
+	/**
+ 	 *
+	 * For future deliverable
+	 * 
+	 */
+	void setWinner(){
+	}
+	
+	/**
+ 	 *
+	 * Action to be called when an illegal move is attempted
+	 *
+	 * @author Remi Carriere
+	 * 
+	 */
+    void illegalMove(){
+    	// We cant throw an exception here since doing so would set the current state to null and crash the state machine. Alse, the UI does not allow a user to
+    	// input a legal move, so users don't need to be warned.
+    	// throw new InvalidMoveException("Illegal move!");
+ 	 }
 	
 	
     // Enumeration for the possible moving directions
