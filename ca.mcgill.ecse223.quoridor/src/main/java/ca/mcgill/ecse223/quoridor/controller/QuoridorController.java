@@ -56,6 +56,98 @@ public class QuoridorController {
 	// ------------------------
 	// Remi
 	// ------------------------
+	
+	/**
+	 * Gets the move with specified moveNumber and roundNumber
+	 * @param moveNumber
+	 * @param roundNumber
+	 * @return
+	 */
+	public static Move getMove(int moveNumber, int roundNumber) {
+		List<Move> moves = QuoridorApplication.getQuoridor().getCurrentGame().getMoves();
+		for (Move move : moves) {
+			if (move.getRoundNumber() == roundNumber && move.getMoveNumber() == moveNumber) {
+				return move;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Adds A move to the game history, and appropriately sets the round and move number
+	 * @param move
+	 * the move to be added
+	 */
+	public static void addMoveToGameHistory(Move move) {
+		Move lastMove = getLastMove();
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		int roundNumber;
+		int moveNumber;
+
+		// first move of the game
+		if (lastMove == null) {
+			move.setRoundNumber(1);
+			move.setMoveNumber(1);
+			return;
+		}
+		// white move
+		else if (p.hasGameAsWhite()) {
+			roundNumber = 1;
+			moveNumber = lastMove.getMoveNumber() + 1;
+		}
+		// black move
+		else {
+			roundNumber = 2;
+			moveNumber = lastMove.getMoveNumber();
+		}
+		// Add move to history
+		move.setMoveNumber(moveNumber);
+		move.setRoundNumber(roundNumber);
+		move.setPrevMove(lastMove);
+		lastMove.setNextMove(move);
+	}
+
+	/**
+	 * Gets the last move in the game History
+	 * 
+	 * @return The last move in the game History
+	 */
+	public static Move getLastMove() {
+		Move move = getMove(1, 1);
+		if (move == null) {
+			return null;
+		}
+		while (move.hasNextMove()) {
+			move = move.getNextMove();
+		}
+		return move;
+	}
+
+	/**
+	 * Sets the game Status to "____won" for the player who didn't run out of time.
+	 * This method is automatically called when a player's time hits 00:00
+	 * 
+	 * @param player
+	 *            The player that ran out of time
+	 */
+	public static void setTimeOutStatus(Player player) {
+		if (player.hasGameAsBlack()) {
+			QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+		} else {
+			QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.BlackWon);
+		}
+	}
+
+	/**
+	 * This method is only to satisfy the gherkin feature, the pawn state machine
+	 * handles this.
+	 */
+	public static void checkGameWon() {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (whiteBehavior == null || !whiteBehavior.getCurrentGame().equals(game) || blackBehavior == null
+				|| !blackBehavior.getCurrentGame().equals(game)) {
+			initPawnMachines();
+		}
+	}
 
 	/**
 	 * Create a new game with Initializing GameStatus
@@ -456,6 +548,7 @@ public class QuoridorController {
 			wall.getMove().delete();
 		}
 	}
+
 	/**
 	 * Changes the MoveMode to Player move for current player
 	 */
@@ -690,6 +783,8 @@ public class QuoridorController {
 				cal.add(Calendar.SECOND, -1);
 				Time newTime = new Time(cal.getTimeInMillis());
 				p.setRemainingTime(newTime);
+			} else {
+				setTimeOutStatus(p);
 			}
 		}
 	}
@@ -1246,15 +1341,7 @@ public class QuoridorController {
 			g.setWallMoveCandidate(null);
 			g.setMoveMode(MoveMode.PlayerMove);
 
-			List<Move> moves = g.getMoves(); // increment the round number and move number
-			int ms = moves.size();
-			Move lastMove = moves.get(ms - 1);
-			int currentRound = lastMove.getRoundNumber();
-			int currentMove = lastMove.getMoveNumber();
-			Move nextMove = lastMove;
-			nextMove.setRoundNumber(currentRound++);
-			nextMove.setMoveNumber(currentMove++);
-			lastMove.setNextMove(nextMove);
+			addMoveToGameHistory(wallMove);
 
 			confirmMove();
 		} else {

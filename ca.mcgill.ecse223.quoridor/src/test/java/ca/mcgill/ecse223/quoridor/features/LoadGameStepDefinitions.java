@@ -4,6 +4,9 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class LoadGameStepDefinitions {
+	//Note that alot of the other steps will be in load position
+	//load/save game calls the same methods as load/save position (i.e. both tests should pass with the new version of the funtion)
+	//This maybe moved to the load positions step defs
 	@When("I initiate to load a game in {string}")
 	public void i_initiate_to_load_a_game_in(String string) {
 		// Write code here that turns the phrase above into concrete actions

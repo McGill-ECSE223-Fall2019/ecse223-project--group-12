@@ -363,23 +363,8 @@ class PawnBehavior {
 		}
 		
 		// Add the move to the game
-		List<Move> moves =  currentGame.getMoves();
-		int roundNumber;
-		int moveNumber;
-		Move lastMove = null;
-		if(currentGame.getMoves().isEmpty()) {
-			roundNumber =  0;
-			moveNumber = 0;
-		} else {
-			lastMove = moves.get(moves.size()-1);
-			roundNumber = lastMove.getRoundNumber() +1;
-			moveNumber = lastMove.getMoveNumber() +1;
-		}
-		JumpMove Move = new JumpMove(moveNumber, roundNumber, player, targetTile, currentGame);
-		if (lastMove != null) {
-			lastMove.setNextMove(Move);
-			Move.setPrevMove(lastMove);
-		}
+		JumpMove move = new JumpMove(0, 0, player, targetTile, currentGame);
+		QuoridorController.addMoveToGameHistory(move);
 		// Confirm the move
 		QuoridorController.confirmMove();
  	 }
@@ -410,23 +395,8 @@ class PawnBehavior {
 			gp.setBlackPosition(newPos);	
 		}
 		// Add the move to the game
-		List<Move> moves =  currentGame.getMoves();
-		int roundNumber;
-		int moveNumber;
-		Move lastMove = null;
-		if(currentGame.getMoves().isEmpty()) {
-			roundNumber =  0;
-			moveNumber = 0;
-		} else {
-			lastMove = moves.get(moves.size()-1);
-			roundNumber = lastMove.getRoundNumber() +1;
-			moveNumber = lastMove.getMoveNumber() +1;
-		}
-		StepMove Move = new StepMove(moveNumber, roundNumber, player, targetTile, currentGame);
-		if (lastMove != null) {
-			lastMove.setNextMove(Move);
-			Move.setPrevMove(lastMove);
-		}
+		StepMove move = new StepMove(0, 0, player, targetTile, currentGame);
+		QuoridorController.addMoveToGameHistory(move);
 		// Confirm the move
 		QuoridorController.confirmMove();
  	 }
