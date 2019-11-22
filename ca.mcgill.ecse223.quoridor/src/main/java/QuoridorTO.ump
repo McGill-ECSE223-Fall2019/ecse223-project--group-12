@@ -28,3 +28,11 @@ class TileTO {
 	int row;
 	int col;
 }
+
+class PathAndMove{
+	depend java.util.List;
+	List<TileTO> whitePath;
+	List<TileTO> blackPath;
+	WallMoveTO move;
+	Boolean reducesOptions;
+}

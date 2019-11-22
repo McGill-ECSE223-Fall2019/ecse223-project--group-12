@@ -25,6 +25,7 @@ class Tile {
 
 class User {
 	unique String name;
+	lazy Boolean isComp;
 }
 
 class Wall {

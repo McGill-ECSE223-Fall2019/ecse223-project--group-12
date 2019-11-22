@@ -20,6 +20,7 @@ public class User
 
   //User Attributes
   private String name;
+  private boolean isComp;
 
   //User Associations
   private Quoridor quoridor;
@@ -30,6 +31,7 @@ public class User
 
   public User(String aName, Quoridor aQuoridor)
   {
+    isComp = false;
     if (!setName(aName))
     {
       throw new RuntimeException("Cannot create due to duplicate name");
@@ -61,6 +63,14 @@ public class User
     return wasSet;
   }
 
+  public boolean setIsComp(boolean aIsComp)
+  {
+    boolean wasSet = false;
+    isComp = aIsComp;
+    wasSet = true;
+    return wasSet;
+  }
+
   public String getName()
   {
     return name;
@@ -74,6 +84,16 @@ public class User
   public static boolean hasWithName(String aName)
   {
     return getWithName(aName) != null;
+  }
+
+  public boolean getIsComp()
+  {
+    return isComp;
+  }
+  /* Code from template attribute_IsBoolean */
+  public boolean isIsComp()
+  {
+    return isComp;
   }
   /* Code from template association_GetOne */
   public Quoridor getQuoridor()
@@ -115,7 +135,8 @@ public class User
   public String toString()
   {
     return super.toString() + "["+
-            "name" + ":" + getName()+ "]" + System.getProperties().getProperty("line.separator") +
+            "name" + ":" + getName()+ "," +
+            "isComp" + ":" + getIsComp()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "quoridor = "+(getQuoridor()!=null?Integer.toHexString(System.identityHashCode(getQuoridor())):"null");
   }
 }

@@ -31,6 +31,7 @@ import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
+import ca.mcgill.ecse223.quoridor.to.PathAndMove;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO.PlayerColor;
 import ca.mcgill.ecse223.quoridor.to.PlayerStatsTO;
@@ -56,9 +57,11 @@ public class QuoridorController {
 	// ------------------------
 	// Remi
 	// ------------------------
-	
+
+
 	/**
 	 * Gets the move with specified moveNumber and roundNumber
+	 * 
 	 * @param moveNumber
 	 * @param roundNumber
 	 * @return
@@ -72,10 +75,13 @@ public class QuoridorController {
 		}
 		return null;
 	}
+
 	/**
-	 * Adds A move to the game history, and appropriately sets the round and move number
+	 * Adds A move to the game history, and appropriately sets the round and move
+	 * number
+	 * 
 	 * @param move
-	 * the move to be added
+	 *            the move to be added
 	 */
 	public static void addMoveToGameHistory(Move move) {
 		Move lastMove = getLastMove();
@@ -147,6 +153,8 @@ public class QuoridorController {
 				|| !blackBehavior.getCurrentGame().equals(game)) {
 			initPawnMachines();
 		}
+		whiteBehavior.checkWinningMove();
+		blackBehavior.checkWinningMove();
 	}
 
 	/**
@@ -174,6 +182,18 @@ public class QuoridorController {
 			QuoridorApplication.getQuoridor().getCurrentGame().delete();
 			if (timerTask != null) {
 				timerTask.cancel();
+			}
+			User comp = getUserByName("Comp");
+			User user1 = getUserByName("User 1");
+			User user2 = getUserByName("User 2");
+			if(comp != null) {
+				comp.delete();
+			}
+			if(user1 != null) {
+				user1.delete();
+			}
+			if(user2 != null) {
+				user2.delete();
 			}
 		}
 	}
@@ -502,7 +522,21 @@ public class QuoridorController {
 		User user = getUserByName(userName);
 		setBlackPlayerInGame(user);
 	}
-
+	public static void setBlackComp() {
+		
+		try {
+			if(getUserByName("Comp") == null) {
+			setNewUserAsBlack("Comp");
+			}else {
+				setBlackPlayerInGame("Comp");
+			}
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		User user = QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().getUser();
+		user.setIsComp(true);
+	}
 	/**
 	 * Creates new user, and sets the user as the white player
 	 * 
@@ -691,8 +725,21 @@ public class QuoridorController {
 	 * @return
 	 */
 	public static List<TileTO> getAdjTiles() {
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		return getAdjTiles(p);
+
+	}
+	
+	/**
+	 * Gets a list of tile that are adjacent (including jump moves) to the current
+	 * player
+	 * 
+	 * @author Remi Carriere
+	 * @return
+	 */
+	public static List<TileTO> getAdjTiles(Player p) {
 		List<TileTO> adjTiles = new ArrayList<TileTO>();
-		Integer[] position = getCurrentPosition();
+		Integer[] position = getCurrentPosition(p);
 		int row = position[0];
 		int col = position[1];
 		BoardGraph bg = new BoardGraph();
@@ -711,16 +758,32 @@ public class QuoridorController {
 	 * @return
 	 */
 	public static List<TileTO> getPath() {
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		return getPath(p);
+
+	}
+
+	/**
+	 * Gets the shortest path between the current players position and his
+	 * destination
+	 * 
+	 * @author Remi Carriere
+	 * @return
+	 */
+	public static List<TileTO> getPath(Player player) {
 		List<TileTO> path = new ArrayList<TileTO>();
-		Integer[] position = getCurrentPosition();
+		Integer[] position = getCurrentPosition(player);
 		Integer dest = position[2];
 		int row = position[0];
 		int col = position[1];
 		BoardGraph bg = new BoardGraph();
 		bg.syncJumpMoves();
-		List<Integer> pathNodes = bg.getBFSPath(row, col, dest).get(0);
-		path = toTileTO(pathNodes);
-		return path;
+		if (bg.getBFSPath(row, col, dest) != null) {
+			List<Integer> pathNodes = bg.getBFSPath(row, col, dest).get(0);
+			path = toTileTO(pathNodes);
+			return path;
+		}
+		return null;
 
 	}
 
@@ -834,8 +897,18 @@ public class QuoridorController {
 	 * @return an array containing the player position: {row, column, destination}
 	 */
 	private static Integer[] getCurrentPosition() {
-		PlayerPosition pos;
 		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		return getCurrentPosition(p);
+	}
+
+	/**
+	 * Gets the current position of the player represented as an array
+	 * 
+	 * @author Remi Carriere
+	 * @return an array containing the player position: {row, column, destination}
+	 */
+	private static Integer[] getCurrentPosition(Player p) {
+		PlayerPosition pos;
 
 		Integer dest;
 		if (p.hasGameAsWhite()) {
@@ -1271,6 +1344,10 @@ public class QuoridorController {
 		}
 		g.addPosition(newGp);
 		g.setCurrentPosition(newGp);
+		checkGameWon();
+		if (g.getCurrentPosition().getPlayerToMove().hasGameAsBlack() && g.getBlackPlayer().getUser().getIsComp() ==true && g.getGameStatus() == GameStatus.Running) {
+			AIController.doMove();
+		}
 
 	}
 
@@ -1347,7 +1424,6 @@ public class QuoridorController {
 		} else {
 			throw new InvalidInputException("Invalid move, try again!");
 		}
-
 	}
 
 	// ------------------------

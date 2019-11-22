@@ -17,6 +17,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.text.MaskFormatter;
@@ -57,6 +58,8 @@ public class MenuPanel extends JPanel {
 	private JLabel startGameErrorLabel;
 	private JLabel titleLabel;
 
+	private JRadioButton aiRadioButton;
+
 	public MenuPanel() {
 		initComponents();
 		refreshData();
@@ -72,7 +75,7 @@ public class MenuPanel extends JPanel {
 		interfacePanel = new JPanel();
 		bannerPanel = new JPanel();
 		imagePanel = new JPanel();
-	
+
 		// Time
 		MaskFormatter timeFormat = null;
 		try {
@@ -108,6 +111,8 @@ public class MenuPanel extends JPanel {
 		loadGameToggelList = new JComboBox<String>();
 		loadGameButton = new JButton("Load Game");
 		loadGameLabel = new JLabel("Load Game");
+		//
+		aiRadioButton = new JRadioButton("Set Black as AI");
 
 		// ------------------------
 		// Layout of Main Panel
@@ -153,6 +158,12 @@ public class MenuPanel extends JPanel {
 				loadGameButtonActionPerformed(evt);
 			}
 		});
+		aiRadioButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				aiButtonActionPerformed(evt);
+			}
+
+		});
 
 	}
 
@@ -190,20 +201,43 @@ public class MenuPanel extends JPanel {
 		}
 	}
 
+	private void aiButtonActionPerformed(ActionEvent evt) {
+		refreshData();
+		if (aiRadioButton.isSelected()) {
+			blackToggleList.setEnabled(false);
+		} else {
+			blackToggleList.setEnabled(true);
+		}
+
+	}
+
 	private void stertGameButtonActionPerformed(ActionEvent evt) {
 		String w = null;
 		String b = null;
 		Time time = null;
 		try {
-			w = whiteToggleList.getSelectedItem().toString();
-			b = blackToggleList.getSelectedItem().toString();
 			int min = Integer.parseInt(thinkingTimeTextField.getText().substring(0, 2));
 			int sec = Integer.parseInt(thinkingTimeTextField.getText().substring(5, 7));
 			time = Time.valueOf("00:" + min + ":" + sec);
+			w = whiteToggleList.getSelectedItem().toString();
+			if (blackToggleList.isEnabled()) {
+				b = blackToggleList.getSelectedItem().toString();
+			}
 		} catch (Exception e) {
 			startGameErrorLabel.setText("Could not parse selections");
 		}
-		if (w != null && b != null && time != null) {
+		if (aiRadioButton.isSelected() && w != null && time != null) {
+			try {
+				QuoridorController.initializeGame();
+				QuoridorController.setWhitePlayerInGame(w);
+				QuoridorController.setBlackComp();
+				QuoridorController.setTotalThinkingTime(time);
+			} catch (InvalidInputException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			changeToGamePanel();
+		} else if (w != null && b != null && time != null) {
 			try {
 				QuoridorController.initializeGame();
 				QuoridorController.setWhitePlayerInGame(w);
@@ -274,7 +308,8 @@ public class MenuPanel extends JPanel {
 												.addPreferredGap(ComponentPlacement.RELATED)
 												.addGroup(interfaceLayout.createParallelGroup()
 														.addComponent(thinkingTimeTextField)
-														.addComponent(setThinkingTimeLable)))
+														.addComponent(setThinkingTimeLable)
+														.addComponent(aiRadioButton)))
 										.addComponent(stertGameButton, GroupLayout.DEFAULT_SIZE,
 												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 								.addGap(34)
@@ -310,7 +345,7 @@ public class MenuPanel extends JPanel {
 						.addComponent(loadGameButton, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
 				.addPreferredGap(ComponentPlacement.RELATED)
 				.addGroup(interfaceLayout.createParallelGroup(Alignment.BASELINE).addComponent(startGameErrorLabel)
-						.addComponent(addUserErrorMessage))));
+						.addComponent(aiRadioButton).addComponent(addUserErrorMessage))));
 		interfacePanel.setLayout(interfaceLayout);
 		interfaceLayout.setAutoCreateContainerGaps(true);
 	}
