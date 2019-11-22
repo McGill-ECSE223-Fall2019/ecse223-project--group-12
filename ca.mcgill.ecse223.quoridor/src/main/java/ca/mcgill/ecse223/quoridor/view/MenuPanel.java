@@ -113,7 +113,17 @@ public class MenuPanel extends JPanel {
 		loadGameLabel = new JLabel("Load Game");
 		//
 		aiRadioButton = new JRadioButton("Set Black as AI");
-
+		
+		//
+		try {
+			QuoridorController.createUser("Default");
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		aiRadioButton.setSelected(true);
+		blackToggleList.setEnabled(false);
+		thinkingTimeTextField.setText("2000");
 		// ------------------------
 		// Layout of Main Panel
 		// ------------------------
@@ -184,7 +194,7 @@ public class MenuPanel extends JPanel {
 		}
 
 		// Clean up text fields, errors and selections
-		whiteToggleList.setSelectedItem(null);
+		whiteToggleList.setSelectedItem("Default");
 		blackToggleList.setSelectedItem(null);
 		loadGameToggelList.setSelectedItem(null);
 		userNameTextField.setText("");
