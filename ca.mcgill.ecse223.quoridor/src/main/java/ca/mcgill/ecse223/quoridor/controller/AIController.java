@@ -124,9 +124,10 @@ public class AIController {
 	public static WallMoveTO getBestWallMove() {
 		List<PathAndMove> pathsToCheck = getPossibleWallMoves();
 		int bestWhiteDelta = 0;
+		int bestRowDelta = 10;
 		PathAndMove bestPathMove = null;
 		boolean betterMove = false;
-
+		boolean betterMove1 = false;
 		for (PathAndMove pathMove : pathsToCheck) {
 			if (pathMove.getWhitePath() != null) {
 				int whiteLength = pathMove.getWhitePath().size();
@@ -136,6 +137,7 @@ public class AIController {
 				int blackLength = pathMove.getBlackPath().size();
 				int whiteDelta = whiteLength - currentWhitePathLength;
 				int blackDelta = blackLength - currentBlackPathLength;
+				int rowDelta = pathMove.getWhitePath().get(0).getRow() - pathMove.getMove().getRow();
 
 				// longer white path, whites path was extended more than blacks
 				if (whiteDelta > bestWhiteDelta && blackDelta < whiteDelta) {
@@ -150,6 +152,7 @@ public class AIController {
 						betterMove = true;
 						System.out.println("case 2.1");
 					}
+					betterMove1 = true;
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
 					System.out.println("case 2");
@@ -167,9 +170,22 @@ public class AIController {
 						betterMove = true;
 						System.out.println("case 4.1");
 					}
+					betterMove1 = true;
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
 					System.out.println("case 4");
+				} else if (whiteDelta >= bestWhiteDelta && blackDelta < whiteDelta && !betterMove1
+						&& rowDelta < bestRowDelta) {
+					bestPathMove = pathMove;
+					bestWhiteDelta = whiteDelta;
+					bestRowDelta = rowDelta;
+					System.out.println("case 5");
+				} else if (whiteDelta >= bestWhiteDelta && blackDelta <= whiteDelta && !betterMove1
+						&& rowDelta < bestRowDelta) {
+					bestPathMove = pathMove;
+					bestWhiteDelta = whiteDelta;
+					bestRowDelta = rowDelta;
+					System.out.println("case 6");
 				}
 			}
 		}
