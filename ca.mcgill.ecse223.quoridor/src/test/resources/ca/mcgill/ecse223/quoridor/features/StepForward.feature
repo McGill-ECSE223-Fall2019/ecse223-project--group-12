@@ -16,12 +16,12 @@ and see the board position after that move.
       |  3 |   1 | e3h  |
       |  3 |   2 | e8h  |
       |  4 |   1 | d3v  |
-      |  4 |   2 | f2   |
-    And The next move is <movno>.<rndno>
+      |  4 |   2 | f3   |
+    And The next move is (<movno>, <rndno>)
     When Step forward is initiated
-    Then The next move shall be <nmov>.<nrnd>
-    And White player's position shall be (<wrow>,<wcol>)
-    And Black player's position shall be (<brow>,<bcol>)
+    Then The next move shall be (<nmov>, <nrnd>)
+    And White player's position shall be (<wrow>, <wcol>)
+    And Black player's position shall be (<brow>, <bcol>)
     And White has <wwallno> on stock
     And Black has <bwallno> on stock
 

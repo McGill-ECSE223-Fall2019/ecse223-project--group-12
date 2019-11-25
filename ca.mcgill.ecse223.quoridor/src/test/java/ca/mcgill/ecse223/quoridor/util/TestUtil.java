@@ -12,6 +12,7 @@ import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.Game.MoveMode;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.Move;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
@@ -169,45 +170,49 @@ public class TestUtil {
 			throw new java.lang.IllegalArgumentException("Invalid direction: " + dir);
 		}
 	}
-	public static boolean checkOpponentExistence(String side,Tile playerTile) {
+
+	public static boolean checkOpponentExistence(String side, Tile playerTile) {
 		GamePosition GP = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Tile oppoTile;
 		if (GP.getPlayerToMove() == QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer()) {
 			oppoTile = GP.getWhitePosition().getTile();
-		}else {
+		} else {
 			oppoTile = GP.getBlackPosition().getTile();
 		}
-		Tile targetTile = findTile(side,playerTile);
+		Tile targetTile = findTile(side, playerTile);
 		if (targetTile == null) {
 			return false;
 		} else {
 			return oppoTile == targetTile;
 		}
 	}
+
 	/**
 	 * return if the side of player have wall with specific direction
+	 * 
 	 * @param dir
 	 * @param side
-	 * @param playerTile the tile that player stand on
-	 * @return  return wall if it exist otherwise return null
+	 * @param playerTile
+	 *            the tile that player stand on
+	 * @return return wall if it exist otherwise return null
 	 * @author Weige qian
 	 * 
 	 */
-	public static Wall checkWallExistence(String dir,String side,Tile playerTile) {
+	public static Wall checkWallExistence(String dir, String side, Tile playerTile) {
 		GamePosition GP = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		List<Wall> blackWalls = GP.getBlackWallsOnBoard();
 		List<Wall> whiteWalls = GP.getWhiteWallsOnBoard();
-		Tile targetTile = findTile(side,playerTile);
+		Tile targetTile = findTile(side, playerTile);
 		if (targetTile == null) {
 			return null;
 		} else {
-			for (Wall wall:blackWalls) {
+			for (Wall wall : blackWalls) {
 				Tile tile = wall.getMove().getTargetTile();
 				if (tile == targetTile && wall.getMove().getWallDirection() == getDirection(dir)) {
 					return wall;
 				}
 			}
-			for (Wall wall:whiteWalls) {
+			for (Wall wall : whiteWalls) {
 				Tile tile = wall.getMove().getTargetTile();
 				if (tile == targetTile && wall.getMove().getWallDirection() == getDirection(dir)) {
 					return wall;
@@ -215,56 +220,59 @@ public class TestUtil {
 			}
 		}
 		return null;
-		
+
 	}
+
 	/**
 	 * return the target tile depend on the side
+	 * 
 	 * @param side
 	 * @param playerTile
 	 * @author Weige qian
-	 * @return 
+	 * @return
 	 */
-	public static Tile findTile(String side,Tile playerTile) {
+	public static Tile findTile(String side, Tile playerTile) {
 		try {
 			switch (side) {
-				case "left":
-					return getTile(playerTile.getRow(),playerTile.getColumn() - 1);
-				case "right":
-					return getTile(playerTile.getRow(),playerTile.getColumn() + 1);
-				case "up":
-					return getTile(playerTile.getRow() + 1,playerTile.getColumn());
-				case "down":
-					return getTile(playerTile.getRow() - 1,playerTile.getColumn());
-				default:
-					throw new java.lang.IllegalArgumentException("Invalid side: " + side);
-			
+			case "left":
+				return getTile(playerTile.getRow(), playerTile.getColumn() - 1);
+			case "right":
+				return getTile(playerTile.getRow(), playerTile.getColumn() + 1);
+			case "up":
+				return getTile(playerTile.getRow() + 1, playerTile.getColumn());
+			case "down":
+				return getTile(playerTile.getRow() - 1, playerTile.getColumn());
+			default:
+				throw new java.lang.IllegalArgumentException("Invalid side: " + side);
+
 			}
 		} catch (IllegalArgumentException e) {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * return the target tile depend on the side
+	 * 
 	 * @param side
 	 * @param playerTile
 	 * @author Weige qian
-	 * @return 
+	 * @return
 	 */
-	public static Tile findTileNotSideOfPlayer(String side,Tile playerTile) {
+	public static Tile findTileNotSideOfPlayer(String side, Tile playerTile) {
 		try {
 			switch (side) {
-				case "left":
-					return getTile(playerTile.getRow(),playerTile.getColumn() + 1); //return right
-				case "right":
-					return getTile(playerTile.getRow(),playerTile.getColumn() - 1); //return left
-				case "up":
-					return getTile(playerTile.getRow() - 1,playerTile.getColumn()); // return down
-				case "down":
-					return getTile(playerTile.getRow() + 1,playerTile.getColumn()); //return up
-				default:
-					throw new java.lang.IllegalArgumentException("Invalid side: " + side);
-			
+			case "left":
+				return getTile(playerTile.getRow(), playerTile.getColumn() + 1); // return right
+			case "right":
+				return getTile(playerTile.getRow(), playerTile.getColumn() - 1); // return left
+			case "up":
+				return getTile(playerTile.getRow() - 1, playerTile.getColumn()); // return down
+			case "down":
+				return getTile(playerTile.getRow() + 1, playerTile.getColumn()); // return up
+			default:
+				throw new java.lang.IllegalArgumentException("Invalid side: " + side);
+
 			}
 		} catch (IllegalArgumentException e) {
 			return null;
@@ -387,5 +395,62 @@ public class TestUtil {
 		}
 		return null;
 	}
+
+	/**
+	 * Gets the move with specified moveNumber and roundNumber
+	 * 
+	 * @param moveNumber
+	 * @param roundNumber
+	 * @return
+	 */
+	public static Move getMove(int moveNumber, int roundNumber) {
+		List<Move> moves = QuoridorApplication.getQuoridor().getCurrentGame().getMoves();
+		for (Move move : moves) {
+			if (move.getRoundNumber() == roundNumber && move.getMoveNumber() == moveNumber) {
+				return move;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Adds A move to the game history, and appropriately sets the round and move
+	 * number
+	 * 
+	 * @param move
+	 *            the move to be added
+	 */
+	public static void addMoveToGameHistory(Move move) {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		
+		if(game.getMoves().isEmpty()) {
+			move.setRoundNumber(1);
+			move.setMoveNumber(1);
+			return;
+		}
+		
+		Move lastMove = game.getMove(0);
+		Player p = move.getPlayer();
+		int roundNumber;
+		int moveNumber;
+
+		// white move
+		if (p.hasGameAsWhite()) {
+			roundNumber = 1;
+			moveNumber = lastMove.getMoveNumber() + 1;
+		}
+		// black move
+		else {
+			roundNumber = 2;
+			moveNumber = lastMove.getMoveNumber();
+		}
+		// Add move to history
+		move.setMoveNumber(moveNumber);
+		move.setRoundNumber(roundNumber);
+		move.setPrevMove(lastMove);
+		lastMove.setNextMove(move);
+		game.addOrMoveMoveAt(move, 0);
+	}
+
 
 }
