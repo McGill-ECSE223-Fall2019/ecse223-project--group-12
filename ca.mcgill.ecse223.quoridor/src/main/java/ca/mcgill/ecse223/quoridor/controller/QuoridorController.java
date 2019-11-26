@@ -43,7 +43,7 @@ import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 public class QuoridorController {
 
 	public static final String TEST_SAVED_GAMES_FOLDER = "src\\test\\resources\\";
-	public static final String SAVED_GAMES_FOLDER = "savedgames\\";
+	public static final String SAVED_POSITIONS_FOLDER = "savedpositions\\";
 
 	private static Timer timer = new Timer();
 	private static TimerTask timerTask;
@@ -1277,20 +1277,17 @@ public class QuoridorController {
 	// ------------------------
 
 	/**
-	 * Loads a previously
-	 * 
-	 * d game position into the current game position
+	 * Loads a previously saved game position into the current game position
 	 * 
 	 * @author Francis Comeau Gherkin feature: LoadPosition.feature
-	 * @param fullPath
-	 *            of the saved file
+	 * @param fullPath of the saved file
 	 * @return True if load was successful, false is unable to load
 	 */
 	public static boolean loadPosition(String fileName, boolean test) {
 		// Initialize Game Add default users and time
 		createAndStartDefaultGame();
 
-		String fullPath = SAVED_GAMES_FOLDER + fileName;
+		String fullPath = SAVED_POSITIONS_FOLDER + fileName;
 		// Necessary since Travis CI expects resources created during tests to be in
 		// test folder
 		if (test) {
@@ -1298,7 +1295,7 @@ public class QuoridorController {
 		}
 
 		// validate text file
-		if (!validateTextFile(fullPath)) {
+		if (!validatePositionTextFile(fullPath)) {
 			return false;
 		}
 
@@ -1410,7 +1407,7 @@ public class QuoridorController {
 		QuoridorApplication.getQuoridor().getCurrentGame().setCurrentPosition(gp);
 	}
 
-	private static boolean validateTextFile(String path) {
+	private static boolean validatePositionTextFile(String path) {
 		File file = new File(path);
 
 		String firstPlayerLine = new String();
@@ -1449,14 +1446,14 @@ public class QuoridorController {
 		}
 
 		// check if each line is correct format
-		if (!validateTextLine(firstPlayerLine) || !validateTextLine(firstPlayerLine)) {
+		if (!validatePositionTextLine(firstPlayerLine) || !validatePositionTextLine(firstPlayerLine)) {
 			return false;
 		}
 
 		return true;
 	}
 
-	private static boolean validateTextLine(String line) {
+	private static boolean validatePositionTextLine(String line) {
 		int l = line.length();
 		if (l < 5 || l > 55) {
 			return false;
@@ -1525,7 +1522,7 @@ public class QuoridorController {
 
 		// save whitePos and blackPos to file
 		PrintWriter pw;
-		String fullPath = SAVED_GAMES_FOLDER + fileName;
+		String fullPath = SAVED_POSITIONS_FOLDER + fileName;
 		// Necessary since Travis CI expects resources created during tests to be in
 		// test folder
 		if (test) {
@@ -1558,7 +1555,7 @@ public class QuoridorController {
 
 	public static boolean checkFileExists(String fileName, boolean test) {
 
-		String fullPath = SAVED_GAMES_FOLDER + fileName;
+		String fullPath = SAVED_POSITIONS_FOLDER + fileName;
 		if (test) {
 			fullPath = TEST_SAVED_GAMES_FOLDER + fileName;
 		}
@@ -1576,6 +1573,45 @@ public class QuoridorController {
 			writePositionFile(fileName, test);
 		}
 	}
+	
+	//deliv 5
+	
+	/**
+	 * Initiates the saving of the current game's move history
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	public static void saveGame(String fileName, boolean overWrite, boolean test) {
+		if (!checkFileExists(fileName, test) || overWrite) {
+			writeGameFile(fileName, test);
+		}
+	}
+	
+	/**
+	 * Saves the current game's move history into a file
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	public static void writeGameFile(String fileName, boolean test) {
+		return;
+	}
+	
+	/**
+	 * Loads a previously saved game's move history into the current game
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	public static boolean loadGame(String fileName, boolean test) {
+		return true;
+	}
+	
+	
 
 	// ------------------------
 	// Weige
