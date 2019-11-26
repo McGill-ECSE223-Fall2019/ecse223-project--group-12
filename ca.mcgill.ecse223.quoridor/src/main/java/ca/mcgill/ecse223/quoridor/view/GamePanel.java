@@ -507,17 +507,20 @@ public class GamePanel extends JPanel {
 				JOptionPane.showMessageDialog(this.getParent(), "Sorry filename is not valid");
 				return;
 			} else {
-				fileName += ".dat";
-				if (QuoridorController.checkFileExists(fileName, false)) {
+				String fileNamePos = fileName + ".pos.dat";
+				String fileNameGame = fileName + ".game.dat";
+				if (QuoridorController.checkFileExists(fileNamePos, false) || QuoridorController.checkFileExists(fileNameGame, false)) {
 					int overWriteOption = JOptionPane.showConfirmDialog(this.getParent(),
 							"File already exists, are you sure you want to overwrite?");
 					if (overWriteOption == 0) {
-						QuoridorController.writePositionFile(fileName, false);
+						QuoridorController.writePositionFile(fileNamePos, false);
+						QuoridorController.writeGameFile(fileNameGame, false);
 					} else {
 						return;
 					}
 				} else {
-					QuoridorController.writePositionFile(fileName, false);
+					QuoridorController.writePositionFile(fileNamePos, false);
+					QuoridorController.writeGameFile(fileNameGame, false);
 				}
 			}
 			QuoridorController.destroyGame();

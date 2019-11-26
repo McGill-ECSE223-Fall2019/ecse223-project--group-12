@@ -44,6 +44,8 @@ public class QuoridorController {
 
 	public static final String TEST_SAVED_GAMES_FOLDER = "src\\test\\resources\\";
 	public static final String SAVED_POSITIONS_FOLDER = "savedpositions\\";
+	public static final String SAVED_GAMES_FOLDER = "savedgames\\";
+
 
 	private static Timer timer = new Timer();
 	private static TimerTask timerTask;
@@ -1597,6 +1599,23 @@ public class QuoridorController {
 	 * @return
 	 */
 	public static void writeGameFile(String fileName, boolean test) {
+	
+		PrintWriter pw;
+		String fullPath = SAVED_GAMES_FOLDER + fileName;
+		// Necessary since Travis CI expects resources created during tests to be in
+		// test folder
+		if (test) {
+			fullPath = TEST_SAVED_GAMES_FOLDER + fileName;
+		}
+		try {
+			pw = new PrintWriter(fullPath, "UTF-8");
+			pw.println("Writing of game files has not been implemented yet");
+			pw.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return;
 	}
 	
