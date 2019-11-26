@@ -4,15 +4,15 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class LoadGameStepDefinitions {
-	//Note that alot of the other steps will be in load position
-	//load/save game calls the same methods as load/save position (i.e. both tests should pass with the new version of the funtion)
-	//This maybe moved to the load positions step defs
+	// All the main steps for svae game are in the saveposition step definitions 
+	//load/save game calls the same methods as load/save position (i.e. both tests should pass with the new version of the function)
 	@When("I initiate to load a game in {string}")
 	public void i_initiate_to_load_a_game_in(String string) {
 		// Write code here that turns the phrase above into concrete actions
 		throw new cucumber.api.PendingException();
 	}
 
+	// I think these 3 extra when clause are useless... loadGame(File file) should check all of those things
 	@When("Each game move is valid")
 	public void each_game_move_is_valid() {
 		// Write code here that turns the phrase above into concrete actions

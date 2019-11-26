@@ -1,12 +1,13 @@
 package ca.mcgill.ecse223.quoridor.features;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
+import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
@@ -23,9 +24,14 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
+/**
+ * 
+ * @author Remi Carriere
+ *
+ */
 public class EnterReplayModeStepDefinitions {
-	Integer moveNum = null;
-	Integer roundNum = null;
+	
+	private String error = "";
 
 	@When("I initiate replay mode")
 	public void i_initiate_replay_mode() {
@@ -123,23 +129,51 @@ public class EnterReplayModeStepDefinitions {
 
 	@When("I initiate to continue game")
 	public void i_initiate_to_continue_game() {
-		QuoridorController.continueGame();
+		try {
+			QuoridorController.continueGame();
+		} catch (InvalidInputException e) {
+			error = e.getMessage();
+		}
 	}
 
 	@Then("The remaining moves of the game shall be removed")
 	public void the_remaining_moves_of_the_game_shall_be_removed() {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		assertNull(game.getCurrentMove().getNextMove());
+	}
 
+	@Then("The next move shall be \\({int}, {int})")
+	public void the_next_move_shall_be(Integer expectedMoveNum, Integer expectedRoundNum) {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		Move currentMove = game.getCurrentMove();
+		int nextMoveNum;
+		int nextRoundNum;
+		if (currentMove == null) {
+			nextMoveNum = 1;
+			nextRoundNum = 1;
+		}
+		else {
+			nextMoveNum = game.getCurrentMove().getMoveNumber();
+			nextRoundNum = game.getCurrentMove().getRoundNumber();
+			if (nextRoundNum == 2) {
+				nextRoundNum = 1;
+				nextMoveNum += 1;
+			} else {
+				nextRoundNum = 2;
+			}
+		}
+		assertEquals(expectedMoveNum, nextMoveNum);
+		assertEquals(expectedRoundNum, nextRoundNum);
 	}
 
 	@Given("The game has a final result")
 	public void the_game_has_a_final_result() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		game.setGameStatus(GameStatus.WhiteWon);
 	}
 
 	@Then("I shall be notified that finished games cannot be continued")
 	public void i_shall_be_notified_that_finished_games_cannot_be_continued() {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		assertEquals("Cannot continue a game with a final result!", error);
 	}
 }

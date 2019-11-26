@@ -18,12 +18,20 @@ import ca.mcgill.ecse223.quoridor.to.PathAndMove;
 import ca.mcgill.ecse223.quoridor.to.TileTO;
 import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
 
+/**
+ * @author Remi Carriere
+ *
+ */
 public class AIController {
 
 	static int currentBlackPathLength = 0;
 	static int currentWhitePathLength = 0;
 	static TileTO nextWhiteTile = null;
 
+	/**
+	 * Makes th AI player do the "best possible" pawn move or jump move (the pawn
+	 * selects the move type randomly, unless no "good" wall moves are available, then we default to pawn move)
+	 */
 	public static void doMove() {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		Player black = g.getBlackPlayer();
@@ -43,13 +51,16 @@ public class AIController {
 		}
 
 		if (move != null && random) {
-			doBestWallMove(move);
+			doWallMove(move);
 		} else {
 			doBestPawnMove();
 		}
 		QuoridorController.checkGameWon();
 	}
 
+	/**
+	 * Makes the pawn move on his current shortest path toward destination
+	 */
 	public static void doBestPawnMove() {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = g.getCurrentPosition();
@@ -62,7 +73,35 @@ public class AIController {
 		QuoridorController.addMoveToGameHistory(move);
 		QuoridorController.confirmMove();
 	}
-
+	/**
+	 * Does the specified wall move for black
+	 * @param moveTO
+	 */
+	public static void doWallMove(WallMoveTO moveTO) {
+		try {
+			QuoridorController.grabWall();
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Tile target = QuoridorController.getTile(moveTO.getRow(), moveTO.getColumn());
+		QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().setTargetTile(target);
+		QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
+				.setWallDirection(moveTO.getDirection());
+		try {
+			QuoridorController.dropWall();
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Retuns a list of possible PathAndMoves (PathAndMoves contains:
+	 * {BlackWallMove, BlackShortestPath, WhiteShortest Path, and a boolean which is
+	 * true if white's step move options are reduced for the corresponding move})
+	 * 
+	 * @return
+	 */
 	public static List<PathAndMove> getPossibleWallMoves() {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = g.getCurrentPosition();
@@ -120,7 +159,10 @@ public class AIController {
 
 		return pathsToCheck;
 	}
-
+	/**
+	 * Gets the best wall move for black
+	 * @return
+	 */
 	public static WallMoveTO getBestWallMove() {
 		List<PathAndMove> pathsToCheck = getPossibleWallMoves();
 		int bestWhiteDelta = 0;
@@ -196,22 +238,4 @@ public class AIController {
 		return bestPathMove.getMove();
 	}
 
-	public static void doBestWallMove(WallMoveTO moveTO) {
-		try {
-			QuoridorController.grabWall();
-		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Tile target = QuoridorController.getTile(moveTO.getRow(), moveTO.getColumn());
-		QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate().setTargetTile(target);
-		QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate()
-				.setWallDirection(moveTO.getDirection());
-		try {
-			QuoridorController.dropWall();
-		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

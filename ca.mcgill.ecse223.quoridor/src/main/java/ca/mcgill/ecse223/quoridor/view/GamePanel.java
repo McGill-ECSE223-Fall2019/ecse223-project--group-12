@@ -79,19 +79,17 @@ public class GamePanel extends JPanel {
 	private final Color boardBorderColor = new Color(134, 89, 45);
 	// Timer thread to refresh time
 	private Timer timer;
-
+	// Path Animation
 	private Timer paintDelay;
-
-	private boolean pawnMoveSelected = false;
 	private boolean togglePath = false;
-
-	private JButton prevButton;
-	private JButton nextButton;
-	private JButton replayModeButton;
-
 	List<TileTO> pathAnimation;
 	List<TileTO> traversalAnimation;
 	int colrindex = 255;
+	private boolean pawnMoveSelected = false;
+	// Replay mode
+	private JButton prevButton;
+	private JButton nextButton;
+	private JButton replayModeButton;
 
 	public GamePanel() {
 		initComponents();
@@ -132,13 +130,14 @@ public class GamePanel extends JPanel {
 		remainingWalls.setFont(new Font(null, Font.BOLD, 14));
 		invalidMoveLabel = new JLabel();
 		invalidMoveLabel.setForeground(Color.RED);
-
+		
+		// Replay mode
 		prevButton = new JButton("Prev");
 		nextButton = new JButton("Next");
 		replayModeButton = new JButton("Replay Mode");
 		prevButton.setVisible(false);
 		nextButton.setVisible(false);
-
+		// Timer for player clock
 		timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -147,7 +146,7 @@ public class GamePanel extends JPanel {
 				}
 			}
 		});
-
+		// Timer for path animation
 		paintDelay = new Timer(70, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
@@ -201,7 +200,7 @@ public class GamePanel extends JPanel {
 		// Action Listeners
 		// ------------------------
 
-		// listeners for save button
+		// listeners for all buttons
 		nextButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				nextButtonActionPerformed(evt);
@@ -261,10 +260,11 @@ public class GamePanel extends JPanel {
 				rotateWallButtonButtonActionPerformed(evt);
 			}
 		});
-		// Key action Listeners
+		// Key action Listeners p = path animation , s = switch player for debugging
 		int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
 		InputMap inputMap = this.getInputMap(condition);
 		ActionMap actionMap = this.getActionMap();
+		// path
 		String p = "p";
 		inputMap.put(KeyStroke.getKeyStroke('p'), p);
 		actionMap.put(p, new AbstractAction() {
@@ -275,7 +275,7 @@ public class GamePanel extends JPanel {
 				togglePathActionPerformed();
 			}
 		});
-
+		// switch player
 		String s = "s";
 		inputMap.put(KeyStroke.getKeyStroke('s'), s);
 		actionMap.put(s, new AbstractAction() {
@@ -405,7 +405,6 @@ public class GamePanel extends JPanel {
 			for (int j = 1; j < 10; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
 				JButton[] wall2 = getWall(i, j, Direction.Horizontal);
-				// wall1[0].getBackground() == candidateWallColor;
 				drawWall(wall1, invisibleWallColor);
 				drawWall(wall2, invisibleWallColor);
 				showPawn(i, j, blackPawnColor, false);
@@ -432,14 +431,23 @@ public class GamePanel extends JPanel {
 		if (replayModeButton.getText().equals("Replay Mode")) {
 			replayModeButton.setText("Continue Game");
 			QuoridorController.enterReplayMode();
+			QuoridorController.removeCandidateWall();
 			prevButton.setVisible(true);
 			nextButton.setVisible(true);
-
+			grabWallButton.setEnabled(false);
+			grabWallButton.setText("Grab Wall");
+			rotateWallButton.setEnabled(false);
 		} else {
 			replayModeButton.setText("Replay Mode");
-			QuoridorController.continueGame();
+			try {
+				QuoridorController.continueGame();
+			} catch (InvalidInputException e) {
+				// TODO Add pop up thats says game cannot be continued
+			}
 			prevButton.setVisible(false);
 			nextButton.setVisible(false);
+			grabWallButton.setEnabled(true);
+			rotateWallButton.setEnabled(true);
 		}
 		refreshData();
 	}
@@ -807,7 +815,6 @@ public class GamePanel extends JPanel {
 		return invalidMoveLabel.getText(); // Temporarily mock this since error labels are reactive
 	}
 
-	// TODO: Same as above but for the arrow buttons (uses the same label)
 	public String getWallsInstockLabel() {
 		return remainingWalls.getText();
 	}

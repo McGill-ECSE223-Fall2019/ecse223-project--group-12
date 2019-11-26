@@ -62,27 +62,37 @@ public class QuoridorController {
 	 * Continues the game from the current move in Replay Mode
 	 * 
 	 * @author Remi Carriere
+	 * @throws InvalidInputException
 	 */
-	public static void continueGame() {
-
+	public static void continueGame() throws InvalidInputException {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = game.getCurrentPosition();
-
-		resetPlayerPositions();
-		resetWalls();
-		gp.setPlayerToMove(game.getWhitePlayer());
-		Move currentMove = game.getCurrentMove();
-		if (currentMove != null) {
-			int moveNum = currentMove.getMoveNumber();
-			int roundNum = currentMove.getRoundNumber();
-			goToMove(moveNum, roundNum);
+		checkGameWon();
+		if (game.getGameStatus() == GameStatus.Replay) {
+			resetPlayerPositions();
+			resetWalls();
+			gp.setPlayerToMove(game.getWhitePlayer());
+			Move currentMove = game.getCurrentMove();
+			if (currentMove != null) {
+				int moveNum = currentMove.getMoveNumber();
+				int roundNum = currentMove.getRoundNumber();
+				goToMove(moveNum, roundNum);
+			} else {
+				goToMove(0, 0);
+			}
+			eraseHistoryAfterCurrentMove();
+			game.setGameStatus(GameStatus.Running);
 		} else {
-			goToMove(0, 0);
+			game.setGameStatus(GameStatus.Replay);
+			throw new InvalidInputException("Cannot continue a game with a final result!");
 		}
-		QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.Running);
+		
+		if (game.getCurrentPosition().getPlayerToMove().hasGameAsBlack()
+				&& game.getBlackPlayer().getUser().getIsComp() == true && game.getGameStatus() == GameStatus.Running) {
+			AIController.doMove();
+		}
 	}
-	
-	
+
 	/**
 	 * Decrements the current move in replay mode
 	 * 
@@ -100,6 +110,8 @@ public class QuoridorController {
 			int roundNum = prevMove.getRoundNumber();
 			int moveNum = prevMove.getMoveNumber();
 			goToMove(moveNum, roundNum);
+		} else {
+			goToMove(0, 0);
 		}
 	}
 
@@ -848,6 +860,72 @@ public class QuoridorController {
 	 * Private Helper Methods
 	 * 
 	 */
+	/**
+	 * Deletes the move history that is after the current move (Last played move) If
+	 * the current Move is null (start of game), this deletes all the moves of the
+	 * game
+	 * 
+	 * @author Remi Carriere
+	 */
+	private static void eraseHistoryAfterCurrentMove() {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		Move currentMove = game.getCurrentMove();
+		if (currentMove == null) {
+			while (!game.getMoves().isEmpty()) {
+				game.getMove(0).delete();
+			}
+		} else {
+			System.out.println("asd");
+			Move lastMove = getLastMoveInHistory();
+			while (true) {
+				Move moveToDelete = lastMove;
+				if (moveToDelete.equals(currentMove)) {
+					break;
+				} else {
+					lastMove = lastMove.getPrevMove();
+					moveToDelete.delete();
+				}
+			}
+		}
+		replaceWallsInStock();
+	}
+
+	/**
+	 * Removes walls on the board that have no move
+	 * 
+	 * @author Remi Carriere
+	 */
+	private static void replaceWallsInStock() {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = game.getCurrentPosition();
+		List<Wall> boardWalls = getBoardWalls();
+		for (Wall wall : boardWalls) {
+			if (wall.getMove() == null) {
+				if (wall.getOwner() == game.getWhitePlayer()) {
+					gp.addWhiteWallsInStock(wall);
+					gp.removeWhiteWallsOnBoard(wall);
+				} else {
+					gp.addBlackWallsInStock(wall);
+					gp.removeBlackWallsOnBoard(wall);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Gets the last move of the move history
+	 * 
+	 * @author Remi Carriere
+	 * @return the last move
+	 */
+	private static Move getLastMoveInHistory() {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		Move currentMove = game.getCurrentMove();
+		while (currentMove.hasNextMove()) {
+			currentMove = currentMove.getNextMove();
+		}
+		return currentMove;
+	}
 
 	/**
 	 * Creatse and starts a game with default users
@@ -879,6 +957,7 @@ public class QuoridorController {
 	/**
 	 * Gets the move with specified moveNumber and roundNumber
 	 * 
+	 * @author Remi Carriere
 	 * @param moveNumber
 	 * @param roundNumber
 	 * @return
@@ -897,13 +976,14 @@ public class QuoridorController {
 	 * Adds A move to the game history, and appropriately sets the round and move
 	 * number
 	 * 
+	 * @author Remi Carriere
 	 * @param move
 	 *            the move to be added
 	 */
 	public static void addMoveToGameHistory(Move move) {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 
-		if (game.getCurrentMove()  == null) {
+		if (game.getCurrentMove() == null) {
 			move.setRoundNumber(1);
 			move.setMoveNumber(1);
 			game.setCurrentMove(move);
@@ -948,16 +1028,16 @@ public class QuoridorController {
 		resetPlayerPositions();
 		resetWalls();
 		gp.setPlayerToMove(game.getWhitePlayer());
-		if(moveNum == 0 && roundNum == 0) {
+		if (moveNum == 0 && roundNum == 0) {
 			resetPlayerPositions();
 			resetWalls();
 			game.setCurrentMove(null);
 			return;
 		}
-		
+
 		// Replay the game in order, starting at the first move
 		Move move = getMove(1, 1);
-		while (true) {
+		while (true && move != null) {
 			if (move.getClass().equals(WallMove.class)) {
 				WallMove wm = (WallMove) move;
 				doWallMove(wm);

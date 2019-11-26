@@ -57,7 +57,7 @@ public class MenuPanel extends JPanel {
 	private JPanel imagePanel; // Place holder for ads?
 	private JLabel startGameErrorLabel;
 	private JLabel titleLabel;
-
+	// Ai button
 	private JRadioButton aiRadioButton;
 
 	public MenuPanel() {
@@ -111,10 +111,10 @@ public class MenuPanel extends JPanel {
 		loadGameToggelList = new JComboBox<String>();
 		loadGameButton = new JButton("Load Game");
 		loadGameLabel = new JLabel("Load Game");
-		//
+		// Ai toggle button
 		aiRadioButton = new JRadioButton("Set Black as AI");
 		
-		//
+		// Set up the menu with some default entries for faster debugging
 		try {
 			QuoridorController.createUser("Default");
 		} catch (InvalidInputException e) {
@@ -124,6 +124,7 @@ public class MenuPanel extends JPanel {
 		aiRadioButton.setSelected(true);
 		blackToggleList.setEnabled(false);
 		thinkingTimeTextField.setText("2000");
+		
 		// ------------------------
 		// Layout of Main Panel
 		// ------------------------
@@ -172,7 +173,6 @@ public class MenuPanel extends JPanel {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				aiButtonActionPerformed(evt);
 			}
-
 		});
 
 	}
@@ -236,6 +236,7 @@ public class MenuPanel extends JPanel {
 		} catch (Exception e) {
 			startGameErrorLabel.setText("Could not parse selections");
 		}
+		// Ai Black is selected
 		if (aiRadioButton.isSelected() && w != null && time != null) {
 			try {
 				QuoridorController.initializeGame();
@@ -243,28 +244,29 @@ public class MenuPanel extends JPanel {
 				QuoridorController.setBlackComp();
 				QuoridorController.setTotalThinkingTime(time);
 			} catch (InvalidInputException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				startGameErrorLabel.setText("Please select names and time");
 			}
 			changeToGamePanel();
-		} else if (w != null && b != null && time != null) {
+		} 
+		// Regular game selected (No AI)
+		else if (w != null && b != null && time != null) {
 			try {
 				QuoridorController.initializeGame();
 				QuoridorController.setWhitePlayerInGame(w);
 				QuoridorController.setBlackPlayerInGame(b);
 				QuoridorController.setTotalThinkingTime(time);
 			} catch (InvalidInputException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				startGameErrorLabel.setText("Please select names and time");
 			}
 			changeToGamePanel();
-		} else {
+		} 
+		// invalid parameters
+		else {
 			startGameErrorLabel.setText("Please select names and time");
 		}
 	}
 
 	private void loadGameButtonActionPerformed(ActionEvent evt) {
-		// TODO check if the position is valid
 		if (loadGameToggelList.getSelectedItem() != null) {
 			String fileName = loadGameToggelList.getSelectedItem().toString();
 

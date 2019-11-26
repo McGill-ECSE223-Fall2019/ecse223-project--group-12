@@ -9,7 +9,12 @@ import ca.mcgill.ecse223.quoridor.model.GamePosition;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class StepBackIrForWardStepDefinitions {
+/**
+ * 
+ * @author Remi Carriere
+ *
+ */
+public class StepBackOrForWardStepDefinitions {
 	
 	@When("Step backward is initiated")
 	public void step_backward_is_initiated() {
@@ -18,10 +23,6 @@ public class StepBackIrForWardStepDefinitions {
 	@When("Step forward is initiated")
 	public void step_forward_is_initiated() {
 	    QuoridorController.stepForward();
-	}
-	@Then("The next move shall be \\({int}, {int})")
-	public void the_next_move_shall_be(Integer int1, Integer int2) {
-
 	}
 
 	@Then("White player's position shall be \\({int}, {int})")
@@ -41,13 +42,17 @@ public class StepBackIrForWardStepDefinitions {
 		assertEquals(col, gp.getBlackPosition().getTile().getColumn());
 	}
 
-	@Then("White has <wwallno> on stock")
-	public void white_has_wwallno_on_stock() {
-
+	@Then("White has {int} on stock")
+	public void white_has_wwallno_on_stock(Integer whiteWalls) {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = game.getCurrentPosition();
+		assertEquals(whiteWalls, gp.getWhiteWallsInStock().size());
 	}
 
 	@Then("Black has {int} on stock")
-	public void black_has_on_stock(Integer int1) {
-
+	public void black_has_on_stock(Integer blackWalls) {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = game.getCurrentPosition();
+		assertEquals(blackWalls, gp.getBlackWallsInStock().size());
 	}
 }
