@@ -54,7 +54,7 @@ public class EnterReplayModeStepDefinitions {
 		GamePosition gp = game.getCurrentPosition();
 		List<Map<String, String>> valueMaps = dataTable.asMaps();
 		for (Map<String, String> map : valueMaps) {
-			//Integer moveNum = Integer.decode(map.get("mv"));
+			// Integer moveNum = Integer.decode(map.get("mv"));
 			Integer roundNum = Integer.decode(map.get("rnd"));
 			String move = map.get("move");
 			Wall wall;
@@ -109,23 +109,16 @@ public class EnterReplayModeStepDefinitions {
 
 	@Given("The next move is \\({int}, {int})")
 	public void the_next_move_is(Integer moveNum, Integer roundNum) {
-		Move nextMove = TestUtil.getMove(moveNum, roundNum);
+		// use current move instead of next move
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		game.addOrMoveMoveAt(nextMove, 0);
-//		String s = "";
-//		Move m = TestUtil.getMove(1,1);
-//		while(m != null) {
-//			s+="move: " + m.getMoveNumber() +" Round:  "+ m.getRoundNumber();
-//			s+="\n";
-//			s+= "Player: " + m.getPlayer().getUser().getName();
-//			s+="\n";
-//			s+=m.getTargetTile().toString();
-//			s+="\n \n";
-//			m =m.getNextMove();
-//		}
-//		s+="\n \n";
-//		s+=game.getMoves().get(0);
-//		throw new cucumber.api.PendingException(s);
+		if (roundNum == 1) {
+			roundNum = 2;
+			moveNum--;
+		} else {
+			roundNum = 1;
+		}
+		Move currentMove = TestUtil.getMove(moveNum, roundNum);
+		game.setCurrentMove(currentMove);
 	}
 
 	@When("I initiate to continue game")
@@ -135,7 +128,7 @@ public class EnterReplayModeStepDefinitions {
 
 	@Then("The remaining moves of the game shall be removed")
 	public void the_remaining_moves_of_the_game_shall_be_removed() {
-		
+
 	}
 
 	@Given("The game has a final result")

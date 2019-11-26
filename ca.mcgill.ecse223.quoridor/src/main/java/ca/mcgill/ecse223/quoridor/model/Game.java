@@ -30,6 +30,7 @@ public class Game
   private WallMove wallMoveCandidate;
   private Player whitePlayer;
   private Player blackPlayer;
+  private Move currentMove;
   private Quoridor quoridor;
 
   //------------------------
@@ -180,6 +181,17 @@ public class Game
   public boolean hasBlackPlayer()
   {
     boolean has = blackPlayer != null;
+    return has;
+  }
+  /* Code from template association_GetOne */
+  public Move getCurrentMove()
+  {
+    return currentMove;
+  }
+
+  public boolean hasCurrentMove()
+  {
+    boolean has = currentMove != null;
     return has;
   }
   /* Code from template association_GetOne */
@@ -435,6 +447,14 @@ public class Game
     wasSet = true;
     return wasSet;
   }
+  /* Code from template association_SetUnidirectionalOptionalOne */
+  public boolean setCurrentMove(Move aNewCurrentMove)
+  {
+    boolean wasSet = false;
+    currentMove = aNewCurrentMove;
+    wasSet = true;
+    return wasSet;
+  }
   /* Code from template association_SetOneToOptionalOne */
   public boolean setQuoridor(Quoridor aNewQuoridor)
   {
@@ -502,6 +522,7 @@ public class Game
       existingBlackPlayer.delete();
       existingBlackPlayer.setGameAsBlack(null);
     }
+    currentMove = null;
     Quoridor existingQuoridor = quoridor;
     quoridor = null;
     if (existingQuoridor != null)
@@ -520,6 +541,7 @@ public class Game
             "  " + "wallMoveCandidate = "+(getWallMoveCandidate()!=null?Integer.toHexString(System.identityHashCode(getWallMoveCandidate())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "whitePlayer = "+(getWhitePlayer()!=null?Integer.toHexString(System.identityHashCode(getWhitePlayer())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "blackPlayer = "+(getBlackPlayer()!=null?Integer.toHexString(System.identityHashCode(getBlackPlayer())):"null") + System.getProperties().getProperty("line.separator") +
+            "  " + "currentMove = "+(getCurrentMove()!=null?Integer.toHexString(System.identityHashCode(getCurrentMove())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "quoridor = "+(getQuoridor()!=null?Integer.toHexString(System.identityHashCode(getQuoridor())):"null");
   }
 }

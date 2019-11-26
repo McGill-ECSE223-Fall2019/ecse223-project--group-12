@@ -423,13 +423,14 @@ public class TestUtil {
 	public static void addMoveToGameHistory(Move move) {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		
-		if(game.getMoves().isEmpty()) {
+		if(game.getCurrentMove() == null) {
 			move.setRoundNumber(1);
 			move.setMoveNumber(1);
+			game.setCurrentMove(move);
 			return;
 		}
 		
-		Move lastMove = game.getMove(0);
+		Move lastMove = game.getCurrentMove();
 		Player p = move.getPlayer();
 		int roundNumber;
 		int moveNumber;
@@ -449,7 +450,7 @@ public class TestUtil {
 		move.setRoundNumber(roundNumber);
 		move.setPrevMove(lastMove);
 		lastMove.setNextMove(move);
-		game.addOrMoveMoveAt(move, 0);
+		game.setCurrentMove(move);
 	}
 
 

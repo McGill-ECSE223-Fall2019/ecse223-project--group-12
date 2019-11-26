@@ -58,180 +58,82 @@ public class QuoridorController {
 	// ------------------------
 	// Remi
 	// ------------------------
-
-	private static void doWallMove(WallMove wm) {
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition gp = game.getCurrentPosition();
-		if (wm.getPlayer().hasGameAsWhite()) {
-			gp.removeWhiteWallsInStock(wm.getWallPlaced());
-			gp.addWhiteWallsOnBoard(wm.getWallPlaced());
-		} else {
-			gp.removeBlackWallsInStock(wm.getWallPlaced());
-			gp.addBlackWallsOnBoard(wm.getWallPlaced());
-		}
-	}
-
-	private static void doPawnMove(Move pawnMove) {
-		Player player = pawnMove.getPlayer();
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition gp = game.getCurrentPosition();
-		Tile targetTile = pawnMove.getTargetTile();
-		PlayerPosition pos = new PlayerPosition(player, targetTile);
-		if (pawnMove.getPlayer().hasGameAsWhite()) {
-			gp.setWhitePosition(pos);
-		} else {
-			gp.setBlackPosition(pos);
-		}
-	}
-
-	private static void resetPlayerPositions() {
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition gp = game.getCurrentPosition();
-		Player player = game.getWhitePlayer();
-		Tile targetTile = getTile(9, 5);
-		PlayerPosition pos = new PlayerPosition(player, targetTile);
-
-		gp.setWhitePosition(pos);
-
-		player = game.getBlackPlayer();
-		targetTile = getTile(1, 5);
-		pos = new PlayerPosition(player, targetTile);
-
-		gp.setBlackPosition(pos);
-	}
-
-	private static void resetWalls() {
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition gp = game.getCurrentPosition();
-		List<Wall> boardWalls = getBoardWalls();
-		for (Wall wall : boardWalls) {
-			if (wall.getOwner().hasGameAsWhite()) {
-				gp.addWhiteWallsInStock(wall);
-				gp.removeWhiteWallsOnBoard(wall);
-			} else {
-				gp.addBlackWallsInStock(wall);
-				gp.removeBlackWallsOnBoard(wall);
-			}
-		}
-	}
-
-	private static List<Wall> getBoardWalls() {
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		GamePosition gp = game.getCurrentPosition();
-		// Create a list of all walls on the board
-		List<Wall> boardWalls = new ArrayList<Wall>();
-		List<Wall> whitewalls = gp.getWhiteWallsOnBoard();
-		List<Wall> blackwalls = gp.getBlackWallsOnBoard();
-		boardWalls.addAll(blackwalls);
-		boardWalls.addAll(whitewalls);
-		// Add the current wall move candidate to the list
-		WallMove candidateWallMove = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
-		if (candidateWallMove != null) {
-			Wall candidateWall = candidateWallMove.getWallPlaced();
-			boardWalls.add(candidateWall);
-		}
-		return boardWalls;
-	}
-
+	/**
+	 * Continues the game from the current move in Replay Mode
+	 * 
+	 * @author Remi Carriere
+	 */
 	public static void continueGame() {
+
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = game.getCurrentPosition();
-
-		Move move = getMove(1, 1);
-		Move nextMove = game.getMove(0);
-		int moveNum = nextMove.getMoveNumber();
-		int roundNum = nextMove.getRoundNumber();
 
 		resetPlayerPositions();
 		resetWalls();
 		gp.setPlayerToMove(game.getWhitePlayer());
-		while (!(move.getRoundNumber() == roundNum && move.getMoveNumber() == moveNum)) {
-			if (move.getClass().equals(WallMove.class)) {
-				WallMove wm = (WallMove) move;
-				doWallMove(wm);
-			} else {
-				doPawnMove(move);
-			}
-			confirmMove();
-			move = move.getNextMove();
+		Move currentMove = game.getCurrentMove();
+		if (currentMove != null) {
+			int moveNum = currentMove.getMoveNumber();
+			int roundNum = currentMove.getRoundNumber();
+			goToMove(moveNum, roundNum);
+		} else {
+			goToMove(0, 0);
 		}
 		QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.Running);
 	}
-
-	public static void goToMove(int moveNum, int roundNum) {
-		Move move = getMove(1, 1);
-		resetPlayerPositions();
-		resetWalls();
-		while (!(move.getRoundNumber() == roundNum && move.getMoveNumber() == moveNum)) {
-			if (move.getClass().equals(WallMove.class)) {
-				WallMove wm = (WallMove) move;
-				doWallMove(wm);
-			} else {
-				doPawnMove(move);
-			}
-			confirmMove();
-			move = move.getNextMove();
-
-		}
-	}
-	private static void doMove(Move move) {
-		if (move.getClass().equals(WallMove.class)) {
-			WallMove wm = (WallMove) move;
-			doWallMove(wm);
-		} else {
-			doPawnMove(move);
-		}
-	}
-
+	
+	
+	/**
+	 * Decrements the current move in replay mode
+	 * 
+	 * @author Remi Carriere
+	 */
 	public static void stepBack() {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		Move nextMove = game.getMove(0);
-		if (!nextMove.hasPrevMove()) {
-			return;
+		Move currentMove = game.getCurrentMove();
+		if (currentMove != null) {
+			if (currentMove.getPrevMove() == null) {
+				goToMove(0, 0);
+				return;
+			}
+			Move prevMove = currentMove.getPrevMove();
+			int roundNum = prevMove.getRoundNumber();
+			int moveNum = prevMove.getMoveNumber();
+			goToMove(moveNum, roundNum);
 		}
-		Move currentMove = nextMove.getPrevMove();
-		int roundNum = currentMove.getRoundNumber();
-		int moveNum = currentMove.getMoveNumber();
-		goToMove(moveNum, roundNum);
 	}
-	
+
+	/**
+	 * Incrementys the current move in replay mode
+	 * 
+	 * @author Remi Carriere
+	 * 
+	 */
 	public static void stepForward() {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		Move nextMove = game.getMove(0);
-		Move currentMove = nextMove;
-		if (nextMove.hasNextMove()) {
-			currentMove = nextMove.getNextMove();;
-		} 
-		int roundNum = currentMove.getRoundNumber();
-		int moveNum = currentMove.getMoveNumber();
+		Move currentMove = game.getCurrentMove();
+		Move nextMove = null;
+		if (currentMove == null) {
+			nextMove = getMove(1, 1);
+		} else if (currentMove.getNextMove() != null) {
+			nextMove = currentMove.getNextMove();
+		} else {
+			nextMove = currentMove;
+		}
+		if (nextMove == null) {
+			return;
+		}
+		int roundNum = nextMove.getRoundNumber();
+		int moveNum = nextMove.getMoveNumber();
 		goToMove(moveNum, roundNum);
-		if (!nextMove.hasNextMove()) {
-			doMove(nextMove);
-		}
 	}
 
-	public static void createAndStartDefaultGame() {
-		try {
-			initializeGame();
-			User defaultWhite = getUserByName("User 1");
-			User defaultBlack = getUserByName("User 2");
-			if (defaultWhite == null) {
-				createUser("User 1");
-				defaultWhite = getUserByName("User 1");
-			}
-			if (defaultBlack == null) {
-				createUser("User 2");
-				defaultBlack = getUserByName("User 2");
-			}
-			setWhitePlayerInGame(defaultWhite);
-			setBlackPlayerInGame(defaultBlack);
-			setTotalThinkingTime(Time.valueOf("00:30:00"));
-			startClock();
-		} catch (InvalidInputException e) {
-			e.printStackTrace();
-		}
-	}
-
+	/**
+	 * Changes the game state to Replay mode, creates a default game if no game
+	 * exists
+	 * 
+	 * @author Remi Carriere
+	 */
 	public static void enterReplayMode() {
 
 		if (!QuoridorApplication.getQuoridor().hasCurrentGame()) {
@@ -241,65 +143,10 @@ public class QuoridorController {
 	}
 
 	/**
-	 * Gets the move with specified moveNumber and roundNumber
-	 * 
-	 * @param moveNumber
-	 * @param roundNumber
-	 * @return
-	 */
-	public static Move getMove(int moveNumber, int roundNumber) {
-		List<Move> moves = QuoridorApplication.getQuoridor().getCurrentGame().getMoves();
-		for (Move move : moves) {
-			if (move.getRoundNumber() == roundNumber && move.getMoveNumber() == moveNumber) {
-				return move;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Adds A move to the game history, and appropriately sets the round and move
-	 * number
-	 * 
-	 * @param move
-	 *            the move to be added
-	 */
-	public static void addMoveToGameHistory(Move move) {
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-
-		if (game.getMoves().isEmpty()) {
-			move.setRoundNumber(1);
-			move.setMoveNumber(1);
-			return;
-		}
-
-		Move lastMove = game.getMove(0);
-		Player p = move.getPlayer();
-		int roundNumber;
-		int moveNumber;
-
-		// white move
-		if (p.hasGameAsWhite()) {
-			roundNumber = 1;
-			moveNumber = lastMove.getMoveNumber() + 1;
-		}
-		// black move
-		else {
-			roundNumber = 2;
-			moveNumber = lastMove.getMoveNumber();
-		}
-		// Add move to history
-		move.setMoveNumber(moveNumber);
-		move.setRoundNumber(roundNumber);
-		move.setPrevMove(lastMove);
-		lastMove.setNextMove(move);
-		game.addOrMoveMoveAt(move, 0);
-	}
-
-	/**
 	 * Sets the game Status to "____won" for the player who didn't run out of time.
 	 * This method is automatically called when a player's time hits 00:00
 	 * 
+	 * @author Remi Carriere
 	 * @param player
 	 *            The player that ran out of time
 	 */
@@ -314,6 +161,8 @@ public class QuoridorController {
 	/**
 	 * This method is only to satisfy the gherkin feature, the pawn state machine
 	 * handles this.
+	 * 
+	 * @author Remi Carriere
 	 */
 	public static void checkGameWon() {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
@@ -755,6 +604,8 @@ public class QuoridorController {
 
 	/**
 	 * Changes the MoveMode to Player move for current player
+	 * 
+	 * @author Remi Carriere
 	 */
 	public static void switchMoveMode() {
 		QuoridorApplication.getQuoridor().getCurrentGame().setMoveMode(MoveMode.PlayerMove);
@@ -997,6 +848,234 @@ public class QuoridorController {
 	 * Private Helper Methods
 	 * 
 	 */
+
+	/**
+	 * Creatse and starts a game with default users
+	 * 
+	 * @author Remi Carriere
+	 */
+	private static void createAndStartDefaultGame() {
+		try {
+			initializeGame();
+			User defaultWhite = getUserByName("User 1");
+			User defaultBlack = getUserByName("User 2");
+			if (defaultWhite == null) {
+				createUser("User 1");
+				defaultWhite = getUserByName("User 1");
+			}
+			if (defaultBlack == null) {
+				createUser("User 2");
+				defaultBlack = getUserByName("User 2");
+			}
+			setWhitePlayerInGame(defaultWhite);
+			setBlackPlayerInGame(defaultBlack);
+			setTotalThinkingTime(Time.valueOf("00:30:00"));
+			startClock();
+		} catch (InvalidInputException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Gets the move with specified moveNumber and roundNumber
+	 * 
+	 * @param moveNumber
+	 * @param roundNumber
+	 * @return
+	 */
+	private static Move getMove(int moveNumber, int roundNumber) {
+		List<Move> moves = QuoridorApplication.getQuoridor().getCurrentGame().getMoves();
+		for (Move move : moves) {
+			if (move.getRoundNumber() == roundNumber && move.getMoveNumber() == moveNumber) {
+				return move;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Adds A move to the game history, and appropriately sets the round and move
+	 * number
+	 * 
+	 * @param move
+	 *            the move to be added
+	 */
+	public static void addMoveToGameHistory(Move move) {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+
+		if (game.getCurrentMove()  == null) {
+			move.setRoundNumber(1);
+			move.setMoveNumber(1);
+			game.setCurrentMove(move);
+			return;
+		}
+
+		Move lastMove = game.getCurrentMove();
+		Player p = move.getPlayer();
+		int roundNumber;
+		int moveNumber;
+
+		// white move
+		if (p.hasGameAsWhite()) {
+			roundNumber = 1;
+			moveNumber = lastMove.getMoveNumber() + 1;
+		}
+		// black move
+		else {
+			roundNumber = 2;
+			moveNumber = lastMove.getMoveNumber();
+		}
+		// Add move to history
+		move.setMoveNumber(moveNumber);
+		move.setRoundNumber(roundNumber);
+		move.setPrevMove(lastMove);
+		lastMove.setNextMove(move);
+		game.setCurrentMove(move);
+	}
+
+	/**
+	 * Sets the current game in replay mode to the desired current move, and updates
+	 * the board (gamePosition)
+	 * 
+	 * @author Remi Carriere
+	 * @param moveNum
+	 * @param roundNum
+	 */
+	private static void goToMove(int moveNum, int roundNum) {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = game.getCurrentPosition();
+
+		resetPlayerPositions();
+		resetWalls();
+		gp.setPlayerToMove(game.getWhitePlayer());
+		if(moveNum == 0 && roundNum == 0) {
+			resetPlayerPositions();
+			resetWalls();
+			game.setCurrentMove(null);
+			return;
+		}
+		
+		// Replay the game in order, starting at the first move
+		Move move = getMove(1, 1);
+		while (true) {
+			if (move.getClass().equals(WallMove.class)) {
+				WallMove wm = (WallMove) move;
+				doWallMove(wm);
+			} else {
+				doPawnMove(move);
+			}
+			confirmMove();
+
+			if (move.getRoundNumber() == roundNum && move.getMoveNumber() == moveNum) {
+				game.setCurrentMove(move);
+				break;
+			}
+			move = move.getNextMove();
+		}
+		game.setCurrentMove(move);
+	}
+
+	/**
+	 * Initiates the desired wall move
+	 * 
+	 * @author Remi Carriere
+	 * @param wm
+	 */
+	private static void doWallMove(WallMove wm) {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = game.getCurrentPosition();
+		if (wm.getPlayer().hasGameAsWhite()) {
+			gp.removeWhiteWallsInStock(wm.getWallPlaced());
+			gp.addWhiteWallsOnBoard(wm.getWallPlaced());
+		} else {
+			gp.removeBlackWallsInStock(wm.getWallPlaced());
+			gp.addBlackWallsOnBoard(wm.getWallPlaced());
+		}
+	}
+
+	/**
+	 * Initiate the desired pawn move (step or jump)
+	 * 
+	 * @author Remi Carriere
+	 * @param pawnMove
+	 */
+	private static void doPawnMove(Move pawnMove) {
+		Player player = pawnMove.getPlayer();
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = game.getCurrentPosition();
+		Tile targetTile = pawnMove.getTargetTile();
+		PlayerPosition pos = new PlayerPosition(player, targetTile);
+		if (pawnMove.getPlayer().hasGameAsWhite()) {
+			gp.setWhitePosition(pos);
+		} else {
+			gp.setBlackPosition(pos);
+		}
+	}
+
+	/**
+	 * Resets the player positions to their initial positions
+	 * 
+	 * @author Remi Carriere
+	 */
+	private static void resetPlayerPositions() {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = game.getCurrentPosition();
+		Player player = game.getWhitePlayer();
+		Tile targetTile = getTile(9, 5);
+		PlayerPosition pos = new PlayerPosition(player, targetTile);
+
+		gp.setWhitePosition(pos);
+
+		player = game.getBlackPlayer();
+		targetTile = getTile(1, 5);
+		pos = new PlayerPosition(player, targetTile);
+
+		gp.setBlackPosition(pos);
+	}
+
+	/**
+	 * Resets the walls to their initial positions
+	 * 
+	 * @author Remi Carriere
+	 */
+	private static void resetWalls() {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = game.getCurrentPosition();
+		List<Wall> boardWalls = getBoardWalls();
+		for (Wall wall : boardWalls) {
+			if (wall.getOwner().hasGameAsWhite()) {
+				gp.addWhiteWallsInStock(wall);
+				gp.removeWhiteWallsOnBoard(wall);
+			} else {
+				gp.addBlackWallsInStock(wall);
+				gp.removeBlackWallsOnBoard(wall);
+			}
+		}
+	}
+
+	/**
+	 * Gets a list of all walls on the board
+	 * 
+	 * @author Remi Carriere
+	 * @return
+	 */
+	private static List<Wall> getBoardWalls() {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		GamePosition gp = game.getCurrentPosition();
+		// Create a list of all walls on the board
+		List<Wall> boardWalls = new ArrayList<Wall>();
+		List<Wall> whitewalls = gp.getWhiteWallsOnBoard();
+		List<Wall> blackwalls = gp.getBlackWallsOnBoard();
+		boardWalls.addAll(blackwalls);
+		boardWalls.addAll(whitewalls);
+		// Add the current wall move candidate to the list
+		WallMove candidateWallMove = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
+		if (candidateWallMove != null) {
+			Wall candidateWall = candidateWallMove.getWallPlaced();
+			boardWalls.add(candidateWall);
+		}
+		return boardWalls;
+	}
 
 	/**
 	 * Method that is called by the background thread mentioned above

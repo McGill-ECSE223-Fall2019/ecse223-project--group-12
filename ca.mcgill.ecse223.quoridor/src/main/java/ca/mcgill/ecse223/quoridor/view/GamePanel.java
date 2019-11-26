@@ -62,7 +62,6 @@ public class GamePanel extends JPanel {
 	private JButton downButton;
 	private JButton saveExitToMenuButton;
 	private JButton grabWallButton;
-	private JButton confirmMoveButton;
 	// Separators
 	private JSeparator upperSeparator;
 	private JSeparator middleSeparator;
@@ -85,6 +84,10 @@ public class GamePanel extends JPanel {
 
 	private boolean pawnMoveSelected = false;
 	private boolean togglePath = false;
+
+	private JButton prevButton;
+	private JButton nextButton;
+	private JButton replayModeButton;
 
 	List<TileTO> pathAnimation;
 	List<TileTO> traversalAnimation;
@@ -110,7 +113,6 @@ public class GamePanel extends JPanel {
 		saveExitToMenuButton = new JButton("Save or Exit");
 		grabWallButton = new JButton("Grab Wall");
 		rotateWallButton = new JButton("Rotate Wall");
-		confirmMoveButton = new JButton("Switch Player");
 		upButton = new JButton("↑");
 		leftButton = new JButton("←");
 		downButton = new JButton("↓");
@@ -130,6 +132,12 @@ public class GamePanel extends JPanel {
 		remainingWalls.setFont(new Font(null, Font.BOLD, 14));
 		invalidMoveLabel = new JLabel();
 		invalidMoveLabel.setForeground(Color.RED);
+
+		prevButton = new JButton("Prev");
+		nextButton = new JButton("Next");
+		replayModeButton = new JButton("Replay Mode");
+		prevButton.setVisible(false);
+		nextButton.setVisible(false);
 
 		timer = new Timer(1000, new ActionListener() {
 			@Override
@@ -194,6 +202,18 @@ public class GamePanel extends JPanel {
 		// ------------------------
 
 		// listeners for save button
+		nextButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				nextButtonActionPerformed(evt);
+			}
+		});
+
+		prevButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				prevButtonActionPerformed(evt);
+			}
+		});
+
 		saveExitToMenuButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				saveExitToMenuButtonActionPerformed(evt);
@@ -206,10 +226,11 @@ public class GamePanel extends JPanel {
 			}
 		});
 
-		confirmMoveButton.addActionListener(new java.awt.event.ActionListener() {
+		replayModeButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				confirmMoveButtonActionPerformed(evt);
+				replayModeButtonActionPerformed(evt);
 			}
+
 		});
 		rightButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -252,6 +273,17 @@ public class GamePanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				togglePathActionPerformed();
+			}
+		});
+
+		String s = "s";
+		inputMap.put(KeyStroke.getKeyStroke('s'), s);
+		actionMap.put(s, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				confirmMoveButtonActionPerformed();
 			}
 		});
 	}
@@ -298,7 +330,6 @@ public class GamePanel extends JPanel {
 				setEnabledMoves(true);
 				if (playerStats.getRemaningTime().equals(Time.valueOf("00:00:00"))) {
 					setEnabledMoves(false);
-					confirmMoveButton.setEnabled(true);
 					if (QuoridorController.getWallMoveCandidate() != null) {
 						grabWallButton.setText("Grab Wall");
 						QuoridorController.removeCandidateWall();
@@ -313,6 +344,7 @@ public class GamePanel extends JPanel {
 	}
 
 	private void refreshWalls() {
+		eraseWalls();
 		List<WallMoveTO> wallMoveTOs = QuoridorController.getWallMoves();
 		for (WallMoveTO wallMoveTO : wallMoveTOs) {
 			JButton[] wallGraphic = getWall(wallMoveTO.getRow(), wallMoveTO.getColumn(), wallMoveTO.getDirection());
@@ -320,27 +352,26 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-	private void refreshWallMoveCandidate() {
+	private void eraseWalls() {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				JButton[] wall = getWall(i, j, Direction.Horizontal);
-				if (wall[0] != null && (wall[0].getBackground() == wallCandidateColor
-						|| wall[1].getBackground() == wallCandidateColor
-						|| wall[2].getBackground() == wallCandidateColor)) {
+				if (wall[0] != null) {
 					wall[0].setBackground(invisibleWallColor);
 					wall[1].setBackground(invisibleWallColor);
 					wall[2].setBackground(invisibleWallColor);
 				}
 				wall = getWall(i, j, Direction.Vertical);
-				if (wall[0] != null && (wall[0].getBackground() == wallCandidateColor
-						|| wall[1].getBackground() == wallCandidateColor
-						|| wall[2].getBackground() == wallCandidateColor)) {
+				if (wall[0] != null) {
 					wall[0].setBackground(invisibleWallColor);
 					wall[1].setBackground(invisibleWallColor);
 					wall[2].setBackground(invisibleWallColor);
 				}
 			}
 		}
+	}
+
+	private void refreshWallMoveCandidate() {
 		refreshWalls();
 		WallMoveTO wallMoveTO = QuoridorController.getWallMoveCandidate();
 		if (wallMoveTO != null) {
@@ -367,6 +398,9 @@ public class GamePanel extends JPanel {
 		remainingWalls.setText("Remaining walls: ");
 		invalidMoveLabel.setText("");
 		grabWallButton.setText("Grab Wall");
+		replayModeButton.setText("Replay Mode");
+		nextButton.setVisible(false);
+		prevButton.setVisible(false);
 		for (int i = 1; i < 10; i++) {
 			for (int j = 1; j < 10; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
@@ -383,6 +417,33 @@ public class GamePanel extends JPanel {
 	// ------------------------
 	// Action Methods
 	// ------------------------
+	private void prevButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.stepBack();
+		refreshData();
+	}
+
+	private void nextButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.stepForward();
+		refreshData();
+
+	}
+
+	private void replayModeButtonActionPerformed(ActionEvent evt) {
+		if (replayModeButton.getText().equals("Replay Mode")) {
+			replayModeButton.setText("Continue Game");
+			QuoridorController.enterReplayMode();
+			prevButton.setVisible(true);
+			nextButton.setVisible(true);
+
+		} else {
+			replayModeButton.setText("Replay Mode");
+			QuoridorController.continueGame();
+			prevButton.setVisible(false);
+			nextButton.setVisible(false);
+		}
+		refreshData();
+	}
+
 	/**
 	 * Starts a popup, only to be called when a game is ready to start, from the
 	 * menu panel
@@ -507,7 +568,6 @@ public class GamePanel extends JPanel {
 			try {
 				QuoridorController.grabWall();
 				grabWallButton.setText("Drop Wall");
-				confirmMoveButton.setEnabled(false);
 				refreshData();
 			} catch (InvalidInputException e) {
 				invalidMoveLabel.setText(e.getMessage());
@@ -517,7 +577,6 @@ public class GamePanel extends JPanel {
 			try {
 				QuoridorController.dropWall();
 				grabWallButton.setText("Grab Wall");
-				confirmMoveButton.setEnabled(true);
 				refreshData();
 			} catch (InvalidInputException e) {
 				refreshData();
@@ -528,7 +587,7 @@ public class GamePanel extends JPanel {
 
 	}
 
-	private void confirmMoveButtonActionPerformed(ActionEvent evt) {
+	private void confirmMoveButtonActionPerformed() {
 		QuoridorController.confirmMove();
 		refreshData();
 	}
@@ -872,31 +931,30 @@ public class GamePanel extends JPanel {
 
 		controlUIPanel.setLayout(new GroupLayout(controlUIPanel));
 		GroupLayout controlUILayout = (GroupLayout) controlUIPanel.getLayout();
-		controlUILayout.setHorizontalGroup(controlUILayout.createParallelGroup(Alignment.LEADING).addGroup(
-				Alignment.TRAILING,
-				controlUILayout.createSequentialGroup().addGroup(controlUILayout.createParallelGroup(Alignment.TRAILING)
-						.addGroup(controlUILayout.createSequentialGroup().addComponent(lowerSeparator))
-						.addGroup(controlUILayout.createSequentialGroup().addComponent(middleSeparator,
-								GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING,
-								controlUILayout.createSequentialGroup().addComponent(upperSeparator))
-						.addGroup(Alignment.LEADING,
-								controlUILayout.createParallelGroup(Alignment.TRAILING, false)
-										.addComponent(grabWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-										.addComponent(rotateWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-										.addComponent(confirmMoveButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-										.addComponent(saveExitToMenuButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
-										.addComponent(dashboardPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
-												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-										.addComponent(arrowPanel, Alignment.CENTER, GroupLayout.DEFAULT_SIZE,
-												GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING,
-								controlUILayout.createSequentialGroup().addComponent(invalidMoveLabel)))));
+		controlUILayout.setHorizontalGroup(controlUILayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(controlUILayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(lowerSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
+						.addComponent(middleSeparator, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+						.addComponent(upperSeparator, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
+						.addGroup(controlUILayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(controlUILayout.createSequentialGroup()
+										.addComponent(prevButton, GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+										.addComponent(nextButton, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE))
+								.addComponent(grabWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+								.addComponent(rotateWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+								.addComponent(replayModeButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+								.addComponent(saveExitToMenuButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+								.addComponent(dashboardPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(arrowPanel, Alignment.CENTER, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addComponent(invalidMoveLabel)));
 		controlUILayout.setVerticalGroup(controlUILayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(controlUILayout.createSequentialGroup()
 						.addComponent(dashboardPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 								GroupLayout.PREFERRED_SIZE)
-
 						.addComponent(upperSeparator, GroupLayout.PREFERRED_SIZE, 2, GroupLayout.PREFERRED_SIZE)
 						.addComponent(grabWallButton).addComponent(rotateWallButton)
 						.addComponent(middleSeparator, GroupLayout.PREFERRED_SIZE, 2, GroupLayout.PREFERRED_SIZE)
@@ -904,8 +962,10 @@ public class GamePanel extends JPanel {
 						.addComponent(arrowPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
 								GroupLayout.PREFERRED_SIZE)
 						.addComponent(lowerSeparator, GroupLayout.PREFERRED_SIZE, 2, GroupLayout.PREFERRED_SIZE)
-						.addComponent(confirmMoveButton).addComponent(invalidMoveLabel)
-						.addPreferredGap(ComponentPlacement.RELATED, 0, Short.MAX_VALUE)
+						.addComponent(replayModeButton).addComponent(invalidMoveLabel)
+						.addGroup(controlUILayout.createParallelGroup(Alignment.BASELINE).addComponent(nextButton)
+								.addComponent(prevButton))
+						.addPreferredGap(ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
 						.addComponent(saveExitToMenuButton)));
 		controlUILayout.setAutoCreateGaps(true);
 		controlUILayout.setAutoCreateContainerGaps(true);
