@@ -4,6 +4,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 public class ReportFinalResultStepDefinitions {
+	
 	@When("The game is no longer running")
 	public void the_game_is_no_longer_running() {
 	    // Write code here that turns the phrase above into concrete actions

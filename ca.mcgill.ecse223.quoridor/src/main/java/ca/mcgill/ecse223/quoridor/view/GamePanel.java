@@ -704,7 +704,6 @@ public class GamePanel extends JPanel {
 					QuoridorController.destroyGame();
 					returnToMenu();
 				}
-				refreshData();
 			}
 			else {
 				//Back to game with refreshing?
