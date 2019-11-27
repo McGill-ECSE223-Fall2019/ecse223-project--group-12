@@ -427,11 +427,8 @@ public class GamePanel extends JPanel {
 				setEnabledMoves(true);
 				if (playerStats.getRemaningTime().equals(Time.valueOf("00:00:00"))) {
 					setEnabledMoves(false);
-					if (QuoridorController.getWallMoveCandidate() != null) {
-						grabWallButton.setText("Grab Wall");
-						QuoridorController.removeCandidateWall();
-						refreshData();
-					}
+					QuoridorController.setTimeOutStatus();
+					refreshData();
 				}
 			} else {
 				setEnabledMoves(true);

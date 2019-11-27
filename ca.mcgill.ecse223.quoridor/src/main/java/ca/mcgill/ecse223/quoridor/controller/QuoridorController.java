@@ -170,6 +170,11 @@ public class QuoridorController {
 			QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.BlackWon);
 		}
 	}
+	public static void setTimeOutStatus() {
+		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove();
+		setTimeOutStatus(p);
+	}
+	
 
 	/**
 	 * This method is only to satisfy the gherkin feature, the pawn state machine
@@ -744,6 +749,7 @@ public class QuoridorController {
 	 *         column and direction of the wall move)
 	 */
 	public static WallMoveTO getWallMoveCandidate() {
+		
 		WallMove wm = QuoridorApplication.getQuoridor().getCurrentGame().getWallMoveCandidate();
 		if (wm != null) {
 			return new WallMoveTO(wm.getTargetTile().getRow(), wm.getTargetTile().getColumn(), wm.getWallDirection());
