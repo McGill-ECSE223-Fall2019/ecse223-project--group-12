@@ -924,6 +924,9 @@ public class QuoridorController {
 	private static Move getLastMoveInHistory() {
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		Move currentMove = game.getCurrentMove();
+		if (currentMove == null) {
+			currentMove = getMove(1,1);
+		}
 		while (currentMove.hasNextMove()) {
 			currentMove = currentMove.getNextMove();
 		}
@@ -1757,6 +1760,26 @@ public class QuoridorController {
 			AIController.doMove();
 		}
 
+	}
+	public static void jumpToFinal() {
+		Move finalMove = getLastMoveInHistory();
+		if(finalMove == null) {
+			return;
+		}
+		while(finalMove.hasNextMove()) {
+			finalMove = finalMove.getNextMove();
+		}
+		int finalRoundNumber = finalMove.getRoundNumber();
+		int finalMoveNumber = finalMove.getMoveNumber();
+		goToMove(finalMoveNumber,finalRoundNumber);
+		
+	}
+	public static void jumpToStart() {
+		Game currentGame = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (!(currentGame.getGameStatus() == GameStatus.Replay)) {
+			return;
+		}
+		goToMove(0,0);
 	}
 
 	// ------------------------
