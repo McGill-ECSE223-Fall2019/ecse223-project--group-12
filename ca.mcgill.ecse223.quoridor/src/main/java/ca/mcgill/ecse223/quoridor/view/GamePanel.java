@@ -94,6 +94,7 @@ public class GamePanel extends JPanel {
 	private JButton prevButton;
 	private JButton nextButton;
 	private JButton replayModeButton;
+	JOptionPane pann;
 
 	public GamePanel() {
 		initComponents();
@@ -301,6 +302,7 @@ public class GamePanel extends JPanel {
 		inputMap.put(KeyStroke.getKeyStroke('w'), w);
 		actionMap.put(w, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				upButtonButtonActionPerformed(null);
@@ -310,6 +312,7 @@ public class GamePanel extends JPanel {
 		inputMap.put(KeyStroke.getKeyStroke('s'), s);
 		actionMap.put(s, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				downButtonButtonActionPerformed(null);
@@ -319,6 +322,7 @@ public class GamePanel extends JPanel {
 		inputMap.put(KeyStroke.getKeyStroke('a'), a);
 		actionMap.put(a, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				leftButtonButtonActionPerformed(null);
@@ -328,6 +332,7 @@ public class GamePanel extends JPanel {
 		inputMap.put(KeyStroke.getKeyStroke('d'), d);
 		actionMap.put(d, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				rightButtonButtonActionPerformed(null);
@@ -337,6 +342,7 @@ public class GamePanel extends JPanel {
 		inputMap.put(KeyStroke.getKeyStroke('q'), q);
 		actionMap.put(q, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				grabWallButtonActionPerformed(null);
@@ -346,13 +352,13 @@ public class GamePanel extends JPanel {
 		inputMap.put(KeyStroke.getKeyStroke('e'), e);
 		actionMap.put(e, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				rotateWallButtonButtonActionPerformed(null);
 			}
 		});
-		
-		
+
 	}
 
 	// ------------------------
@@ -377,13 +383,21 @@ public class GamePanel extends JPanel {
 		invalidMoveLabel.setText("");
 
 		if (QuoridorController.getGameStatus() == GameStatus.WhiteWon) {
-			JOptionPane.showMessageDialog(this.getParent(), "White Won!");
-			QuoridorController.destroyGame();
-			returnToMenu();
+			int op = JOptionPane.showConfirmDialog(this.getParent(), "White Won! Would you like to save the game?");
+			if (op == 0) {
+				saveExitToMenuButtonActionPerformed(null);
+			} else {
+				QuoridorController.destroyGame();
+				returnToMenu();
+			}
 		} else if (QuoridorController.getGameStatus() == GameStatus.BlackWon) {
-			JOptionPane.showMessageDialog(this.getParent(), "Black Won!");
-			QuoridorController.destroyGame();
-			returnToMenu();
+			int op = JOptionPane.showConfirmDialog(this.getParent(), "Black Won! Would you like to save the game?");
+			if (op == 0) {
+				saveExitToMenuButtonActionPerformed(null);
+			} else {
+				QuoridorController.destroyGame();
+				returnToMenu();
+			}
 		}
 
 	}
@@ -821,9 +835,12 @@ public class GamePanel extends JPanel {
 	/**
 	 * Show or hide pawn at certain tile
 	 * 
-	 * @param row     rows 1 to 9
-	 * @param col     cols 1 to 9 (A to I in specification)
-	 * @param c       the color of the pawn to show
+	 * @param row
+	 *            rows 1 to 9
+	 * @param col
+	 *            cols 1 to 9 (A to I in specification)
+	 * @param c
+	 *            the color of the pawn to show
 	 * @param visible
 	 */
 	private void showPawn(int row, int col, PlayerColor c, boolean visible) {
@@ -861,7 +878,8 @@ public class GamePanel extends JPanel {
 	/**
 	 * Draw a wall in a selection of colors
 	 * 
-	 * @param wall  an array of JButtons representing a wall (see getWall())
+	 * @param wall
+	 *            an array of JButtons representing a wall (see getWall())
 	 * @param color
 	 * 
 	 */
