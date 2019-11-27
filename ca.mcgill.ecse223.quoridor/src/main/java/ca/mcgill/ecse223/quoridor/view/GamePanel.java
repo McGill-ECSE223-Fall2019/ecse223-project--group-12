@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.Time;
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class GamePanel extends JPanel {
 	private JButton downButton;
 	private JButton saveExitToMenuButton;
 	private JButton grabWallButton;
-		// Resign
+	// Resign
 	private JButton resignButton;
 
 	// Separators
@@ -93,7 +94,7 @@ public class GamePanel extends JPanel {
 	private JButton prevButton;
 	private JButton nextButton;
 	private JButton replayModeButton;
-	
+
 	public GamePanel() {
 		initComponents();
 	}
@@ -134,7 +135,7 @@ public class GamePanel extends JPanel {
 		remainingWalls.setFont(new Font(null, Font.BOLD, 14));
 		invalidMoveLabel = new JLabel();
 		invalidMoveLabel.setForeground(Color.RED);
-		
+
 		// Replay mode
 		prevButton = new JButton("Prev");
 		nextButton = new JButton("Next");
@@ -285,9 +286,9 @@ public class GamePanel extends JPanel {
 			}
 		});
 		// switch player
-		String s = "s";
-		inputMap.put(KeyStroke.getKeyStroke('s'), s);
-		actionMap.put(s, new AbstractAction() {
+		String l = "l";
+		inputMap.put(KeyStroke.getKeyStroke('l'), l);
+		actionMap.put(l, new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -295,6 +296,63 @@ public class GamePanel extends JPanel {
 				confirmMoveButtonActionPerformed();
 			}
 		});
+		// move wall up
+		String w = "w";
+		inputMap.put(KeyStroke.getKeyStroke('w'), w);
+		actionMap.put(w, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				upButtonButtonActionPerformed(null);
+			}
+		});
+		String s = "s";
+		inputMap.put(KeyStroke.getKeyStroke('s'), s);
+		actionMap.put(s, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				downButtonButtonActionPerformed(null);
+			}
+		});
+		String a = "a";
+		inputMap.put(KeyStroke.getKeyStroke('a'), a);
+		actionMap.put(a, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				leftButtonButtonActionPerformed(null);
+			}
+		});
+		String d = "d";
+		inputMap.put(KeyStroke.getKeyStroke('d'), d);
+		actionMap.put(d, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				rightButtonButtonActionPerformed(null);
+			}
+		});
+		String q = "q";
+		inputMap.put(KeyStroke.getKeyStroke('q'), q);
+		actionMap.put(q, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				grabWallButtonActionPerformed(null);
+			}
+		});
+		String e = "e";
+		inputMap.put(KeyStroke.getKeyStroke('e'), e);
+		actionMap.put(e, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				rotateWallButtonButtonActionPerformed(null);
+			}
+		});
+		
+		
 	}
 
 	// ------------------------
@@ -518,7 +576,8 @@ public class GamePanel extends JPanel {
 			} else {
 				String fileNamePos = fileName + ".pos.dat";
 				String fileNameGame = fileName + ".game.dat";
-				if (QuoridorController.checkFileExists(fileNamePos, false) || QuoridorController.checkFileExists(fileNameGame, false)) {
+				if (QuoridorController.checkFileExists(fileNamePos, false)
+						|| QuoridorController.checkFileExists(fileNameGame, false)) {
 					int overWriteOption = JOptionPane.showConfirmDialog(this.getParent(),
 							"File already exists, are you sure you want to overwrite?");
 					if (overWriteOption == 0) {
@@ -688,26 +747,23 @@ public class GamePanel extends JPanel {
 			refreshData();
 		}
 	}
-	
+
 	private void resignButtonActionPerformed(ActionEvent evt) {
-			int saveGameOption = JOptionPane.
-					showConfirmDialog(this.getParent(),
-					"Are you sure you want to resign?");
-			if (saveGameOption == 0) {
-				QuoridorController.resignGame();
-				if (QuoridorController.getGameStatus() == GameStatus.WhiteWon) {
-					JOptionPane.showMessageDialog(this.getParent(), "Black Player resigned, White Won!");
-					QuoridorController.destroyGame();
-					returnToMenu();
-				} else if (QuoridorController.getGameStatus() == GameStatus.BlackWon) {
-					JOptionPane.showMessageDialog(this.getParent(), "White Player resigned, Black Won!");
-					QuoridorController.destroyGame();
-					returnToMenu();
-				}
+		int saveGameOption = JOptionPane.showConfirmDialog(this.getParent(), "Are you sure you want to resign?");
+		if (saveGameOption == 0) {
+			QuoridorController.resignGame();
+			if (QuoridorController.getGameStatus() == GameStatus.WhiteWon) {
+				JOptionPane.showMessageDialog(this.getParent(), "Black Player resigned, White Won!");
+				QuoridorController.destroyGame();
+				returnToMenu();
+			} else if (QuoridorController.getGameStatus() == GameStatus.BlackWon) {
+				JOptionPane.showMessageDialog(this.getParent(), "White Player resigned, Black Won!");
+				QuoridorController.destroyGame();
+				returnToMenu();
 			}
-			else {
-				//Back to game with refreshing?
-			}
+		} else {
+			// Back to game with refreshing?
+		}
 	}
 
 	// ------------------------
@@ -765,12 +821,9 @@ public class GamePanel extends JPanel {
 	/**
 	 * Show or hide pawn at certain tile
 	 * 
-	 * @param row
-	 *            rows 1 to 9
-	 * @param col
-	 *            cols 1 to 9 (A to I in specification)
-	 * @param c
-	 *            the color of the pawn to show
+	 * @param row     rows 1 to 9
+	 * @param col     cols 1 to 9 (A to I in specification)
+	 * @param c       the color of the pawn to show
 	 * @param visible
 	 */
 	private void showPawn(int row, int col, PlayerColor c, boolean visible) {
@@ -808,8 +861,7 @@ public class GamePanel extends JPanel {
 	/**
 	 * Draw a wall in a selection of colors
 	 * 
-	 * @param wall
-	 *            an array of JButtons representing a wall (see getWall())
+	 * @param wall  an array of JButtons representing a wall (see getWall())
 	 * @param color
 	 * 
 	 */
@@ -1006,8 +1058,7 @@ public class GamePanel extends JPanel {
 						.addComponent(replayModeButton).addComponent(invalidMoveLabel)
 						.addGroup(controlUILayout.createParallelGroup(Alignment.BASELINE).addComponent(nextButton)
 								.addComponent(prevButton))
-						.addPreferredGap(ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
-						.addComponent(resignButton)
+						.addPreferredGap(ComponentPlacement.RELATED, 71, Short.MAX_VALUE).addComponent(resignButton)
 						.addComponent(saveExitToMenuButton)));
 		controlUILayout.setAutoCreateGaps(true);
 		controlUILayout.setAutoCreateContainerGaps(true);
