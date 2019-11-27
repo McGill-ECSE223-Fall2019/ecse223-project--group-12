@@ -62,6 +62,9 @@ public class GamePanel extends JPanel {
 	private JButton downButton;
 	private JButton saveExitToMenuButton;
 	private JButton grabWallButton;
+		// Resign
+	private JButton resignButton;
+
 	// Separators
 	private JSeparator upperSeparator;
 	private JSeparator middleSeparator;
@@ -90,7 +93,7 @@ public class GamePanel extends JPanel {
 	private JButton prevButton;
 	private JButton nextButton;
 	private JButton replayModeButton;
-
+	
 	public GamePanel() {
 		initComponents();
 	}
@@ -115,6 +118,7 @@ public class GamePanel extends JPanel {
 		leftButton = new JButton("←");
 		downButton = new JButton("↓");
 		rightButton = new JButton("→");
+		resignButton = new JButton("Resign");
 		// Separators
 		upperSeparator = new JSeparator();
 		middleSeparator = new JSeparator();
@@ -258,6 +262,11 @@ public class GamePanel extends JPanel {
 		rotateWallButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				rotateWallButtonButtonActionPerformed(evt);
+			}
+		});
+		resignButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				resignButtonActionPerformed(evt);
 			}
 		});
 		// Key action Listeners p = path animation , s = switch player for debugging
@@ -679,6 +688,28 @@ public class GamePanel extends JPanel {
 			refreshData();
 		}
 	}
+	
+	private void resignButtonActionPerformed(ActionEvent evt) {
+			int saveGameOption = JOptionPane.
+					showConfirmDialog(this.getParent(),
+					"Are you sure you want to resign?");
+			if (saveGameOption == 0) {
+				QuoridorController.resignGame();
+				if (QuoridorController.getGameStatus() == GameStatus.WhiteWon) {
+					JOptionPane.showMessageDialog(this.getParent(), "Black Player resigned, White Won!");
+					QuoridorController.destroyGame();
+					returnToMenu();
+				} else if (QuoridorController.getGameStatus() == GameStatus.BlackWon) {
+					JOptionPane.showMessageDialog(this.getParent(), "White Player resigned, Black Won!");
+					QuoridorController.destroyGame();
+					returnToMenu();
+				}
+				refreshData();
+			}
+			else {
+				//Back to game with refreshing?
+			}
+	}
 
 	// ------------------------
 	// UI Utility Methods
@@ -955,6 +986,7 @@ public class GamePanel extends JPanel {
 								.addComponent(grabWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
 								.addComponent(rotateWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
 								.addComponent(replayModeButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+								.addComponent(resignButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
 								.addComponent(saveExitToMenuButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
 								.addComponent(dashboardPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
 										GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -976,6 +1008,7 @@ public class GamePanel extends JPanel {
 						.addGroup(controlUILayout.createParallelGroup(Alignment.BASELINE).addComponent(nextButton)
 								.addComponent(prevButton))
 						.addPreferredGap(ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
+						.addComponent(resignButton)
 						.addComponent(saveExitToMenuButton)));
 		controlUILayout.setAutoCreateGaps(true);
 		controlUILayout.setAutoCreateContainerGaps(true);

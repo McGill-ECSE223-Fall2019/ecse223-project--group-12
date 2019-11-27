@@ -858,6 +858,7 @@ public class QuoridorController {
 		return new PlayerPositionTO(pos.getTile().getRow(), pos.getTile().getColumn(), null);
 	}
 
+		
 	/*
 	 * Private Helper Methods
 	 * 
@@ -1898,6 +1899,31 @@ public class QuoridorController {
 			}
 		}
 	}
+	
+	/**
+	 * @author Zechen Ren Gherkin feature: ResigGame.feature
+	 * @throws InvalidInputException
+	 */
+	public static void resignGame() {
+		Quoridor quoridor = QuoridorApplication.getQuoridor();
+		Game game = quoridor.getCurrentGame();
+		
+		if (game != null && game.getGameStatus() == GameStatus.Running) {
+			Player p = game.getCurrentPosition().getPlayerToMove();
+			
+			if (p.hasGameAsBlack()) {
+				QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.WhiteWon);
+
+			} else {
+				QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.BlackWon);
+			}
+		}
+		
+		
+	}
+	
+	
+	
 
 	// ------------------------
 	// Team
