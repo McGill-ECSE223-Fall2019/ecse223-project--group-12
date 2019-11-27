@@ -27,12 +27,10 @@ import ca.mcgill.ecse223.quoridor.model.Move;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Quoridor;
-import ca.mcgill.ecse223.quoridor.model.StepMove;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.User;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
-import ca.mcgill.ecse223.quoridor.to.PathAndMove;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO.PlayerColor;
 import ca.mcgill.ecse223.quoridor.to.PlayerStatsTO;
@@ -84,6 +82,7 @@ public class QuoridorController {
 			}
 			eraseHistoryAfterCurrentMove();
 			game.setGameStatus(GameStatus.Running);
+			initPawnMachines();
 		} else {
 			game.setGameStatus(GameStatus.Replay);
 			throw new InvalidInputException("Cannot continue a game with a final result!");
@@ -878,7 +877,6 @@ public class QuoridorController {
 				game.getMove(0).delete();
 			}
 		} else {
-			System.out.println("asd");
 			Move lastMove = getLastMoveInHistory();
 			while (true) {
 				Move moveToDelete = lastMove;
@@ -927,7 +925,7 @@ public class QuoridorController {
 		if (currentMove == null) {
 			currentMove = getMove(1,1);
 		}
-		while (currentMove.hasNextMove()) {
+		while (currentMove != null && currentMove.hasNextMove()) {
 			currentMove = currentMove.getNextMove();
 		}
 		return currentMove;
