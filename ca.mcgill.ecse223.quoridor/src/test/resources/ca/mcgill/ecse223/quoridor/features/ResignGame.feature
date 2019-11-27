@@ -11,5 +11,5 @@ Feature: Resign game
 
     Examples:
     | player | result   |
-    | white  | BlackWon |
-    | black  | WhiteWon |
+    | white  | blackWon |
+    | black  | whiteWon |

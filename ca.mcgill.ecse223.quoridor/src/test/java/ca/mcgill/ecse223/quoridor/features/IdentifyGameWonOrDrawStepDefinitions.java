@@ -62,7 +62,7 @@ public class IdentifyGameWonOrDrawStepDefinitions {
 			expected = GameStatus.WhiteWon;
 		} else if  (status.equals("blackWon")) {
 			expected = GameStatus.BlackWon;
-		}
+		} 
 		
 		assertEquals(expected, acutal);
 	}
