@@ -1599,7 +1599,13 @@ public class QuoridorController {
 	 * @return
 	 */
 	public static void writeGameFile(String fileName, boolean test) {
-	
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (game.getCurrentMove()==null) {
+			return;
+		}
+		//get first move
+		Move myMove = getMove(1,1);
+		
 		PrintWriter pw;
 		String fullPath = SAVED_GAMES_FOLDER + fileName;
 		// Necessary since Travis CI expects resources created during tests to be in
@@ -1609,7 +1615,24 @@ public class QuoridorController {
 		}
 		try {
 			pw = new PrintWriter(fullPath, "UTF-8");
-			pw.println("Writing of game files has not been implemented yet");
+			int i=1;
+			while (myMove!=null) {
+				pw.print(i+". ");
+				pw.print(moveToString(myMove));
+				myMove = myMove.getNextMove();
+				if (myMove!=null) {
+					pw.print(" ");
+					pw.print(moveToString(myMove));
+					if (myMove.hasNextMove()) {
+						//skip line
+						pw.println("");
+					}
+				} else {
+					break;
+				}
+				myMove = myMove.getNextMove();
+				i++;
+			}
 			pw.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -1617,6 +1640,24 @@ public class QuoridorController {
 			e.printStackTrace();
 		}
 		return;
+	}
+	
+	/**
+	 * Converts a move into the appropriate annotation for it to be written
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	public static String moveToString(Move move) {
+		int row = move.getTargetTile().getRow();
+		char column = (char) (move.getTargetTile().getColumn() + 96);
+		String s = ""+column+row;
+		if (move.getClass().equals(WallMove.class)) {
+			WallMove wallMove = (WallMove) move;
+			s+=wallMove.getWallDirection().toString().toLowerCase().charAt(0);
+		}
+		return s;
 	}
 	
 	/**
