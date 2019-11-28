@@ -93,6 +93,8 @@ public class GamePanel extends JPanel {
 	// Replay mode
 	private JButton prevButton;
 	private JButton nextButton;
+	private JButton finalButton;
+	private JButton startButton;
 	private JButton replayModeButton;
 	JOptionPane pann;
 
@@ -140,9 +142,13 @@ public class GamePanel extends JPanel {
 		// Replay mode
 		prevButton = new JButton("Prev");
 		nextButton = new JButton("Next");
+		finalButton = new JButton("to final");
+		startButton = new JButton("to start");
 		replayModeButton = new JButton("Replay Mode");
 		prevButton.setVisible(false);
 		nextButton.setVisible(false);
+		finalButton.setVisible(false);
+		startButton.setVisible(false);
 		// Timer for player clock
 		timer = new Timer(1000, new ActionListener() {
 			@Override
@@ -207,6 +213,16 @@ public class GamePanel extends JPanel {
 		// ------------------------
 
 		// listeners for all buttons
+		finalButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				finalButtonActionPerformed(evt);
+			}
+		});
+		startButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				startButtonActionPerformed(evt);
+			}
+		});
 		nextButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				nextButtonActionPerformed(evt);
@@ -411,11 +427,8 @@ public class GamePanel extends JPanel {
 				setEnabledMoves(true);
 				if (playerStats.getRemaningTime().equals(Time.valueOf("00:00:00"))) {
 					setEnabledMoves(false);
-					if (QuoridorController.getWallMoveCandidate() != null) {
-						grabWallButton.setText("Grab Wall");
-						QuoridorController.removeCandidateWall();
-						refreshData();
-					}
+					QuoridorController.setTimeOutStatus();
+					refreshData();
 				}
 			} else {
 				setEnabledMoves(true);
@@ -482,6 +495,8 @@ public class GamePanel extends JPanel {
 		replayModeButton.setText("Replay Mode");
 		nextButton.setVisible(false);
 		prevButton.setVisible(false);
+		finalButton.setVisible(false);
+		startButton.setVisible(false);
 		for (int i = 1; i < 10; i++) {
 			for (int j = 1; j < 10; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
@@ -507,6 +522,14 @@ public class GamePanel extends JPanel {
 		refreshData();
 
 	}
+	private void finalButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.jumpToFinal();
+		refreshData();
+	}
+	private void startButtonActionPerformed(ActionEvent evt) {
+		QuoridorController.jumpToStart();
+		refreshData();
+	}
 
 	private void replayModeButtonActionPerformed(ActionEvent evt) {
 		if (replayModeButton.getText().equals("Replay Mode")) {
@@ -515,6 +538,8 @@ public class GamePanel extends JPanel {
 			QuoridorController.removeCandidateWall();
 			prevButton.setVisible(true);
 			nextButton.setVisible(true);
+			finalButton.setVisible(true);
+			startButton.setVisible(true);
 			grabWallButton.setEnabled(false);
 			grabWallButton.setText("Grab Wall");
 			rotateWallButton.setEnabled(false);
@@ -527,6 +552,8 @@ public class GamePanel extends JPanel {
 			}
 			prevButton.setVisible(false);
 			nextButton.setVisible(false);
+			finalButton.setVisible(false);
+			startButton.setVisible(false);
 			grabWallButton.setEnabled(true);
 			rotateWallButton.setEnabled(true);
 		}
@@ -1052,6 +1079,9 @@ public class GamePanel extends JPanel {
 								.addGroup(controlUILayout.createSequentialGroup()
 										.addComponent(prevButton, GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
 										.addComponent(nextButton, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE))
+								.addGroup(controlUILayout.createSequentialGroup()
+										.addComponent(finalButton,GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+										.addComponent(startButton,GroupLayout.PREFERRED_SIZE,70, Short.MAX_VALUE))
 								.addComponent(grabWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
 								.addComponent(rotateWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
 								.addComponent(replayModeButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
@@ -1076,6 +1106,8 @@ public class GamePanel extends JPanel {
 						.addComponent(replayModeButton).addComponent(invalidMoveLabel)
 						.addGroup(controlUILayout.createParallelGroup(Alignment.BASELINE).addComponent(nextButton)
 								.addComponent(prevButton))
+						.addGroup(controlUILayout.createParallelGroup(Alignment.BASELINE).addComponent(finalButton)
+								.addComponent(startButton))
 						.addPreferredGap(ComponentPlacement.RELATED, 71, Short.MAX_VALUE).addComponent(resignButton)
 						.addComponent(saveExitToMenuButton)));
 		controlUILayout.setAutoCreateGaps(true);

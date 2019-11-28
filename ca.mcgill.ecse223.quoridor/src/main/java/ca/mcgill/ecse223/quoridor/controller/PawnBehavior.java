@@ -1442,7 +1442,7 @@ public class PawnBehavior
  	 	// Update the player position
  	 	if (player.hasGameAsWhite()) {
 			PlayerPosition newPos = new PlayerPosition(player, targetTile);
-			gp.setWhitePosition(newPos);
+			gp.setWhitePosition(newPos);;
 		} else {		
 			PlayerPosition newPos = new PlayerPosition(player, targetTile);
 			gp.setBlackPosition(newPos);	
