@@ -1672,6 +1672,320 @@ public class QuoridorController {
 	 * @return
 	 */
 	public static boolean loadGame(String fileName, boolean test) {
+		createAndStartDefaultGame();
+		
+		String fullPath = SAVED_GAMES_FOLDER + fileName;
+		// Necessary since Travis CI expects resources created during tests to be in
+		// test folder
+		if (test) {
+			fullPath = fileName;
+		}
+
+		// validate text file's format
+		if (!validateGameTextFile(fullPath)) {
+			return false;
+		}
+
+		// extract text line one by one and attempts the moves to see if they are valid
+		File file = new File(fullPath);
+		String textLine = new String();
+		BufferedReader br;
+		try {
+			br = new BufferedReader(new FileReader(file));
+			try {
+				textLine = br.readLine();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			while (textLine!=null) {
+				int rounds = getRounds(textLine);
+				if (rounds==1) {
+					if (!parseMove(textLine,1)) {
+						return false;
+					}
+				} else {
+					if (!parseMove(textLine.substring(0, textLine.length()-3),1)) {
+						return false;
+					}
+					
+					if(!parseMove(textLine.substring(textLine.length()-3, textLine.length()),2)) {
+						return false;
+					}
+				}
+				try {
+					textLine = br.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return validatePosition();
+	}
+	
+	/**
+	 * Says if a game history text file is valid for loading or not
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	private static boolean validateGameTextFile(String path) {
+		
+		// extract text line one by one and attempts the moves to see if they are valid
+		File file = new File(path);
+		String textLine = new String();
+		BufferedReader br;
+		int roundNumber=1;
+		String roundNumberString;
+		
+		try {
+			br = new BufferedReader(new FileReader(file));
+			try {
+				textLine = br.readLine();
+				while (textLine!=null) {
+					//check if each line's format is individually valid
+					if (!validateGameTextLine(textLine)) {
+						return false;
+					}
+					
+					//check if round numbers are coherent
+					roundNumberString = ""+roundNumber;
+					if (!roundNumberString.equals(textLine.substring(0,textLine.lastIndexOf(".")))) {
+						return false;
+					}
+					
+					roundNumber++;
+					textLine = br.readLine();
+				}
+				
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+					
+		return true;
+	}
+	
+	/**
+	 * Says if a game history text file is valid for loading or not
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	private static boolean validateGameTextLine(String line) {
+		String pattern = "^[1-9]+\\. [a-i][1-9](h|v)?( [a-i][1-9](h|v)?)?$";
+		if (line.toLowerCase().matches(pattern)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Gets the number of rounds played from a saved game text file's line of text 
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	private static int getRounds(String textLine) {
+		String twoMovesPattern = "^[1-9]+\\. [a-i][1-9](h|v)? [a-i][1-9](h|v)?$";
+		if (textLine.toLowerCase().matches(twoMovesPattern)) {
+			return 2;
+		} else {
+			return 1;
+		}
+	}
+	
+	/**
+	 * Extracts move type and target tile from text data of the save file
+	 * And then calls validation method for said move
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	private static Boolean parseMove(String text, int round) {
+		//clean string
+		String importantCharsOnly = text;
+		//remove spaces from string
+		importantCharsOnly = importantCharsOnly.replace(" ", "");
+		if (round==1) {
+			//white player's move
+			//remove move number from string
+			importantCharsOnly = importantCharsOnly.substring(importantCharsOnly.lastIndexOf('.')+1, importantCharsOnly.length());
+		}
+		//get target tile
+		int col = importantCharsOnly.toLowerCase().charAt(0) - 96;
+		int row = importantCharsOnly.charAt(1)-48;
+		
+		//get type of move and validate it
+		//wallmove
+		if (importantCharsOnly.length()==3) {
+			Direction dir = Direction.Vertical;
+			if (importantCharsOnly.toLowerCase().charAt(2)=='h') {
+				dir = Direction.Horizontal;
+			}
+			return validateWallMove(col,row,dir);
+
+		} else {
+			//pawnmove
+			return validatePawnMove(col,row);
+		}
+	}
+	
+	/**
+	 * Validates a pawn move by trying to make said move
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	private static Boolean validatePawnMove(int col, int row) {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		
+		//get dx dy
+		int playerCol, playerRow;
+		if (game.getCurrentPosition().getPlayerToMove().hasGameAsWhite()) {
+			playerCol = game.getCurrentPosition().getWhitePosition().getTile().getColumn();
+			playerRow = game.getCurrentPosition().getWhitePosition().getTile().getRow();
+		} else {
+			playerCol = game.getCurrentPosition().getBlackPosition().getTile().getColumn();
+			playerRow = game.getCurrentPosition().getBlackPosition().getTile().getRow();
+		}
+		int dx = col - playerCol;
+		int dy = row - playerRow;
+		
+		//check if player is moving at all
+		if (dx==0&&dy==0) {
+			return false;
+		}
+		//get which side its moving
+		Side side;
+		if (dx==0 && dy>0) {
+			side = Side.down;
+		} else if (dx==0 && dy<0) {
+			side = Side.up;
+		} else if (dx>0 && dy==0) {
+			side = Side.right;
+		} else if (dx<0 && dy==0) {
+			side = Side.left;
+		} else if (dx>0 && dy>0) {
+			side = Side.downright;
+		} else if (dx>0 && dy<0) {
+			side = Side.upright;
+		} else if (dx<0 && dy>0) {
+			side = Side.downleft;
+		} else {
+			//dx<0 && dy<0)
+			side = Side.upleft;
+		}
+
+		//try to move the pawn
+		return movePawn(side);
+	}
+	
+	/**
+	 * Validates a wall move by trying to make said move
+	 * 
+	 * @author Francis Comeau
+	 * @param
+	 * @return
+	 */
+	private static Boolean validateWallMove(int col, int row, Direction dir) {
+		//check if has walls left
+		try {
+			grabWall();
+		} catch (InvalidInputException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return false;
+		}
+		
+		//try to place the wall in position
+		if (!moveWallToTile(col,row)) {
+			return false;
+		}
+		
+		//rotate the wall
+		if (dir == Direction.Horizontal) {
+			rotateWall();
+		}
+		
+		//try to drop the wall
+		try {
+			dropWall();
+		} catch (InvalidInputException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private static Boolean moveWallToTile(int col, int row) {
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		
+		//get dx
+		int dx = col - game.getWallMoveCandidate().getTargetTile().getColumn();
+		//move wall in x direction
+		while (dx < 0) {
+			try {
+				moveWall(Side.left);
+				dx = col - game.getWallMoveCandidate().getTargetTile().getColumn();
+			} catch (InvalidInputException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		while (dx > 0) {
+			try {
+				moveWall(Side.right);
+				dx = col - game.getWallMoveCandidate().getTargetTile().getColumn();
+			} catch (InvalidInputException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		//get dy
+		int dy = row - game.getWallMoveCandidate().getTargetTile().getRow();
+		//move wall in y direction
+		while (dy < 0) {
+			try {
+				moveWall(Side.down);
+				dy = row - game.getWallMoveCandidate().getTargetTile().getRow();
+			} catch (InvalidInputException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		while (dy > 0) {
+			try {
+				moveWall(Side.up);
+				dy = row - game.getWallMoveCandidate().getTargetTile().getRow();
+			} catch (InvalidInputException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
 		return true;
 	}
 	
@@ -2039,8 +2353,8 @@ public class QuoridorController {
 	 * @param side
 	 *            The desired direction to move
 	 */
-	public static void movePawn(Side side) {
-		movePawn(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(), side);
+	public static boolean movePawn(Side side) {
+		return movePawn(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove(), side);
 	}
 
 	/*

@@ -271,7 +271,7 @@ public class MenuPanel extends JPanel {
 			String fileNamePos = loadGameToggelList.getSelectedItem().toString();
 			String fileNameGame = fileNamePos.substring(0, fileNamePos.length()-7) + "game.dat";
 
-			if (!QuoridorController.loadPosition(fileNamePos, false) || !QuoridorController.loadGame(fileNameGame, false)) {
+			if (/*!QuoridorController.loadPosition(fileNamePos, false) || */!QuoridorController.loadGame(fileNameGame, false)) {
 				JOptionPane.showMessageDialog(this.getParent(), "Sorry file is not valid");
 				QuoridorController.destroyGame();
 			} else {
