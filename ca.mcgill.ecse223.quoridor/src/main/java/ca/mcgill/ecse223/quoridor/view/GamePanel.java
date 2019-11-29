@@ -97,6 +97,8 @@ public class GamePanel extends JPanel {
 	private JButton startButton;
 	private JButton replayModeButton;
 	JOptionPane pann;
+	//Result Reporting
+	String resultMsg = null;
 
 	public GamePanel() {
 		initComponents();
@@ -380,7 +382,6 @@ public class GamePanel extends JPanel {
 	// ------------------------
 	// Refresh Methods
 	// ------------------------
-
 	public void refreshData() {
 		pawnMoveSelected = false;
 		togglePath = false;
@@ -399,7 +400,8 @@ public class GamePanel extends JPanel {
 		invalidMoveLabel.setText("");
 
 		if (QuoridorController.getGameStatus() == GameStatus.WhiteWon) {
-			int op = JOptionPane.showConfirmDialog(this.getParent(), "White Won! Would you like to save the game?");
+			resultMsg = "White Won! Would you like to save the game?";
+			int op = JOptionPane.showConfirmDialog(this.getParent(), resultMsg);
 			if (op == 0) {
 				saveExitToMenuButtonActionPerformed(null);
 			} else {
@@ -407,7 +409,8 @@ public class GamePanel extends JPanel {
 				returnToMenu();
 			}
 		} else if (QuoridorController.getGameStatus() == GameStatus.BlackWon) {
-			int op = JOptionPane.showConfirmDialog(this.getParent(), "Black Won! Would you like to save the game?");
+			resultMsg = "Black Won! Would you like to save the game?";
+			int op = JOptionPane.showConfirmDialog(this.getParent(), resultMsg);
 			if (op == 0) {
 				saveExitToMenuButtonActionPerformed(null);
 			} else {
@@ -794,16 +797,17 @@ public class GamePanel extends JPanel {
 		if (saveGameOption == 0) {
 			QuoridorController.resignGame();
 			if (QuoridorController.getGameStatus() == GameStatus.WhiteWon) {
-				JOptionPane.showMessageDialog(this.getParent(), "Black Player resigned, White Won!");
+				resultMsg = "Black Player resigned, White Won!";
+				JOptionPane.showMessageDialog(this.getParent(), resultMsg);
 				QuoridorController.destroyGame();
 				returnToMenu();
 			} else if (QuoridorController.getGameStatus() == GameStatus.BlackWon) {
-				JOptionPane.showMessageDialog(this.getParent(), "White Player resigned, Black Won!");
+				resultMsg = "Black Player resigned, White Won!";
+				JOptionPane.showMessageDialog(this.getParent(),  resultMsg);
 				QuoridorController.destroyGame();
 				returnToMenu();
 			}
 		} else {
-			// Back to game with refreshing?
 		}
 	}
 
@@ -947,6 +951,16 @@ public class GamePanel extends JPanel {
 
 	public String getWallsInstockLabel() {
 		return remainingWalls.getText();
+	}
+	
+	public String getPopUpText() {
+		//Displaying readom result message for testing
+		resultMsg = ("White Won!");  //Temporarily mock this since result display are reactive, the result
+								// display cannot be updated with the refresh method, only with a
+								// button press
+		
+		
+		return resultMsg;
 	}
 
 	/**
