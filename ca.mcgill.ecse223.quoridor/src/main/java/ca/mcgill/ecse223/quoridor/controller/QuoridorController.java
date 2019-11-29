@@ -1621,9 +1621,11 @@ public class QuoridorController {
 		if (test) {
 			fullPath = TEST_SAVED_GAMES_FOLDER + fileName;
 		}
+		
 		try {
 			pw = new PrintWriter(fullPath, "UTF-8");
 			int i=1;
+			pw.println("test");
 			while (myMove!=null) {
 				pw.print(i+". ");
 				pw.print(moveToString(myMove));

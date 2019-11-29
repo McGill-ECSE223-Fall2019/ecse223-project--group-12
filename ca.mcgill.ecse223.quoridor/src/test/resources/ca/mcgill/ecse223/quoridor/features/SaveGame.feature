@@ -17,7 +17,7 @@
   #Scenario Outline: Save game with existing file name
   #	Given File "<filename>" exists in the filesystem
     #When The user initiates to save the game with name "<filename>"
-    #And The user confirms to overwrite existing file
+    #And The user confirms to overwrite existing game file
     #Then File with "<filename>" shall be updated in the filesystem
 #
     #Examples: 
@@ -27,7 +27,7 @@
   #Scenario Outline: Save game cancelled due to existing file name
   #	Given File "<filename>" exists in the filesystem
     #When The user initiates to save the game with name "<filename>"
-    #And The user cancels to overwrite existing file
+    #And The user cancels to overwrite existing game file
     #Then File "<filename>" shall not be changed in the filesystem
 #
     #Examples: 

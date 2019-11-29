@@ -25,6 +25,7 @@ import io.cucumber.java.en.When;
  *
  */
 public class SavePositionStepDefinitions {
+	
 	private String fileName = "";
 
 	@Given("No file {string} exists in the filesystem")
@@ -33,9 +34,10 @@ public class SavePositionStepDefinitions {
 		file.delete();
 	}
 
-	@When("The user initiates to save the game with name {string}")
-	public void the_user_initiates_to_save_the_game_with_name(String fileName) {
+	@When("The user initiates to save the position with name {string}")
+	public void the_user_initiates_to_save_the_position_with_name(String fileName) {
 		QuoridorController.savePosition(fileName, false, true);
+		//QuoridorController.saveGame(fileName, false, true);
 	}
 
 	@Then("A file with {string} shall be created in the filesystem")
@@ -58,9 +60,11 @@ public class SavePositionStepDefinitions {
 		}
 	}
 
-	@When("The user confirms to overwrite existing file")
-	public void the_user_confirms_to_overwrite_existing_file() {
+	@When("The user confirms to overwrite existing position file")
+	public void the_user_confirms_to_overwrite_existing_position_file() {
 		QuoridorController.savePosition(fileName, true, true);
+		//QuoridorController.saveGame(fileName, true, true);
+
 	}
 
 	@Then("File with {string} shall be updated in the filesystem")
@@ -71,9 +75,11 @@ public class SavePositionStepDefinitions {
 		assertNotEquals(lastModified.getTime(), 0); //Check if the stamp has changed
 	}
 
-	@When("The user cancels to overwrite existing file")
-	public void the_user_cancels_to_overwrite_existing_file() {
+	@When("The user cancels to overwrite existing position file")
+	public void the_user_cancels_to_overwrite_existing_position_file() {
 		QuoridorController.savePosition(fileName, false, true);
+		//QuoridorController.saveGame(fileName, false, true);
+
 	}
 
 	@Then("File {string} shall not be changed in the filesystem")
@@ -87,5 +93,9 @@ public class SavePositionStepDefinitions {
 	public void cleanUp() {
 		File file = new File("src\\test\\resources\\save_game_test.dat");
 		file.delete();
+		File file2 = new File("src\\test\\resources\\save_game_test.mov");
+		file2.delete();
 	}
+	
+	
 }

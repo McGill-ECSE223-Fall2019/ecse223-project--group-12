@@ -6,7 +6,7 @@ Feature: Save Position
 
   Scenario Outline: Save position
   	Given No file "<filename>" exists in the filesystem
-    When The user initiates to save the game with name "<filename>"
+    When The user initiates to save the position with name "<filename>"
     Then A file with "<filename>" shall be created in the filesystem
 
     Examples: 
@@ -15,8 +15,8 @@ Feature: Save Position
 
   Scenario Outline: Save position with existing file name
   	Given File "<filename>" exists in the filesystem
-    When The user initiates to save the game with name "<filename>"
-    And The user confirms to overwrite existing file
+    When The user initiates to save the position with name "<filename>"
+    And The user confirms to overwrite existing position file
     Then File with "<filename>" shall be updated in the filesystem
 
     Examples: 
@@ -25,8 +25,8 @@ Feature: Save Position
 
   Scenario Outline: Save position cancelled due to existing file name
   	Given File "<filename>" exists in the filesystem
-    When The user initiates to save the game with name "<filename>"
-    And The user cancels to overwrite existing file
+    When The user initiates to save the position with name "<filename>"
+    And The user cancels to overwrite existing position file
     Then File "<filename>" shall not be changed in the filesystem
 
     Examples: 
