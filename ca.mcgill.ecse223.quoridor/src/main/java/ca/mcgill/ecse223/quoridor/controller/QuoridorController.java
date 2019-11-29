@@ -1739,7 +1739,7 @@ public class QuoridorController {
 	 * @param
 	 * @return
 	 */
-	private static boolean validateGameTextFile(String path) {
+	public static boolean validateGameTextFile(String path) {
 		
 		// extract text line one by one and attempts the moves to see if they are valid
 		File file = new File(path);
