@@ -2174,6 +2174,20 @@ public class QuoridorController {
 			throw new InvalidInputException("Invalid move, try again!");
 		}
 	}
+	
+	
+	/**
+	 * Checks if game is drawn
+	 * 
+	 * @author Kaan Gure
+	 * @param
+	 */
+	
+	public static void checkGameDrawn() throws java.lang.UnsupportedOperationException{
+		throw new UnsupportedOperationException();
+		//IN PROGRESS
+		}
+		
 
 	// ------------------------
 	// Zechen
