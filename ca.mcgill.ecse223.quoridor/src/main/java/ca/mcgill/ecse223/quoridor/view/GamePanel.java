@@ -589,6 +589,11 @@ public class GamePanel extends JPanel {
 		refreshData();
 		timer.start();
 		refreshData();
+		//call controller method checkGameOver and if returns true then call replayButtonActionPerformed
+		if (QuoridorController.checkGameOver()) {
+			ActionEvent evt = null;
+			replayModeButtonActionPerformed(evt);
+		}
 	}
 
 	/**

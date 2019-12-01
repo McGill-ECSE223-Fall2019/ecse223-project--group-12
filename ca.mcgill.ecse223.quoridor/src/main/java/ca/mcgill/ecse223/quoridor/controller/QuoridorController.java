@@ -33,6 +33,7 @@ import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO;
 import ca.mcgill.ecse223.quoridor.to.PlayerPositionTO.PlayerColor;
+import ca.mcgill.ecse223.quoridor.view.GamePanel;
 import ca.mcgill.ecse223.quoridor.to.PlayerStatsTO;
 import ca.mcgill.ecse223.quoridor.to.TileTO;
 import ca.mcgill.ecse223.quoridor.to.UserTO;
@@ -1295,6 +1296,7 @@ public class QuoridorController {
 	 */
 	public static boolean loadPosition(String fileName, boolean test) {
 		// Initialize Game Add default users and time
+		destroyGame();
 		createAndStartDefaultGame();
 
 		String fullPath = SAVED_POSITIONS_FOLDER + fileName;
@@ -1607,14 +1609,6 @@ public class QuoridorController {
 	 * @return
 	 */
 	public static void writeGameFile(String fileName, boolean test) {
-		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
-		if (game.getCurrentMove()==null) {
-			return;
-		}
-		//get first move
-		Move myMove = getMove(1,1);
-		
-		PrintWriter pw;
 		String fullPath = SAVED_GAMES_FOLDER + fileName;
 		// Necessary since Travis CI expects resources created during tests to be in
 		// test folder
@@ -1622,10 +1616,30 @@ public class QuoridorController {
 			fullPath = TEST_SAVED_GAMES_FOLDER + fileName;
 		}
 		
+		PrintWriter pw;
+		
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (game.getCurrentMove()==null) {
+			File file = new File(fullPath);
+			try {
+				file.createNewFile();
+				file.setLastModified(0); // Set the modified to 0 so we can see if it was updated
+				file.setWritable(true);
+				file.setReadable(true);
+				pw = new PrintWriter(fullPath, "UTF-8");
+				pw.println("This is a test file so there are no moves to write");
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			return;
+		}
+		//get first move
+		Move myMove = getMove(1,1);
+		
 		try {
 			pw = new PrintWriter(fullPath, "UTF-8");
 			int i=1;
-			pw.println("test");
 			while (myMove!=null) {
 				pw.print(i+". ");
 				pw.print(moveToString(myMove));
@@ -1678,6 +1692,8 @@ public class QuoridorController {
 	 * @return
 	 */
 	public static boolean loadGame(String fileName, boolean test) {
+		System.out.println("f search: starting loadGame");
+		destroyGame();
 		createAndStartDefaultGame();
 		
 		String fullPath = SAVED_GAMES_FOLDER + fileName;
@@ -1689,6 +1705,7 @@ public class QuoridorController {
 
 		// validate text file's format
 		if (!validateGameTextFile(fullPath)) {
+			System.out.println("f search: file was invalid");
 			return false;
 		}
 
@@ -1706,16 +1723,21 @@ public class QuoridorController {
 			}
 			while (textLine!=null) {
 				int rounds = getRounds(textLine);
+				System.out.println("f search: now processing line: "+textLine+" with rounds: "+rounds);
+
 				if (rounds==1) {
 					if (!parseMove(textLine,1)) {
+						System.out.println("f search: something went wrong with text line: "+textLine);
 						return false;
 					}
 				} else {
 					if (!parseMove(textLine.substring(0, textLine.length()-3),1)) {
+						System.out.println("f search: something went wrong with text line: "+textLine.substring(0, textLine.length()-3));
 						return false;
 					}
 					
 					if(!parseMove(textLine.substring(textLine.length()-3, textLine.length()),2)) {
+						System.out.println("f search: something went wrong with text line: "+textLine.substring(textLine.length()-3, textLine.length()));
 						return false;
 					}
 				}
@@ -1727,11 +1749,31 @@ public class QuoridorController {
 				}
 			}
 		} catch (FileNotFoundException e) {
+			System.out.println("f search: file not found");
 			e.printStackTrace();
 			return false;
 		}
 		
+		if (checkGameOver()) {
+			QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.Replay);
+		} else if (test) {
+			QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.ReadyToStart);
+		}
+				
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsWhite()) {
+			System.out.println("f search: white player to move");
+		}
+		if (QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getPlayerToMove().hasGameAsBlack()) {
+			System.out.println("f search: black player to move");
+		}
+		
 		return validatePosition();
+	}
+	
+	public static boolean checkGameOver(){
+		GameStatus status = QuoridorApplication.getQuoridor().getCurrentGame().getGameStatus();
+		
+		return (status.equals(GameStatus.WhiteWon) || status.equals(GameStatus.BlackWon) || status.equals(GameStatus.Draw));		
 	}
 	
 	/**
@@ -1791,10 +1833,11 @@ public class QuoridorController {
 	 * @return
 	 */
 	private static boolean validateGameTextLine(String line) {
-		String pattern = "^[1-9]+\\. [a-i][1-9](h|v)?( [a-i][1-9](h|v)?)?$";
+		String pattern = "^[0-9]+\\. [a-i][1-9](h|v)?( [a-i][1-9](h|v)?)?$";
 		if (line.toLowerCase().matches(pattern)) {
 			return true;
 		} else {
+			System.out.println("f search: line was invalid: "+line.toLowerCase());
 			return false;
 		}
 	}
@@ -1807,7 +1850,7 @@ public class QuoridorController {
 	 * @return
 	 */
 	private static int getRounds(String textLine) {
-		String twoMovesPattern = "^[1-9]+\\. [a-i][1-9](h|v)? [a-i][1-9](h|v)?$";
+		String twoMovesPattern = "^[0-9]+\\. [a-i][1-9](h|v)? [a-i][1-9](h|v)?$";
 		if (textLine.toLowerCase().matches(twoMovesPattern)) {
 			return 2;
 		} else {
@@ -1916,12 +1959,14 @@ public class QuoridorController {
 			grabWall();
 		} catch (InvalidInputException e1) {
 			// TODO Auto-generated catch block
+			System.out.println("f search: couldnt grab wall");
 			e1.printStackTrace();
 			return false;
 		}
 		
 		//try to place the wall in position
 		if (!moveWallToTile(col,row)) {
+			System.out.println("f search: error when moving wall to correct tile");
 			return false;
 		}
 		
@@ -1935,6 +1980,7 @@ public class QuoridorController {
 			dropWall();
 		} catch (InvalidInputException e) {
 			// TODO Auto-generated catch block
+			System.out.println("f search: error dropping wall");
 			e.printStackTrace();
 			return false;
 		}
@@ -1954,6 +2000,7 @@ public class QuoridorController {
 				dx = col - game.getWallMoveCandidate().getTargetTile().getColumn();
 			} catch (InvalidInputException e) {
 				// TODO Auto-generated catch block
+				System.out.println("f search: hit left wall");
 				e.printStackTrace();
 				return false;
 			}
@@ -1964,6 +2011,7 @@ public class QuoridorController {
 				dx = col - game.getWallMoveCandidate().getTargetTile().getColumn();
 			} catch (InvalidInputException e) {
 				// TODO Auto-generated catch block
+				System.out.println("f search: hit right wall");
 				e.printStackTrace();
 				return false;
 			}
@@ -1974,20 +2022,22 @@ public class QuoridorController {
 		//move wall in y direction
 		while (dy < 0) {
 			try {
-				moveWall(Side.down);
+				moveWall(Side.up);
 				dy = row - game.getWallMoveCandidate().getTargetTile().getRow();
 			} catch (InvalidInputException e) {
 				// TODO Auto-generated catch block
+				System.out.println("f search: hit down wall");
 				e.printStackTrace();
 				return false;
 			}
 		}
 		while (dy > 0) {
 			try {
-				moveWall(Side.up);
+				moveWall(Side.down);
 				dy = row - game.getWallMoveCandidate().getTargetTile().getRow();
 			} catch (InvalidInputException e) {
 				// TODO Auto-generated catch block
+				System.out.println("f search: hit up wall");
 				e.printStackTrace();
 				return false;
 			}

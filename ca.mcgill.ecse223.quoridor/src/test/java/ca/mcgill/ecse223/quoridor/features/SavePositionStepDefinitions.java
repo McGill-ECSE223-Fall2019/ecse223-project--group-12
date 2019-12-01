@@ -26,7 +26,7 @@ import io.cucumber.java.en.When;
  */
 public class SavePositionStepDefinitions {
 	
-	private String fileName = "";
+	protected static String fileName = "";
 
 	@Given("No file {string} exists in the filesystem")
 	public void no_file_exists_in_the_filesystem(String fileName) {

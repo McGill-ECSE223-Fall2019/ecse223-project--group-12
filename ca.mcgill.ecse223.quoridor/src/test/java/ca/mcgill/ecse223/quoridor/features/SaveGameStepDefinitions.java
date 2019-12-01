@@ -30,25 +30,25 @@ import io.cucumber.java.en.When;
 
 public class SaveGameStepDefinitions {
 
-	private String fileName = "";
+	//private String fileName = "";
 	
 	@When("The user initiates to save the game with name {string}")
 	public void the_user_initiates_to_save_the_game_with_name(String fileName) {
 		//QuoridorController.savePosition(fileName, false, true);
-		QuoridorController.saveGame(this.fileName, false, true);
+		QuoridorController.saveGame(fileName, false, true);
 	}
 	
 	@When("The user confirms to overwrite existing game file")
 	public void the_user_confirms_to_overwrite_existing_game_file() {
 		//QuoridorController.savePosition(fileName, true, true);
-		QuoridorController.saveGame(this.fileName, true, true);
+		QuoridorController.saveGame(SavePositionStepDefinitions.fileName, true, true);
 
 	}
 
 	@When("The user cancels to overwrite existing game file")
 	public void the_user_cancels_to_overwrite_existing_game_file() {
 		//QuoridorController.savePosition(fileName, false, true);
-		QuoridorController.saveGame(this.fileName, false, true);
+		QuoridorController.saveGame(SavePositionStepDefinitions.fileName, false, true);
 
 	}
 	

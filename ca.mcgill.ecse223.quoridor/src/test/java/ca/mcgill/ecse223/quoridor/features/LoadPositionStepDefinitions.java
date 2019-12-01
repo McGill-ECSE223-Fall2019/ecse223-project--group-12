@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.List;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
@@ -13,6 +14,7 @@ import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
+import io.cucumber.java.After;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -51,14 +53,27 @@ public class LoadPositionStepDefinitions {
 				.hasGameAsBlack()) {
 			playerToMove = "black";
 		}
-		assertTrue(color.equals(playerToMove));
+		
+		assertEquals(color, playerToMove);
 	}
 
 	@Then("{string} shall be at {int}:{int}")
-	public void shall_be_at(String color, Integer row, Integer col) {
-		PlayerPosition playerPosition = TestUtil.getPlayerPositionByColor(color);
-		assertEquals(playerPosition.getTile().getColumn(), col, 0);
-		assertEquals(playerPosition.getTile().getRow(), row, 0);
+	public void shall_be_at(String color, int row, int col) {
+		//PlayerPosition playerPosition = TestUtil.getPlayerPositionByColor(color);
+		//assertEquals(playerPosition.getTile().getColumn(), col, 0);
+		//assertEquals(playerPosition.getTile().getRow(), row, 0);
+		
+		int pCol,pRow;
+		if (color.equals("white")) {
+			pCol = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
+			pRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+
+		} else {
+			pCol = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
+			pRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+		}
+		assertEquals(col, pCol);
+		assertEquals(row, pRow);
 	}
 
 	@Then("{string} shall have a vertical wall at {int}:{int}")
@@ -112,5 +127,10 @@ public class LoadPositionStepDefinitions {
 	@Then("The load shall return an error")
 	public void the_load_shall_return_an_error() {
 		assertFalse(isValid);
+	}
+	
+	@After
+	public void cleanUp() {
+		QuoridorController.destroyGame();
 	}
 }
