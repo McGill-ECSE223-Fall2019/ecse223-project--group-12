@@ -2,12 +2,19 @@ package ca.mcgill.ecse223.quoridor.features;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.Time;
+import java.util.List;
+import java.util.Map;
+
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
+import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.Move;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
+import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.en.Given;
@@ -18,7 +25,10 @@ public class IdentifyGameWonOrDrawStepDefinitions {
 	
 	@Given("Player {string} has just completed his move")
 	public void player_has_just_completed_his_move(String color) {
-		//Player p = TestUtil.getPlayerByColor(color);
+		Player p = TestUtil.getPlayerByColor(color);
+		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		gp.setPlayerToMove(p);
+		QuoridorController.confirmMove();
 	}
 	
 	@Given("The new position of {string} is {int}:{int}")
@@ -37,6 +47,13 @@ public class IdentifyGameWonOrDrawStepDefinitions {
 
 	@Given("The clock of {string} is more than zero")
 	public void the_clock_of_is_more_than_zero(String string) {
+		Player p = TestUtil.getPlayerByColor(string);
+		Time zeroTime = Time.valueOf("00:00:00");
+		Time addTime = Time.valueOf("00:10:00");
+		Time t = p.getRemainingTime();
+		if (!(t.compareTo(zeroTime) > 0)) {
+			p.setRemainingTime(addTime); //add more time if remaining time = 0
+		}
 
 	}
 
@@ -44,6 +61,7 @@ public class IdentifyGameWonOrDrawStepDefinitions {
 	@When("Checking of game result is initated")
 	public void checking_of_game_result_is_initated() {
 		QuoridorController.checkGameWon();
+		//QuoridorController.checkGameDrawn();
 	}
 	
 	@When("The clock of {string} counts down to zero")
@@ -69,23 +87,82 @@ public class IdentifyGameWonOrDrawStepDefinitions {
 
 	@Then("The game shall no longer be running")
 	public void the_game_shall_no_longer_be_running() {
+//		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+//		assertEquals(null, game);
 		
 	}
 	@Given("The following moves were executed:")
 	public void the_following_moves_were_executed(io.cucumber.datatable.DataTable dataTable) {
-		// Write code here that turns the phrase above into concrete actions
-		// For automatic transformation, change DataTable to one of
-		// E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-		// Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-		// Double, Byte, Short, Long, BigInteger or BigDecimal.
-		//
-		// For other transformations you can register a DataTableType.
 		throw new cucumber.api.PendingException();
+//		List<Map<String, String>> mappedValues = dataTable.asMaps();
+//		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+//		GamePosition gp = g.getCurrentPosition();
+//		for (Map<String, String> map: mappedValues) {
+//			Integer move = Integer.decode(map.get("move"));
+//			Integer turn = Integer.decode(map.get("turn"));
+//			Integer row = Integer.decode(map.get("row"));
+//			Integer col = Integer.decode(map.get("col"));
+//			
+//			Tile targetTile = TestUtil.getTile(row, col);
+//			
+//			Player p = null;
+//			switch (turn) {
+//			case 1:
+//				p = g.getWhitePlayer();
+//				break;
+//			case 2:
+//				p = g.getBlackPlayer();
+//				break;
+//			default:
+//				throw new IllegalArgumentException("Unsupported turn id was provided: " + turn);
+//			}
+//			
+//			PlayerPosition pos = new PlayerPosition(p, targetTile);
+//			
+//			Move moveTodo = g.getCurrentMove();
+//			int rn = 0;
+//			if(moveTodo == null) {
+//				rn = 1;
+//			} else {
+//				rn = moveTodo.getRoundNumber();
+//			}
+//			moveTodo.setMoveNumber(move);
+//			moveTodo.setPlayer(p);
+//			moveTodo.setRoundNumber(rn++);
+//			moveTodo.setTargetTile(targetTile);
+//			
+//			if (p.hasGameAsWhite()) {
+//				gp.setWhitePosition(pos);
+//			} else {
+//				gp.setBlackPosition(pos);
+//			}
+//			g.addMove(moveTodo);
+//			
+//			//System.out.println("rn: " +rn);
+//
+//		}
 	}
 
 	@Given("The last move of {string} is pawn move to {int}:{int}")
 	public void the_last_move_of_is_pawn_move_to(String string, Integer int1, Integer int2) {
-		// Write code here that turns the phrase above into concrete actions
-		throw new cucumber.api.PendingException();
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+		int row = int1;
+		int col = int2;
+		String player = string;
+		Player p = null;
+		Tile targetTile = TestUtil.getTile(row, col);
+		switch (player) {
+		case "white":
+			p = g.getWhitePlayer();
+			p.getGameAsWhite().getCurrentMove().getPrevMove().setTargetTile(targetTile);
+			break;
+		case "black":
+			p = g.getBlackPlayer();
+			p.getGameAsBlack().getCurrentMove().getPrevMove().setTargetTile(targetTile);
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported player was provided: " + string);
+		}
+		
 	}
 }
