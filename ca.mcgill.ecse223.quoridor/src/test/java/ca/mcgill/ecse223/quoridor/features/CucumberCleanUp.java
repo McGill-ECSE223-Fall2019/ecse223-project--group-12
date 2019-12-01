@@ -26,7 +26,7 @@ public class CucumberCleanUp {
 		}
 		for (int i = 1; i <= 20; i++) {
 			Wall wall = Wall.getWithId(i);
-			if(wall != null) {
+			if (wall != null) {
 				wall.delete();
 			}
 		}

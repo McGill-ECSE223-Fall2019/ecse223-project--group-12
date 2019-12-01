@@ -71,11 +71,13 @@ public class InitializeBoardStepDefinitions {
 		// get the remaining time again
 		Time afterTime = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getRemainingTime();
 		// Check if time is counting down (00:30:00 is after 00:29:59)
-		/*boolean countingDown = initialTime.after(afterTime);
-		boolean notcountingDown = initialTime.equals(afterTime);*/
-		//boolean countingDown = initialTime.getTime() > afterTime.getTime();
+		/*
+		 * boolean countingDown = initialTime.after(afterTime); boolean notcountingDown
+		 * = initialTime.equals(afterTime);
+		 */
+		// boolean countingDown = initialTime.getTime() > afterTime.getTime();
 		assertTrue(initialTime.getTime() > afterTime.getTime());
-		//assertFalse(notcountingDown);
+		// assertFalse(notcountingDown);
 	}
 
 	@Then("It shall be shown that this is White's turn")

@@ -1,6 +1,8 @@
 package ca.mcgill.ecse223.quoridor.features;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,15 +13,16 @@ import ca.mcgill.ecse223.quoridor.controller.InvalidInputException;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Game;
+import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
+import ca.mcgill.ecse223.quoridor.model.GamePosition;
+import ca.mcgill.ecse223.quoridor.model.Move;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.StepMove;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.model.WallMove;
-import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
-import ca.mcgill.ecse223.quoridor.model.GamePosition;
-import ca.mcgill.ecse223.quoridor.model.Move;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
+import ca.mcgill.ecse223.quoridor.view.GamePanel;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -30,7 +33,7 @@ import io.cucumber.java.en.When;
  *
  */
 public class EnterReplayModeStepDefinitions {
-	
+
 	private String error = "";
 
 	@When("I initiate replay mode")
@@ -110,7 +113,10 @@ public class EnterReplayModeStepDefinitions {
 
 	@Given("The game does not have a final result")
 	public void the_game_does_not_have_a_final_result() {
-
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (game.getGameStatus() == GameStatus.BlackWon || game.getGameStatus() == GameStatus.WhiteWon) {
+			game.setGameStatus(GameStatus.Replay);
+		}
 	}
 
 	@Given("The next move is \\({int}, {int})")
@@ -151,8 +157,7 @@ public class EnterReplayModeStepDefinitions {
 		if (currentMove == null) {
 			nextMoveNum = 1;
 			nextRoundNum = 1;
-		}
-		else {
+		} else {
 			nextMoveNum = game.getCurrentMove().getMoveNumber();
 			nextRoundNum = game.getCurrentMove().getRoundNumber();
 			if (nextRoundNum == 2) {
@@ -175,5 +180,9 @@ public class EnterReplayModeStepDefinitions {
 	@Then("I shall be notified that finished games cannot be continued")
 	public void i_shall_be_notified_that_finished_games_cannot_be_continued() {
 		assertEquals("Cannot continue a game with a final result!", error);
+		GamePanel gPanel = new GamePanel();
+		String popUpText = gPanel.getPopUpText();
+		boolean popUpChanged = (popUpText == ("White Won!"));
+		assertTrue(popUpChanged);
 	}
 }

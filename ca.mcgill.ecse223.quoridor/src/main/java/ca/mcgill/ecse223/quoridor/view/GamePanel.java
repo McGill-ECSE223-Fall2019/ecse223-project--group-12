@@ -9,7 +9,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.sql.Time;
 import java.util.List;
 
@@ -93,11 +92,11 @@ public class GamePanel extends JPanel {
 	// Replay mode
 	private JButton prevButton;
 	private JButton nextButton;
-	private JButton finalButton;
 	private JButton startButton;
+	private JButton finalButton;
 	private JButton replayModeButton;
 	JOptionPane pann;
-	//Result Reporting
+	// Result Reporting
 	String resultMsg = null;
 
 	public GamePanel() {
@@ -144,13 +143,13 @@ public class GamePanel extends JPanel {
 		// Replay mode
 		prevButton = new JButton("Prev");
 		nextButton = new JButton("Next");
-		finalButton = new JButton("to final");
-		startButton = new JButton("to start");
+		startButton = new JButton("Start");
+		finalButton = new JButton("Final");
 		replayModeButton = new JButton("Replay Mode");
 		prevButton.setVisible(false);
 		nextButton.setVisible(false);
-		finalButton.setVisible(false);
 		startButton.setVisible(false);
+		finalButton.setVisible(false);
 		// Timer for player clock
 		timer = new Timer(1000, new ActionListener() {
 			@Override
@@ -215,14 +214,14 @@ public class GamePanel extends JPanel {
 		// ------------------------
 
 		// listeners for all buttons
-		finalButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				finalButtonActionPerformed(evt);
-			}
-		});
 		startButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				startButtonActionPerformed(evt);
+			}
+		});
+		finalButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				finalButtonActionPerformed(evt);
 			}
 		});
 		nextButton.addActionListener(new java.awt.event.ActionListener() {
@@ -498,8 +497,8 @@ public class GamePanel extends JPanel {
 		replayModeButton.setText("Replay Mode");
 		nextButton.setVisible(false);
 		prevButton.setVisible(false);
-		finalButton.setVisible(false);
 		startButton.setVisible(false);
+		finalButton.setVisible(false);
 		for (int i = 1; i < 10; i++) {
 			for (int j = 1; j < 10; j++) {
 				JButton[] wall1 = getWall(i, j, Direction.Vertical);
@@ -525,10 +524,12 @@ public class GamePanel extends JPanel {
 		refreshData();
 
 	}
+
 	private void finalButtonActionPerformed(ActionEvent evt) {
 		QuoridorController.jumpToFinal();
 		refreshData();
 	}
+
 	private void startButtonActionPerformed(ActionEvent evt) {
 		QuoridorController.jumpToStart();
 		refreshData();
@@ -541,8 +542,8 @@ public class GamePanel extends JPanel {
 			QuoridorController.removeCandidateWall();
 			prevButton.setVisible(true);
 			nextButton.setVisible(true);
-			finalButton.setVisible(true);
 			startButton.setVisible(true);
+			finalButton.setVisible(true);
 			grabWallButton.setEnabled(false);
 			grabWallButton.setText("Grab Wall");
 			rotateWallButton.setEnabled(false);
@@ -555,8 +556,8 @@ public class GamePanel extends JPanel {
 			}
 			prevButton.setVisible(false);
 			nextButton.setVisible(false);
-			finalButton.setVisible(false);
 			startButton.setVisible(false);
+			finalButton.setVisible(false);
 			grabWallButton.setEnabled(true);
 			rotateWallButton.setEnabled(true);
 		}
@@ -589,7 +590,8 @@ public class GamePanel extends JPanel {
 		refreshData();
 		timer.start();
 		refreshData();
-		//call controller method checkGameOver and if returns true then call replayButtonActionPerformed
+		// call controller method checkGameOver and if returns true then call
+		// replayButtonActionPerformed
 		if (QuoridorController.checkGameOver()) {
 			ActionEvent evt = null;
 			replayModeButtonActionPerformed(evt);
@@ -691,33 +693,35 @@ public class GamePanel extends JPanel {
 		}
 	}
 
-	private void grabWallButtonActionPerformed(ActionEvent evt) {
-		if (grabWallButton.getText().equals("Grab Wall")) {
-			try {
-				QuoridorController.grabWall();
-				grabWallButton.setText("Drop Wall");
-				refreshData();
-			} catch (InvalidInputException e) {
-				invalidMoveLabel.setText(e.getMessage());
-			}
-
-		} else if (grabWallButton.getText().equals("Drop Wall")) {
-			try {
-				QuoridorController.dropWall();
-				grabWallButton.setText("Grab Wall");
-				refreshData();
-			} catch (InvalidInputException e) {
-				refreshData();
-				invalidMoveLabel.setText(e.getMessage());
-			}
-
-		}
-
-	}
-
 	private void confirmMoveButtonActionPerformed() {
 		QuoridorController.confirmMove();
 		refreshData();
+	}
+
+	private void grabWallButtonActionPerformed(ActionEvent evt) {
+		if (QuoridorController.getGameStatus() == GameStatus.Running) {
+			if (grabWallButton.getText().equals("Grab Wall")) {
+				try {
+					QuoridorController.grabWall();
+					grabWallButton.setText("Drop Wall");
+					refreshData();
+				} catch (InvalidInputException e) {
+					invalidMoveLabel.setText(e.getMessage());
+				}
+
+			} else if (grabWallButton.getText().equals("Drop Wall")) {
+				try {
+					QuoridorController.dropWall();
+					grabWallButton.setText("Grab Wall");
+					refreshData();
+				} catch (InvalidInputException e) {
+					refreshData();
+					invalidMoveLabel.setText(e.getMessage());
+				}
+
+			}
+		}
+
 	}
 
 	private void anyTileButtonActionPerformed(ActionEvent evt) {
@@ -808,7 +812,7 @@ public class GamePanel extends JPanel {
 				returnToMenu();
 			} else if (QuoridorController.getGameStatus() == GameStatus.BlackWon) {
 				resultMsg = "Black Player resigned, White Won!";
-				JOptionPane.showMessageDialog(this.getParent(),  resultMsg);
+				JOptionPane.showMessageDialog(this.getParent(), resultMsg);
 				QuoridorController.destroyGame();
 				returnToMenu();
 			}
@@ -957,14 +961,13 @@ public class GamePanel extends JPanel {
 	public String getWallsInstockLabel() {
 		return remainingWalls.getText();
 	}
-	
+
 	public String getPopUpText() {
-		//Displaying readom result message for testing
-		resultMsg = ("White Won!");  //Temporarily mock this since result display are reactive, the result
-								// display cannot be updated with the refresh method, only with a
-								// button press
-		
-		
+		// Displaying readom result message for testing
+		resultMsg = ("White Won!"); // Temporarily mock this since result display are reactive, the result
+		// display cannot be updated with the refresh method, only with a
+		// button press
+
 		return resultMsg;
 	}
 
@@ -1099,8 +1102,8 @@ public class GamePanel extends JPanel {
 										.addComponent(prevButton, GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
 										.addComponent(nextButton, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE))
 								.addGroup(controlUILayout.createSequentialGroup()
-										.addComponent(finalButton,GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
-										.addComponent(startButton,GroupLayout.PREFERRED_SIZE,70, Short.MAX_VALUE))
+										.addComponent(startButton, GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+										.addComponent(finalButton, GroupLayout.PREFERRED_SIZE, 70, Short.MAX_VALUE))
 								.addComponent(grabWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
 								.addComponent(rotateWallButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
 								.addComponent(replayModeButton, Alignment.LEADING, 0, 0, Short.MAX_VALUE)
@@ -1125,8 +1128,8 @@ public class GamePanel extends JPanel {
 						.addComponent(replayModeButton).addComponent(invalidMoveLabel)
 						.addGroup(controlUILayout.createParallelGroup(Alignment.BASELINE).addComponent(nextButton)
 								.addComponent(prevButton))
-						.addGroup(controlUILayout.createParallelGroup(Alignment.BASELINE).addComponent(finalButton)
-								.addComponent(startButton))
+						.addGroup(controlUILayout.createParallelGroup(Alignment.BASELINE).addComponent(startButton)
+								.addComponent(finalButton))
 						.addPreferredGap(ComponentPlacement.RELATED, 71, Short.MAX_VALUE).addComponent(resignButton)
 						.addComponent(saveExitToMenuButton)));
 		controlUILayout.setAutoCreateGaps(true);

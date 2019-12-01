@@ -78,7 +78,7 @@ public class SwitchCurrentPlayerStepDefinition {
 		// GUI Test
 		GamePanel gamePanel = new GamePanel();
 		gamePanel.refreshData();
-		String playerLabel =  gamePanel.getPlayerLabel();
+		String playerLabel = gamePanel.getPlayerLabel();
 		playerLabel = playerLabel.toLowerCase();
 		boolean b = playerLabel.contains(color); // This player Label is "Player: {color} - {username}"
 		assertTrue(b);

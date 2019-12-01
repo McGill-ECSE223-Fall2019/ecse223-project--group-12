@@ -4,14 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.util.List;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
 import ca.mcgill.ecse223.quoridor.model.Direction;
 import ca.mcgill.ecse223.quoridor.model.Player;
-import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
 import ca.mcgill.ecse223.quoridor.model.Wall;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.After;
@@ -39,7 +37,8 @@ public class LoadPositionStepDefinitions {
 
 	@When("The position to load is valid") // Causing trouble for now, will fix it later
 	public void the_position_to_load_is_valid() {
-		// Validate the current position (Redundant since this is already done in the loadPosition() method)
+		// Validate the current position (Redundant since this is already done in the
+		// loadPosition() method)
 		isValid = QuoridorController.validatePosition();
 	}
 
@@ -53,24 +52,28 @@ public class LoadPositionStepDefinitions {
 				.hasGameAsBlack()) {
 			playerToMove = "black";
 		}
-		
+
 		assertEquals(color, playerToMove);
 	}
 
 	@Then("{string} shall be at {int}:{int}")
 	public void shall_be_at(String color, int row, int col) {
-		//PlayerPosition playerPosition = TestUtil.getPlayerPositionByColor(color);
-		//assertEquals(playerPosition.getTile().getColumn(), col, 0);
-		//assertEquals(playerPosition.getTile().getRow(), row, 0);
-		
-		int pCol,pRow;
+		// PlayerPosition playerPosition = TestUtil.getPlayerPositionByColor(color);
+		// assertEquals(playerPosition.getTile().getColumn(), col, 0);
+		// assertEquals(playerPosition.getTile().getRow(), row, 0);
+
+		int pCol, pRow;
 		if (color.equals("white")) {
-			pCol = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getColumn();
-			pRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile().getRow();
+			pCol = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
+					.getColumn();
+			pRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getWhitePosition().getTile()
+					.getRow();
 
 		} else {
-			pCol = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getColumn();
-			pRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile().getRow();
+			pCol = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
+					.getColumn();
+			pRow = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition().getBlackPosition().getTile()
+					.getRow();
 		}
 		assertEquals(col, pCol);
 		assertEquals(row, pRow);
@@ -120,7 +123,8 @@ public class LoadPositionStepDefinitions {
 
 	@When("The position to load is invalid")
 	public void the_position_to_load_is_invalid() {
-		// Validate the current position (Redundant since this is already done in the loadPosition() method)
+		// Validate the current position (Redundant since this is already done in the
+		// loadPosition() method)
 		isValid = QuoridorController.validatePosition();
 	}
 
@@ -128,7 +132,7 @@ public class LoadPositionStepDefinitions {
 	public void the_load_shall_return_an_error() {
 		assertFalse(isValid);
 	}
-	
+
 	@After
 	public void cleanUp() {
 		QuoridorController.destroyGame();

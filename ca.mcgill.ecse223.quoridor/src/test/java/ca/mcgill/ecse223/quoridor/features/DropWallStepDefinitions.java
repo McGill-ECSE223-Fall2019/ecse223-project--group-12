@@ -32,6 +32,7 @@ import io.cucumber.java.en.When;
 public class DropWallStepDefinitions {
 
 	private String errorMessage = "";
+
 	/**
 	 * @author Kaan Gure
 	 */
@@ -40,7 +41,7 @@ public class DropWallStepDefinitions {
 		Wall wall = TestUtil.getAWallInStockForCurrenPlayer();
 		Player p = TestUtil.getCurrentPlayer();
 		Tile tile = TestUtil.getTile(8, 5);
-		Game g  = QuoridorApplication.getQuoridor().getCurrentGame();
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		WallMove candidate = new WallMove(0, 0, p, tile, g, Direction.Vertical, wall);
 		g.setWallMoveCandidate(candidate);
 		GamePanel gPanel = new GamePanel();
@@ -59,8 +60,8 @@ public class DropWallStepDefinitions {
 		Player p = TestUtil.getCurrentPlayer();
 		Tile tile = TestUtil.getTile(row, col);
 		Direction direction = TestUtil.getDirection(dir);
-		Game g  = QuoridorApplication.getQuoridor().getCurrentGame();
-		if(wall.getMove() != null) {
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (wall.getMove() != null) {
 			wall.getMove().delete();
 		}
 		WallMove candidate = new WallMove(0, 0, p, tile, g, direction, wall);
@@ -96,10 +97,10 @@ public class DropWallStepDefinitions {
 		Tile tile = TestUtil.getTile(row, col);
 		Direction direction = TestUtil.getDirection(dir);
 		boolean moveExists = false;
-		for (Wall wall: boardWalls) {
+		for (Wall wall : boardWalls) {
 			Tile tileToCheck = wall.getMove().getTargetTile();
 			Direction dirToCheck = wall.getMove().getWallDirection();
-			if(tile.equals(tileToCheck) && direction.equals(dirToCheck)) {
+			if (tile.equals(tileToCheck) && direction.equals(dirToCheck)) {
 				moveExists = true;
 			}
 		}
@@ -112,9 +113,9 @@ public class DropWallStepDefinitions {
 
 	@Then("I shall not have a wall in my hand")
 	public void i_shall_not_have_a_wall_in_my_hand() {
-			GamePanel gPanel = new GamePanel();
-			gPanel.refreshData();
-			assertFalse(gPanel.hasWallInHand()); // GUI related
+		GamePanel gPanel = new GamePanel();
+		gPanel.refreshData();
+		assertFalse(gPanel.hasWallInHand()); // GUI related
 	}
 
 	/**
@@ -134,7 +135,8 @@ public class DropWallStepDefinitions {
 	@Then("It shall not be my turn to move")
 	public void it_shall_not_be_my_turn_to_move() {
 		Player currentPlayer = TestUtil.getCurrentPlayer();
-		Player whitePlayer = TestUtil.getPlayerByColor("white"); // the player to move was set as white in beginning of scenario
+		Player whitePlayer = TestUtil.getPlayerByColor("white"); // the player to move was set as white in beginning of
+																	// scenario
 		assertNotEquals(currentPlayer, whitePlayer);
 	}
 
@@ -148,13 +150,13 @@ public class DropWallStepDefinitions {
 		Player p = TestUtil.getCurrentPlayer();
 		Tile tile = TestUtil.getTile(row, col);
 		Direction direction = TestUtil.getDirection(dir);
-		Game g  = QuoridorApplication.getQuoridor().getCurrentGame();
-		if(wall.getMove() != null) {
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (wall.getMove() != null) {
 			wall.getMove().delete();
 		}
 		WallMove candidate = new WallMove(0, 0, p, tile, g, direction, wall);
 		g.setWallMoveCandidate(candidate);
-		assertFalse(QuoridorController.validatePosition()); //asserting precondition
+		assertFalse(QuoridorController.validatePosition()); // asserting precondition
 	}
 
 	/**
@@ -162,7 +164,7 @@ public class DropWallStepDefinitions {
 	 */
 	@Then("I shall be notified that my wall move is invalid") // GUI related
 	public void i_shall_be_notified_that_my_wall_move_is_invalid() {
-		assertEquals("Invalid move, try again!",errorMessage );
+		assertEquals("Invalid move, try again!", errorMessage);
 		// Message shown to player in the GUI
 	}
 
@@ -173,8 +175,9 @@ public class DropWallStepDefinitions {
 	@Then("It shall be my turn to move")
 	public void it_shall_be_my_turn_to_move() {
 		Player currentPlayer = TestUtil.getCurrentPlayer();
-		Player whitePlayer = TestUtil.getPlayerByColor("white"); // the player to move was set as white in beginning of scenario
-		assertEquals(currentPlayer, whitePlayer);	
+		Player whitePlayer = TestUtil.getPlayerByColor("white"); // the player to move was set as white in beginning of
+																	// scenario
+		assertEquals(currentPlayer, whitePlayer);
 	}
 
 	/**
@@ -192,10 +195,10 @@ public class DropWallStepDefinitions {
 		Tile tile = TestUtil.getTile(row, col);
 		Direction direction = TestUtil.getDirection(dir);
 		boolean moveExists = false;
-		for (Wall wall: boardWalls) {
+		for (Wall wall : boardWalls) {
 			Tile tileToCheck = wall.getMove().getTargetTile();
 			Direction dirToCheck = wall.getMove().getWallDirection();
-			if(tile.equals(tileToCheck) && direction.equals(dirToCheck)) {
+			if (tile.equals(tileToCheck) && direction.equals(dirToCheck)) {
 				moveExists = true;
 			}
 		}

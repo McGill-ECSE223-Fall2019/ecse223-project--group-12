@@ -54,7 +54,8 @@ public class StartNewGameStepDefinition {
 	@When("White player chooses a username")
 	public void white_player_chooses_a_username() {
 		try {
-			// used set new user here since the scenario does not include the precondition: "A user exists".
+			// used set new user here since the scenario does not include the precondition:
+			// "A user exists".
 			QuoridorController.setNewUserAsWhite("User1");
 			;
 		} catch (InvalidInputException e) {

@@ -1,6 +1,6 @@
 package ca.mcgill.ecse223.quoridor.features;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.QuoridorController;
@@ -16,6 +16,7 @@ import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
 /**
  * 
  * @author Remi Carriere

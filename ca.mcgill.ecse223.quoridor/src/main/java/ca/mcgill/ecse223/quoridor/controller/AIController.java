@@ -30,7 +30,8 @@ public class AIController {
 
 	/**
 	 * Makes th AI player do the "best possible" pawn move or jump move (the pawn
-	 * selects the move type randomly, unless no "good" wall moves are available, then we default to pawn move)
+	 * selects the move type randomly, unless no "good" wall moves are available,
+	 * then we default to pawn move)
 	 */
 	public static void doMove() {
 		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
@@ -73,8 +74,10 @@ public class AIController {
 		QuoridorController.addMoveToGameHistory(move);
 		QuoridorController.confirmMove();
 	}
+
 	/**
 	 * Does the specified wall move for black
+	 * 
 	 * @param moveTO
 	 */
 	public static void doWallMove(WallMoveTO moveTO) {
@@ -95,6 +98,7 @@ public class AIController {
 			e.printStackTrace();
 		}
 	}
+
 	/**
 	 * Retuns a list of possible PathAndMoves (PathAndMoves contains:
 	 * {BlackWallMove, BlackShortestPath, WhiteShortest Path, and a boolean which is
@@ -159,8 +163,10 @@ public class AIController {
 
 		return pathsToCheck;
 	}
+
 	/**
 	 * Gets the best wall move for black
+	 * 
 	 * @return
 	 */
 	public static WallMoveTO getBestWallMove() {

@@ -25,7 +25,7 @@ import io.cucumber.java.en.When;
  *
  */
 public class SavePositionStepDefinitions {
-	
+
 	protected static String fileName = "";
 
 	@Given("No file {string} exists in the filesystem")
@@ -37,7 +37,7 @@ public class SavePositionStepDefinitions {
 	@When("The user initiates to save the position with name {string}")
 	public void the_user_initiates_to_save_the_position_with_name(String fileName) {
 		QuoridorController.savePosition(fileName, false, true);
-		//QuoridorController.saveGame(fileName, false, true);
+		// QuoridorController.saveGame(fileName, false, true);
 	}
 
 	@Then("A file with {string} shall be created in the filesystem")
@@ -63,7 +63,7 @@ public class SavePositionStepDefinitions {
 	@When("The user confirms to overwrite existing position file")
 	public void the_user_confirms_to_overwrite_existing_position_file() {
 		QuoridorController.savePosition(fileName, true, true);
-		//QuoridorController.saveGame(fileName, true, true);
+		// QuoridorController.saveGame(fileName, true, true);
 
 	}
 
@@ -72,13 +72,13 @@ public class SavePositionStepDefinitions {
 		File file = new File("src\\test\\resources\\" + fileName);
 		Timestamp lastModified = new Timestamp(file.lastModified());
 
-		assertNotEquals(lastModified.getTime(), 0); //Check if the stamp has changed
+		assertNotEquals(lastModified.getTime(), 0); // Check if the stamp has changed
 	}
 
 	@When("The user cancels to overwrite existing position file")
 	public void the_user_cancels_to_overwrite_existing_position_file() {
 		QuoridorController.savePosition(fileName, false, true);
-		//QuoridorController.saveGame(fileName, false, true);
+		// QuoridorController.saveGame(fileName, false, true);
 
 	}
 
@@ -86,7 +86,7 @@ public class SavePositionStepDefinitions {
 	public void file_shall_not_be_changed_in_the_filesystem(String fileName) {
 		File file = new File("src\\test\\resources\\" + fileName);
 		Timestamp lastModified = new Timestamp(file.lastModified());
-		assertEquals(lastModified.getTime(), 0); //Check if the stamp is as originally set
+		assertEquals(lastModified.getTime(), 0); // Check if the stamp is as originally set
 	}
 
 	@After
@@ -96,6 +96,5 @@ public class SavePositionStepDefinitions {
 		File file2 = new File("src\\test\\resources\\save_game_test.mov");
 		file2.delete();
 	}
-	
-	
+
 }

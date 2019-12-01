@@ -24,7 +24,7 @@ public class SetTotalThinkingTimeStepDefinition {
 	@When("{int}:{int} is set as the thinking time")
 	public void is_set_as_the_thinking_time(Integer minutes, Integer seconds) {
 		try {
-			Time time = Time.valueOf("00:"+minutes+":"+seconds);
+			Time time = Time.valueOf("00:" + minutes + ":" + seconds);
 			QuoridorController.setTotalThinkingTime(time);
 		} catch (InvalidInputException e) {
 			throw new cucumber.api.PendingException();
@@ -33,7 +33,7 @@ public class SetTotalThinkingTimeStepDefinition {
 
 	@Then("Both players shall have {int}:{int} remaining time left")
 	public void both_players_shall_have_remaining_time_left(Integer minutes, Integer seconds) {
-		Time time = Time.valueOf("00:"+minutes+":"+seconds);
+		Time time = Time.valueOf("00:" + minutes + ":" + seconds);
 		assertEquals(time, QuoridorApplication.getQuoridor().getCurrentGame().getBlackPlayer().getRemainingTime());
 		assertEquals(time, QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer().getRemainingTime());
 	}

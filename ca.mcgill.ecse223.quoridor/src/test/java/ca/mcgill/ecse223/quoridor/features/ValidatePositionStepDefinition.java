@@ -61,7 +61,7 @@ public class ValidatePositionStepDefinition {
 	@Given("A game position is supplied with wall coordinate {int}:{int}-{string}")
 	public void a_game_position_is_supplied_with_wall_coordinate(Integer row, Integer col, String dir) {
 		Player p = QuoridorApplication.getQuoridor().getCurrentGame().getWhitePlayer();
-		Game g =  QuoridorApplication.getQuoridor().getCurrentGame();
+		Game g = QuoridorApplication.getQuoridor().getCurrentGame();
 		Tile tile = TestUtil.getTile(row, col);
 		Direction direction = TestUtil.getDirection(dir);
 		gamePositionToCheck = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
