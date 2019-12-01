@@ -195,7 +195,7 @@ public class AIController {
 				}
 				// Same as previous longest path, whites path was extended more than blacks
 				else if (whiteDelta >= bestWhiteDelta && blackDelta < whiteDelta && pathMove.getReducesOptions()
-						&& !betterMove) {
+						&& !betterMove && whiteDelta != 0) {
 					if (b) {
 						betterMove = true;
 						System.out.println("case 2.1");
@@ -206,14 +206,14 @@ public class AIController {
 					System.out.println("case 2");
 				}
 				// longer white path, paths were extented the same amount
-				else if (whiteDelta > bestWhiteDelta && blackDelta <= whiteDelta) {
+				else if (whiteDelta > bestWhiteDelta && blackDelta <= whiteDelta  && whiteDelta != 0) {
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
 					System.out.println("case 3");
 				}
 				// Same as previous longest path, paths were extented the same amount
 				else if (whiteDelta >= bestWhiteDelta && blackDelta <= whiteDelta && pathMove.getReducesOptions()
-						&& !betterMove) {
+						&& !betterMove  && whiteDelta != 0) {
 					if (b) {
 						betterMove = true;
 						System.out.println("case 4.1");
@@ -223,13 +223,13 @@ public class AIController {
 					bestWhiteDelta = whiteDelta;
 					System.out.println("case 4");
 				} else if (whiteDelta >= bestWhiteDelta && blackDelta < whiteDelta && !betterMove1
-						&& rowDelta < bestRowDelta) {
+						&& rowDelta < bestRowDelta  && whiteDelta != 0) {
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
 					bestRowDelta = rowDelta;
 					System.out.println("case 5");
 				} else if (whiteDelta >= bestWhiteDelta && blackDelta <= whiteDelta && !betterMove1
-						&& rowDelta < bestRowDelta) {
+						&& rowDelta < bestRowDelta  && whiteDelta != 0) {
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
 					bestRowDelta = rowDelta;
