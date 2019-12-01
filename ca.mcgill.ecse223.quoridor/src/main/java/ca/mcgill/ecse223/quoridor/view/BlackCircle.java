@@ -7,11 +7,12 @@ import javax.swing.JPanel;
 
 public class BlackCircle extends JPanel {
 	private static final long serialVersionUID = -4426310869335015542L;
-    @Override
-    protected void paintComponent(Graphics g) {
-    	g.setColor(Color.BLACK);
-    	g.setPaintMode();
-        g.fillOval(0, 0, g.getClipBounds().width, g.getClipBounds().height);
-        g.dispose();
-    }
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		g.setColor(Color.BLACK);
+		g.setPaintMode();
+		g.fillOval(0, 0, g.getClipBounds().width, g.getClipBounds().height);
+		g.dispose();
+	}
 }

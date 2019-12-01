@@ -1,6 +1,6 @@
 package ca.mcgill.ecse223.quoridor.features;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import ca.mcgill.ecse223.quoridor.application.QuoridorApplication;
 import ca.mcgill.ecse223.quoridor.controller.InvalidMoveException;
@@ -27,7 +27,7 @@ import io.cucumber.java.en.When;
 public class MoveJumpPawnStepDefinitions {
 
 	private boolean moveSuccess = false;
-	
+
 	/**
 	 * 
 	 * @author Remi Carriere
@@ -44,7 +44,7 @@ public class MoveJumpPawnStepDefinitions {
 			gp.setBlackPosition(position);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @author Remi Carriere
@@ -62,7 +62,7 @@ public class MoveJumpPawnStepDefinitions {
 		}
 
 	}
-	
+
 	/**
 	 * @author Weige Qian
 	 */
@@ -191,7 +191,7 @@ public class MoveJumpPawnStepDefinitions {
 			gp.removeBlackWallsInStock(wall);
 		}
 	}
-	
+
 	/**
 	 * @author Weige Qian
 	 */

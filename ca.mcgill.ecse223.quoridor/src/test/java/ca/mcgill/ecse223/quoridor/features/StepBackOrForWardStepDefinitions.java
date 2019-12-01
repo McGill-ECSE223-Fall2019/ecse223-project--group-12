@@ -15,14 +15,15 @@ import io.cucumber.java.en.When;
  *
  */
 public class StepBackOrForWardStepDefinitions {
-	
+
 	@When("Step backward is initiated")
 	public void step_backward_is_initiated() {
-	    QuoridorController.stepBack();
+		QuoridorController.stepBack();
 	}
+
 	@When("Step forward is initiated")
 	public void step_forward_is_initiated() {
-	    QuoridorController.stepForward();
+		QuoridorController.stepForward();
 	}
 
 	@Then("White player's position shall be \\({int}, {int})")
@@ -30,8 +31,8 @@ public class StepBackOrForWardStepDefinitions {
 
 		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
 		GamePosition gp = game.getCurrentPosition();
-		assertEquals(row,gp.getWhitePosition().getTile().getRow());
-		assertEquals(col,gp.getWhitePosition().getTile().getColumn());
+		assertEquals(row, gp.getWhitePosition().getTile().getRow());
+		assertEquals(col, gp.getWhitePosition().getTile().getColumn());
 	}
 
 	@Then("Black player's position shall be \\({int}, {int})")

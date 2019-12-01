@@ -196,8 +196,7 @@ public class BoardGraph {
 		int tileIndex = getTileIndex(row, col);
 		return adj[tileIndex];
 	}
-	
-	
+
 	/**
 	 * Checks if a path exists to the destination
 	 *
@@ -207,33 +206,33 @@ public class BoardGraph {
 	 *            row position of player
 	 * @param destination
 	 *            the winning position for player (1 or 9 for two player)
-	 * @return
-	 * 	A list which contains the path at index 0, and the visited tiles at index 1, returns null if no path exists
+	 * @return A list which contains the path at index 0, and the visited tiles at
+	 *         index 1, returns null if no path exists
 	 */
 	public LinkedList<List<Integer>> getBFSPath(int startRow, int startCol, int destination) {
 		int currentNode = getTileIndex(startRow, startCol);
-		
+
 		List<Integer> visitedOrder = new ArrayList<Integer>();
 		LinkedList<List<Integer>> pathAndVisited = new LinkedList<List<Integer>>();
-		
+
 		// Mark the tile nodes as unvisited (initialized to false)
 		boolean visited[] = new boolean[tileNodes];
 		// Create a queue for BFS
 		Queue<List<Integer>> queue = new LinkedList<>();
 		// Mark the source tile node as visited and add it to queue
 		visited[currentNode] = true;
-		
+
 		List<Integer> path = new ArrayList<Integer>();
 		path.add(currentNode);
 		queue.add(path);
-		
-		//queue.add(currentNode);
+
+		// queue.add(currentNode);
 		while (queue.size() != 0) {
 			path = queue.poll();
-			currentNode = path.get(path.size()-1);
+			currentNode = path.get(path.size() - 1);
 			visitedOrder.add(currentNode);
 			// Dequeue a tile node
-			//currentNode = queue.poll();
+			// currentNode = queue.poll();
 			// Check if the source tile node is a winning position
 			for (int i = 1; i < 10; i++) {
 				if (currentNode == getTileIndex(destination, i)) {
@@ -435,7 +434,7 @@ public class BoardGraph {
 	 */
 	private void addDiagonalJumpMove(Integer playerIndex, Integer target, Integer opponentIndex) {
 		// L shaped path to target through the opponent
-		if (target !=null && adj[playerIndex].contains(opponentIndex) && adj[target].contains(opponentIndex)) {
+		if (target != null && adj[playerIndex].contains(opponentIndex) && adj[target].contains(opponentIndex)) {
 			adj[playerIndex].add(target);
 		}
 	}

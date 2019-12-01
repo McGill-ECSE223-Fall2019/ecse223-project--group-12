@@ -113,7 +113,7 @@ public class MenuPanel extends JPanel {
 		loadGameLabel = new JLabel("Load Game");
 		// Ai toggle button
 		aiRadioButton = new JRadioButton("Set Black as AI");
-		
+
 		// Set up the menu with some default entries for faster debugging
 		try {
 			QuoridorController.createUser("Default");
@@ -124,7 +124,7 @@ public class MenuPanel extends JPanel {
 		aiRadioButton.setSelected(true);
 		blackToggleList.setEnabled(false);
 		thinkingTimeTextField.setText("2000");
-		
+
 		// ------------------------
 		// Layout of Main Panel
 		// ------------------------
@@ -247,7 +247,7 @@ public class MenuPanel extends JPanel {
 				startGameErrorLabel.setText("Please select names and time");
 			}
 			changeToGamePanel();
-		} 
+		}
 		// Regular game selected (No AI)
 		else if (w != null && b != null && time != null) {
 			try {
@@ -259,7 +259,7 @@ public class MenuPanel extends JPanel {
 				startGameErrorLabel.setText("Please select names and time");
 			}
 			changeToGamePanel();
-		} 
+		}
 		// invalid parameters
 		else {
 			startGameErrorLabel.setText("Please select names and time");
@@ -269,9 +269,10 @@ public class MenuPanel extends JPanel {
 	private void loadGameButtonActionPerformed(ActionEvent evt) {
 		if (loadGameToggelList.getSelectedItem() != null) {
 			String fileNamePos = loadGameToggelList.getSelectedItem().toString();
-			String fileNameGame = fileNamePos.substring(0, fileNamePos.length()-7) + "game.dat";
+			String fileNameGame = fileNamePos.substring(0, fileNamePos.length() - 7) + "game.dat";
 
-			if (/*!QuoridorController.loadPosition(fileNamePos, false) || */!QuoridorController.loadGame(fileNameGame, false)) {
+			if (/* !QuoridorController.loadPosition(fileNamePos, false) || */!QuoridorController.loadGame(fileNameGame,
+					false)) {
 				JOptionPane.showMessageDialog(this.getParent(), "Sorry file is not valid");
 				QuoridorController.destroyGame();
 			} else {

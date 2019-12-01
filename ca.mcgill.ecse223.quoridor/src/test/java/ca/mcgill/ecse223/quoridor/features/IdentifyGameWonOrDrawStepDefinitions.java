@@ -1,7 +1,7 @@
 package ca.mcgill.ecse223.quoridor.features;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.sql.Time;
 import java.util.List;
@@ -13,10 +13,8 @@ import ca.mcgill.ecse223.quoridor.controller.QuoridorController.Side;
 import ca.mcgill.ecse223.quoridor.model.Game;
 import ca.mcgill.ecse223.quoridor.model.Game.GameStatus;
 import ca.mcgill.ecse223.quoridor.model.GamePosition;
-import ca.mcgill.ecse223.quoridor.model.Move;
 import ca.mcgill.ecse223.quoridor.model.Player;
 import ca.mcgill.ecse223.quoridor.model.PlayerPosition;
-import ca.mcgill.ecse223.quoridor.model.Quoridor;
 import ca.mcgill.ecse223.quoridor.model.Tile;
 import ca.mcgill.ecse223.quoridor.util.TestUtil;
 import io.cucumber.java.en.Given;
@@ -31,7 +29,7 @@ import io.cucumber.java.en.When;
  */
 
 public class IdentifyGameWonOrDrawStepDefinitions {
-	
+
 	@Given("Player {string} has just completed his move")
 	public void player_has_just_completed_his_move(String color) {
 		Player p = TestUtil.getPlayerByColor(color);
@@ -39,12 +37,12 @@ public class IdentifyGameWonOrDrawStepDefinitions {
 		gp.setPlayerToMove(p);
 		QuoridorController.confirmMove();
 	}
-	
+
 	@Given("The new position of {string} is {int}:{int}")
 	public void the_new_position_of_is(String color, Integer row, Integer col) {
-	    // Write code here that turns the phrase above into concrete actions
-	    Player p = TestUtil.getPlayerByColor(color);
-	    GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
+		// Write code here that turns the phrase above into concrete actions
+		Player p = TestUtil.getPlayerByColor(color);
+		GamePosition gp = QuoridorApplication.getQuoridor().getCurrentGame().getCurrentPosition();
 		Tile tile = TestUtil.getTile(row, col);
 		PlayerPosition position = new PlayerPosition(p, tile);
 		if (p.hasGameAsWhite()) {
@@ -61,18 +59,17 @@ public class IdentifyGameWonOrDrawStepDefinitions {
 		Time addTime = Time.valueOf("00:10:00");
 		Time t = p.getRemainingTime();
 		if (!(t.compareTo(zeroTime) > 0)) {
-			p.setRemainingTime(addTime); //add more time if remaining time = 0
+			p.setRemainingTime(addTime); // add more time if remaining time = 0
 		}
 
 	}
-
 
 	@When("Checking of game result is initated")
 	public void checking_of_game_result_is_initated() {
 		QuoridorController.checkGameWon();
 		QuoridorController.checkGameDrawn();
 	}
-	
+
 	@When("The clock of {string} counts down to zero")
 	public void the_clock_of_counts_down_to_zero(String color) {
 		Player player = TestUtil.getPlayerByColor(color);
@@ -103,6 +100,7 @@ public class IdentifyGameWonOrDrawStepDefinitions {
 		assertNotEquals(running, status);
 		
 	}
+
 	@Given("The following moves were executed:")
 	public void the_following_moves_were_executed(io.cucumber.datatable.DataTable dataTable) {
 		//throw new cucumber.api.PendingException();

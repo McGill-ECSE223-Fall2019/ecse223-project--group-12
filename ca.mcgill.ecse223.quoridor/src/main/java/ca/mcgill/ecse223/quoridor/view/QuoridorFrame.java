@@ -18,12 +18,12 @@ public class QuoridorFrame extends JFrame {
 	public QuoridorFrame() {
 		try {
 			UIManager.setLookAndFeel(
-					//UIManager.getCrossPlatformLookAndFeelClassName());
+					// UIManager.getCrossPlatformLookAndFeelClassName());
 					// "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 					// "com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
 					// "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			//"com.sun.java.swing.plaf.motif.MotifLookAndFeel");
-			"javax.swing.plaf.metal.MetalLookAndFeel");
+					// "com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+					"javax.swing.plaf.metal.MetalLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
 			// TODO Auto-generated catch block
@@ -45,7 +45,7 @@ public class QuoridorFrame extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Quridor Application");
-		//this.setMinimumSize(new Dimension(900, 680));
+		// this.setMinimumSize(new Dimension(900, 680));
 		this.setMinimumSize(new Dimension(900, 650));
 		pack();
 	}
