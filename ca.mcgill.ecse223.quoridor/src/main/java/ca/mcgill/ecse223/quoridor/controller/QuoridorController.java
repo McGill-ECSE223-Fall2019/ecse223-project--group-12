@@ -89,7 +89,7 @@ public class QuoridorController {
 
 		if (game.getCurrentPosition().getPlayerToMove().hasGameAsBlack()
 				&& game.getBlackPlayer().getUser().getIsComp() == true && game.getGameStatus() == GameStatus.Running) {
-			AIController.doMove();
+			CompPlayerController.doMove();
 		}
 	}
 
@@ -1627,7 +1627,6 @@ public class QuoridorController {
 				pw = new PrintWriter(fullPath, "UTF-8");
 				pw.println("This is a test file so there are no moves to write");
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			return;
@@ -1714,7 +1713,6 @@ public class QuoridorController {
 			try {
 				textLine = br.readLine();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			while (textLine != null) {
@@ -1736,7 +1734,6 @@ public class QuoridorController {
 				try {
 					textLine = br.readLine();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -1798,11 +1795,9 @@ public class QuoridorController {
 				}
 
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -1943,7 +1938,6 @@ public class QuoridorController {
 		try {
 			grabWall();
 		} catch (InvalidInputException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			return false;
 		}
@@ -1962,7 +1956,6 @@ public class QuoridorController {
 		try {
 			dropWall();
 		} catch (InvalidInputException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
 		}
@@ -1981,7 +1974,6 @@ public class QuoridorController {
 				moveWall(Side.left);
 				dx = col - game.getWallMoveCandidate().getTargetTile().getColumn();
 			} catch (InvalidInputException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return false;
 			}
@@ -1991,7 +1983,6 @@ public class QuoridorController {
 				moveWall(Side.right);
 				dx = col - game.getWallMoveCandidate().getTargetTile().getColumn();
 			} catch (InvalidInputException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return false;
 			}
@@ -2005,7 +1996,6 @@ public class QuoridorController {
 				moveWall(Side.up);
 				dy = row - game.getWallMoveCandidate().getTargetTile().getRow();
 			} catch (InvalidInputException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return false;
 			}
@@ -2015,7 +2005,6 @@ public class QuoridorController {
 				moveWall(Side.down);
 				dy = row - game.getWallMoveCandidate().getTargetTile().getRow();
 			} catch (InvalidInputException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return false;
 			}
@@ -2103,7 +2092,7 @@ public class QuoridorController {
 		checkGameWon();
 		if (g.getCurrentPosition().getPlayerToMove().hasGameAsBlack()
 				&& g.getBlackPlayer().getUser().getIsComp() == true && g.getGameStatus() == GameStatus.Running) {
-			AIController.doMove();
+			CompPlayerController.doMove();
 		}
 
 	}

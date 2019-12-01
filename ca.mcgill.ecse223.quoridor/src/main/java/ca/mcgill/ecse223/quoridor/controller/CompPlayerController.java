@@ -22,14 +22,14 @@ import ca.mcgill.ecse223.quoridor.to.WallMoveTO;
  * @author Remi Carriere
  *
  */
-public class AIController {
+public class CompPlayerController {
 
 	static int currentBlackPathLength = 0;
 	static int currentWhitePathLength = 0;
 	static TileTO nextWhiteTile = null;
 
 	/**
-	 * Makes th AI player do the "best possible" pawn move or jump move (the pawn
+	 * Makes the Comp player do the "best possible" pawn move or jump move (the pawn
 	 * selects the move type randomly, unless no "good" wall moves are available,
 	 * then we default to pawn move)
 	 */
@@ -191,57 +191,47 @@ public class AIController {
 				if (whiteDelta > bestWhiteDelta && blackDelta < whiteDelta) {
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
-					System.out.println("case 1");
 				}
 				// Same as previous longest path, whites path was extended more than blacks
 				else if (whiteDelta >= bestWhiteDelta && blackDelta < whiteDelta && pathMove.getReducesOptions()
 						&& !betterMove && whiteDelta != 0) {
 					if (b) {
 						betterMove = true;
-						System.out.println("case 2.1");
 					}
 					betterMove1 = true;
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
-					System.out.println("case 2");
 				}
 				// longer white path, paths were extented the same amount
 				else if (whiteDelta > bestWhiteDelta && blackDelta <= whiteDelta  && whiteDelta != 0) {
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
-					System.out.println("case 3");
 				}
 				// Same as previous longest path, paths were extented the same amount
 				else if (whiteDelta >= bestWhiteDelta && blackDelta <= whiteDelta && pathMove.getReducesOptions()
 						&& !betterMove  && whiteDelta != 0) {
 					if (b) {
 						betterMove = true;
-						System.out.println("case 4.1");
 					}
 					betterMove1 = true;
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
-					System.out.println("case 4");
 				} else if (whiteDelta >= bestWhiteDelta && blackDelta < whiteDelta && !betterMove1
 						&& rowDelta < bestRowDelta  && whiteDelta != 0) {
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
 					bestRowDelta = rowDelta;
-					System.out.println("case 5");
 				} else if (whiteDelta >= bestWhiteDelta && blackDelta <= whiteDelta && !betterMove1
 						&& rowDelta < bestRowDelta  && whiteDelta != 0) {
 					bestPathMove = pathMove;
 					bestWhiteDelta = whiteDelta;
 					bestRowDelta = rowDelta;
-					System.out.println("case 6");
 				}
 			}
 		}
-		System.out.println("end");
 		if (bestPathMove == null) {
 			return null;
 		}
 		return bestPathMove.getMove();
 	}
-
 }
