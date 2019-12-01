@@ -416,6 +416,15 @@ public class GamePanel extends JPanel {
 				QuoridorController.destroyGame();
 				returnToMenu();
 			}
+		} else if (QuoridorController.getGameStatus() == GameStatus.Draw) {
+			resultMsg = "Game Drawn! Would you like to save the game?";
+			int op = JOptionPane.showConfirmDialog(this.getParent(), resultMsg);
+			if (op == 0) {
+				saveExitToMenuButtonActionPerformed(null);
+			} else {
+				QuoridorController.destroyGame();
+				returnToMenu();
+			}
 		}
 
 	}

@@ -189,6 +189,7 @@ public class QuoridorController {
 		}
 		whiteBehavior.checkWinningMove();
 		blackBehavior.checkWinningMove();
+		checkGameDrawn();
 	}
 
 	/**
@@ -2210,11 +2211,89 @@ public class QuoridorController {
 	 * @author Kaan Gure
 	 * @param
 	 */
+	
+	//private variable to keep track of target length outside of each method call
+	private static int targetLenght = -1;
 
-	public static void checkGameDrawn() throws java.lang.UnsupportedOperationException {
-		throw new UnsupportedOperationException();
-		// IN PROGRESS
+	public static void checkGameDrawn(){
+		Game game = QuoridorApplication.getQuoridor().getCurrentGame();
+		if (game != null && game.getGameStatus() == GameStatus.Running) {
+			List<Move> movesInHistory = QuoridorApplication.getQuoridor().getCurrentGame().getMoves();
+			List<Move> whiteMoves = new ArrayList<>();
+			List<Move> blackMoves = new ArrayList<>();
+			//create lists of past moves for each players
+			for (int i=0; i < movesInHistory.size(); i++) {
+				int r = movesInHistory.get(i).getRoundNumber();
+				if(r == 1) {
+					whiteMoves.add(movesInHistory.get(i));
+				} else {
+					blackMoves.add(movesInHistory.get(i));
+				}
+			}
+			
+			int lastWMovIdx = whiteMoves.size()-1;
+			int lastBMovIdx = blackMoves.size()-1;
+			boolean whiteDoubleRepeatFlag = false;
+			boolean blackDoubleRepeatFlag = false;
+			
+			if(QuoridorApplication.getQuoridor().getCurrentGame().getMoves().size() > 9 ) { //checking if game is drawn in the middle of the game
+				
+				//check the equivalency of the past 4 moves in 2 groups with the same direction for both black and white and set up flags
+				if((whiteMoves.get(lastWMovIdx).getTargetTile().equals(whiteMoves.get(lastWMovIdx-2).getTargetTile())) &&
+				   (whiteMoves.get(lastWMovIdx-1).getTargetTile().equals(whiteMoves.get(lastWMovIdx-3).getTargetTile()))) {
+					whiteDoubleRepeatFlag = true;
+				}
+	
+				if((blackMoves.get(lastBMovIdx).getTargetTile().equals(blackMoves.get(lastBMovIdx-2).getTargetTile())) && 
+				   (blackMoves.get(lastBMovIdx-1).getTargetTile().equals(blackMoves.get(lastBMovIdx-3).getTargetTile()))) {
+					blackDoubleRepeatFlag = true;
+					
+				}
+			// if both flags are up, delay for a next critical move to occur where a draw may happen
+			int currentMoveLenght = QuoridorApplication.getQuoridor().getCurrentGame().getMoves().size();
+			if(!whiteDoubleRepeatFlag && !blackDoubleRepeatFlag) {
+				currentMoveLenght = QuoridorApplication.getQuoridor().getCurrentGame().getMoves().size();
+				targetLenght = currentMoveLenght + 5;
+			}
+			
+			//check if draw happens at critical move
+			if(QuoridorApplication.getQuoridor().getCurrentGame().getMoves().size() == targetLenght) {
+				if(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentMove().getTargetTile().equals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentMove().getPrevMove().getPrevMove().getPrevMove().getPrevMove().getTargetTile())) {
+					QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.Draw);
+				}
+			} else { QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.Running);
+			
+				
+			}
+			
+			} else { //Edge case: check if a draw happens at the very start of the game
+				
+				for (int i=0; i < (whiteMoves.size() - 4); i++) {
+					if((whiteMoves.get(i).getTargetTile().equals(whiteMoves.get(i+2).getTargetTile())) &&
+					   (whiteMoves.get(i+1).getTargetTile().equals(whiteMoves.get(i+3).getTargetTile()))) {
+						whiteDoubleRepeatFlag = true;
+					}
+				}
+				
+				for (int i=0; i < (blackMoves.size() - 3); i++) {
+					if((blackMoves.get(i).getTargetTile().equals(blackMoves.get(i+2).getTargetTile())) && 
+					   (blackMoves.get(i+1).getTargetTile().equals(blackMoves.get(i+3).getTargetTile()))) {
+						blackDoubleRepeatFlag = true;
+					}
+				}
+						
+				if(whiteDoubleRepeatFlag && blackDoubleRepeatFlag) {
+					if(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentMove().getTargetTile().equals(QuoridorApplication.getQuoridor().getCurrentGame().getCurrentMove().getPrevMove().getPrevMove().getPrevMove().getPrevMove().getTargetTile())) {
+						QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.Draw);
+					} else { QuoridorApplication.getQuoridor().getCurrentGame().setGameStatus(GameStatus.Running);
+						
+					}
+				}
+						
+			}
+		}
 	}
+		
 
 	// ------------------------
 	// Zechen
